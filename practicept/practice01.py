@@ -9,7 +9,7 @@ print(2**3) #2^3 = 8
 print(5%3) # 나머지 2
 print(10%3) # 나머지1
 print(5//3) # 몫 1
-print(10//3) # 3
+print(10//3) # 3 ggg
 
 print(10>3) # true
 print(4 >= 7) # false
