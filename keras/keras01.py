@@ -9,8 +9,8 @@ y = np.array([1,2,3])
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 
-model = Sequential()
-model.add(Dense(5, input_dim=1, activation='linear'))
+model = Sequential() # 순차적인
+model.add(Dense(5, input_dim=1, activation='linear')) 
 model.add(Dense(3, activation='linear'))
 model.add(Dense(4))
 model.add(Dense(1))
@@ -23,7 +23,9 @@ model.fit(x, y, epochs=137, batch_size=1 )
 loss = model.evaluate(x, y, batch_size=1)
 print("loss : ", loss)
 
-result = model.predict([4])
+x_pred = np.array([4])
+
+result = model.predict(x_pred)
 print("result : ", result)
 
 
