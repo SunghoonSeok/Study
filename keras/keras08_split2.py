@@ -18,7 +18,7 @@ y = np.array(range(1,101))
 
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True)
- #(x, y, train_size=0.6, shuffle=False) 라고 하면 안섞이고 순서대로 나옴
+ #(x, y, train_size=0.8, shuffle=False) 라고 하면 안섞이고 순서대로 나옴
 print(x_train)
 print(x_train.shape)
 print(x_test.shape)

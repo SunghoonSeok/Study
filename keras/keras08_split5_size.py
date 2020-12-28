@@ -21,15 +21,15 @@ y = np.array(range(1,101))
 
 from sklearn.model_selection import train_test_split
 # x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.9, test_size=0.2)
-# x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, test_size=0.2)
+# x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, test_size=0.2, shuffle=False)
 # 위 두가지 경우에 대해 확인 후 정리할 것
 # 넘칠 경우 value error가 뜬다. ValueError: The sum of test_size and train_size = 1.1
-# 부족할 경우 shuffle을 안쓴 경우에만 돌아가며 56 : 14 : 20이 나온다.
+# 부족할 경우 56 : 14 : 20이 나온다. shuffle을 안하면 train : 1~56 val : 57~70 test : 71~90 값을 가진다.
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, test_size=0.2, shuffle=True) # 80 : 20
-x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size = 0.2, shuffle=True) # 64 : 16 : 20
+x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size = 0.2, shuffle=False) # 64 : 16 : 20
  #(x, y, train_size=0.6, shuffle=False) 라고 하면 안섞이고 순서대로 나옴
-print(x_train)
+print(x_test)
 print(x_train.shape)
 print(x_val.shape)
 print(x_test.shape)
