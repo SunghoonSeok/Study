@@ -46,7 +46,7 @@ model.summary()
 
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam', metrics=['mae'])
-model.fit(x_train, y_train, epochs=100, batch_size=1, validation_split=0.2, verbose=5)
+model.fit(x_train, y_train, epochs=100, batch_size=1, validation_split=0.2, verbose=1)
 '''
 # verbose 0 : 훈련과정 출력 안됨
 # verbose 1 : 작대기, s, ms/step, loss, mae, val_loss, val_mae, epoch n/100

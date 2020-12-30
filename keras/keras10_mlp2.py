@@ -1,5 +1,5 @@
 # 실습 train과 test 분리해서 소스를 완성하시오.
-
+# 다 : 1 mlp
 import numpy as np
 
 #1. 데이터

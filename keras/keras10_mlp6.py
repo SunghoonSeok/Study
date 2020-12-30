@@ -1,31 +1,24 @@
-#실습
-# x는 (100, 5) 데이터 구성
-# y는 (100, 2) 데이터 구성
-# 모델을 완성하시오.
-
-# 다 만든 친구들은 predict 일부값을 출력하시오.
-# 다 : 다 mlp
+# 1 : 다 mlp
 
 import numpy as np
 
 #1. 데이터
-x = np.array([range(100), range(301, 401), range(1, 101), range(201, 301), range(501, 601)])
-y = np.array([range(711, 811), range(1, 101)])
-print(x.shape) #(5, 100)
-print(y.shape) # (2, 100)
-
+x = np.array([range(100)])
+y = np.array([range(711, 811), range(1, 101), range(201, 301)])
+print(x.shape) #(1, 100)
+print(y.shape) # (3, 100)
 
 x = np.transpose(x)  # x = x.T
 y = np.transpose(y)
 print(x) 
-print(x.shape)   #(100, 5)
+print(x.shape)   #(100, 1)
 
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True, random_state=66)  
- # 행을 자르는겨, 열(특성)은 건들지않아    random_state
+ # 행을 자르는겨, 열(특성)은 건들지않아    random_state는 66번째의 나눈 데이터값으로 고정시킨다는 뜻
 
-print(x_train.shape) #(80, 5)
-print(y_train.shape) #(80, 2)
+print(x_train.shape) #(80, 1)
+print(y_train.shape) #(80, 3)
 
 #2. 모델구성
 from tensorflow.keras.models import Sequential
@@ -33,14 +26,14 @@ from tensorflow.keras.layers import Dense
 # from keras.layers import Dense
 
 model = Sequential()
-model.add(Dense(10, input_dim=5))
-model.add(Dense(5))
-model.add(Dense(5))
-model.add(Dense(2))  # output_dim = 2
+model.add(Dense(10, input_dim=1))
+model.add(Dense(50))
+model.add(Dense(50))
+model.add(Dense(3))  # output_dim = 3
 
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam', metrics=['mae'])
-model.fit(x_train, y_train, epochs=100, batch_size=1, validation_split=0.2)
+model.fit(x_train, y_train, epochs=150, batch_size=1, validation_split=0.2)
 
 #4. 평가, 예측
 loss, mae = model.evaluate(x_test, y_test)
@@ -63,10 +56,8 @@ from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
 print("R2 : ", r2)
 
-# x_predict = np.array([[100,401,101,301,601]])
-x_predict = np.array([100,401,101,301,601])
-x_predict = x_predict.reshape(1,5)
 
+
+x_predict = np.array([200])
 y_predict = model.predict(x_predict)
 print(y_predict)
-

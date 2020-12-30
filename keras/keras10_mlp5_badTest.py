@@ -4,7 +4,7 @@
 # 3. node   :    각 10개 이상
 # 4. batch_size  :  8이하
 # 5. epochs   : 30 이상
-
+# 다 : 다 mlp
 import numpy as np
 
 #1. 데이터
