@@ -34,7 +34,3 @@ print('loss : ', loss)
 result = model.predict([12])
 print("result : ", result)
 
-
-
-
-

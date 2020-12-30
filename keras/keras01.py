@@ -27,5 +27,3 @@ x_pred = np.array([4])
 
 result = model.predict(x_pred)
 print("result : ", result)
-
-
