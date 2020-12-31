@@ -44,12 +44,12 @@ x_test = scaler.transform(x_test)
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Input
 inputs = Input(shape=(13,))
-dense1 = Dense(50, activation='relu')(inputs)
-dense1 = Dense(100)(dense1)
-dense1 = Dense(100)(dense1)
-dense1 = Dense(200)(dense1)
-dense1 = Dense(100)(dense1)
-dense1 = Dense(50)(dense1)
+dense1 = Dense(64, activation='relu')(inputs)
+dense1 = Dense(128)(dense1)
+dense1 = Dense(128)(dense1)
+dense1 = Dense(256)(dense1)
+dense1 = Dense(128)(dense1)
+dense1 = Dense(64)(dense1)
 outputs = Dense(1)(dense1)
 
 model = Model(inputs=inputs, outputs=outputs)
@@ -57,7 +57,10 @@ model.summary()
 
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam', metrics=['mae'])
-model.fit(x_train, y_train, batch_size=8, epochs=300, validation_data=(x_val, y_val))
+from tensorflow.keras.callbacks import EarlyStopping
+early_stopping = EarlyStopping(monitor='loss', patience=20, mode='auto')
+
+model.fit(x_train, y_train, batch_size=8, epochs=1000, validation_data=(x_val, y_val), callbacks=[early_stopping])
 
 #4. 평가, 예측
 loss, mae = model.evaluate(x_test, y_test, batch_size=8)
@@ -99,5 +102,13 @@ print("R2 : ", r2)
 # loss, mae :  6.998237133026123 1.869640827178955
 # RMSE :  2.645418213195852
 # R2 :  0.9162719360420687
+
+# early stopping 적용후
+# loss, mae :  6.493799686431885 2.0575599670410156
+# RMSE :  2.5482935370353137
+# R2 :  0.9223071100610187
+
+
+
 
 
