@@ -22,6 +22,7 @@ from sklearn.preprocessing import MinMaxScaler
 scaler = MinMaxScaler()
 scaler.fit(x)
 x= scaler.transform(x)   # 이렇게 하면 최소값 최대값 알 필요가 없다.
+# 데이터 전체를 fit하게 되면 train의 범위가 0~1이 아니다 val과 test값을 나눠가지니까
 
 print(np.min(x), np.max(x))
 print(np.max(x[0]))
