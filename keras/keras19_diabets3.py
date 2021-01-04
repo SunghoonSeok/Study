@@ -29,12 +29,17 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffl
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Input
 inputs = Input(shape=(10,))
-dense1 = Dense(50, activation='relu')(inputs)
-dense1 = Dense(100)(dense1)
-dense1 = Dense(200)(dense1)
-dense1 = Dense(200)(dense1)
-dense1 = Dense(100)(dense1)
-dense1 = Dense(50)(dense1)
+dense1 = Dense(4, activation='relu')(inputs)
+dense1 = Dense(8, activation='relu')(dense1)
+dense1 = Dense(8, activation='relu')(dense1)
+dense1 = Dense(16, activation='relu')(dense1)
+dense1 = Dense(16, activation='relu')(dense1)
+dense1 = Dense(32, activation='relu')(dense1)
+dense1 = Dense(32, activation='relu')(dense1)
+dense1 = Dense(16, activation='relu')(dense1)
+dense1 = Dense(18, activation='relu')(dense1)
+dense1 = Dense(8, activation='relu')(dense1)
+dense1 = Dense(4, activation='relu')(dense1)
 outputs = Dense(1)(dense1)
 
 model = Model(inputs=inputs, outputs=outputs)
@@ -42,10 +47,10 @@ model.summary()
 
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam', metrics=['mae'])
-model.fit(x_train, y_train, batch_size=8, epochs=300, validation_split=0.2)
+model.fit(x_train, y_train, batch_size=4, epochs=400, validation_split=0.2)
 
 #4. 평가, 예측
-loss, mae = model.evaluate(x_test, y_test, batch_size=8)
+loss, mae = model.evaluate(x_test, y_test, batch_size=4)
 y_predict = model.predict(x_test)
 print("loss, mae : ", loss, mae)
 

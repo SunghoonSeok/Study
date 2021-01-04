@@ -18,7 +18,7 @@ print(dataset.DESCR)
 
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True)
-x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, train_size=0.8, shuffle=True)
+x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, train_size=0.6, shuffle=True)
 
 from sklearn.preprocessing import MinMaxScaler
 scaler = MinMaxScaler()
@@ -33,16 +33,16 @@ x_test = scaler.transform(x_test)
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Input
 inputs = Input(shape=(10,))
-dense1 = Dense(50, activation='linear')(inputs)
-dense1 = Dense(100)(dense1)
-dense1 = Dense(200)(dense1)
-dense1 = Dense(200)(dense1)
-dense1 = Dense(200)(dense1)
-dense1 = Dense(200)(dense1)
-dense1 = Dense(200)(dense1)
-dense1 = Dense(200)(dense1)
+dense1 = Dense(8, activation='linear')(inputs)
+dense1 = Dense(16)(dense1)
+dense1 = Dense(32)(dense1)
+dense1 = Dense(64)(dense1)
 dense1 = Dense(100)(dense1)
 dense1 = Dense(50)(dense1)
+dense1 = Dense(30)(dense1)
+dense1 = Dense(20)(dense1)
+dense1 = Dense(10)(dense1)
+dense1 = Dense(5)(dense1)
 outputs = Dense(1)(dense1)
 
 model = Model(inputs=inputs, outputs=outputs)
