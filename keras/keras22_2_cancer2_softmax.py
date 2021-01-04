@@ -48,9 +48,9 @@ model.add(Dense(30, activation='relu'))
 model.add(Dense(2, activation='softmax'))
 
 # 3. 컴파일, 훈련
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc']) # 이진분류일때 loss는 binary_crossentropy
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc'])
 from tensorflow.keras.callbacks import EarlyStopping
-early_stopping = EarlyStopping(monitor='loss', patience=20, mode='auto')
+early_stopping = EarlyStopping(monitor='loss', patience=30, mode='auto')
 model.fit(x_train, y_train, epochs=300, validation_data=(x_val, y_val), callbacks=[early_stopping])
 
 # 4. 평가, 예측
