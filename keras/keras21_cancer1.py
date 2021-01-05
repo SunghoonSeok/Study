@@ -55,7 +55,7 @@ print(loss, acc)
 y_pred = model.predict(x[-5:-1])
 print(y_pred)
 print(y[-5:-1])
-y_recovery = np.argmax(y_pred, axis=1).reshape(-1,1)
+y_recovery = np.where(y_pred<0.5, 0, 1)
 print(y_recovery)
 
 
