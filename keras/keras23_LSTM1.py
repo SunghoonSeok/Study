@@ -22,6 +22,21 @@ model.add(Dense(1))
 model.summary() 
 # param# 480의 비밀 -> 
 
+# LSTM param#
+#         __________   output 10          
+# input  |  gate    | --------->                 
+# -----> | o o o o  | ________ 10         
+# (3, 1) |__________|          |       
+#              ^               |      
+#              |_______________|       
+#  input -> (time steps, input_dim)                                 
+                               
+# 4 * ( 1 + 1 + 10 ) * 10
+# gate * ( input_dim + bias + output(역전파)) * output
+# LSTM ( batch_size, time steps, input_dim(feature))
+# LSTM은 RNN이 가진 단점(앞부분의 데이터가 뒷부분 학습에 영향을 못미치는 문제)을 보완하기위해 만들어졌다.
+# 
+
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
 model.fit(x, y, epochs=100, batch_size=1)
