@@ -22,11 +22,11 @@ x_pred = x_pred.reshape(1, 3)
 #     results.append(scaler.transform(x[:, ss, :]).reshape(num_batch, 1, num_feature))
 # x = np.concatenate(results, axis=1)
 
-from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
-scaler.fit(x)
-scaler.transform(x)
-scaler.transform(x_pred)
+# from sklearn.preprocessing import MinMaxScaler
+# scaler = MinMaxScaler()
+# scaler.fit(x)
+# scaler.transform(x)
+# scaler.transform(x_pred)
 
 x = x.reshape(13, 3, 1)
 
@@ -35,11 +35,11 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM
 
 model = Sequential()
-model.add(LSTM(40, activation='relu', input_shape=(3,1))) #(행, 열, 몇개씩자르는지)
-model.add(Dense(80))
-model.add(Dense(80))
+model.add(LSTM(20, activation='relu', input_shape=(3,1))) #(행, 열, 몇개씩자르는지)
+model.add(Dense(40))
 model.add(Dense(80))
 model.add(Dense(40))
+model.add(Dense(20))
 model.add(Dense(1))
 
 model.summary() 
@@ -47,7 +47,7 @@ model.summary()
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
 from tensorflow.keras.callbacks import EarlyStopping
-early_stopping = EarlyStopping(monitor='loss', patience=20, mode='auto')
+early_stopping = EarlyStopping(monitor='loss', patience=30, mode='auto')
 model.fit(x, y, epochs=2000, batch_size=16, callbacks=[early_stopping])
 
 
