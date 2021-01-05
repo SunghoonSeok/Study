@@ -27,7 +27,7 @@ model.summary()
 # paran# 360 -> reset after=False
 
 
-'''
+
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
 model.fit(x, y, epochs=100, batch_size=1)
@@ -53,4 +53,3 @@ print(y_pred)
 # GRU
 # loss: 0.0057
 # [[8.1311245]]
-'''
