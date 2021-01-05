@@ -35,3 +35,9 @@ x_pred = np.array([5,6,7]) # (3,)
 x_pred = x_pred.reshape(1,3,1) 
 y_pred = model.predict(x_pred)
 print(y_pred)
+
+
+
+# LSTM
+# loss: 0.0028
+# [[7.9007807]]

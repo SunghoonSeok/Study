@@ -1,4 +1,5 @@
-# input_shape / input_length / input_dim
+# Simple RNN
+
 # 1. 데이터
 import numpy as np
 
@@ -11,11 +12,10 @@ x = x.reshape(4, 3, 1)# -1은 제일끝, -2는 끝에서 두번째를 의미 (-1
 
 # 2. 모델구성
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, LSTM
+from tensorflow.keras.layers import Dense, SimpleRNN
 
 model = Sequential()
-# model.add(LSTM(10, activation='relu', input_shape=(3,1))) #(행, 열, 몇개씩자르는지)
-model.add(LSTM(10, activation='relu', input_length=3, input_dim=1))
+model.add(SimpleRNN(10, activation='relu', input_shape=(3,1))) #(행, 열, 몇개씩자르는지)
 model.add(Dense(20))
 model.add(Dense(20))
 model.add(Dense(10))
@@ -37,3 +37,11 @@ x_pred = np.array([5,6,7]) # (3,)
 x_pred = x_pred.reshape(1,3,1) 
 y_pred = model.predict(x_pred)
 print(y_pred)
+
+# SimpleRNN
+# loss: 0.0012
+# [[8.006236]]
+
+# LSTM
+# loss: 0.0028
+# [[7.9007807]]
