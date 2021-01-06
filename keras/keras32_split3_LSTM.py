@@ -33,7 +33,7 @@ y = dataset[:, -1]
 pred = split_x(range(96,106),6)
 x_pred = pred[:, :-1]
 from sklearn.model_selection import train_test_split
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True)
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True, random_state=66)
 x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, train_size=0.8, shuffle=True)
 
 from sklearn.preprocessing import MinMaxScaler
@@ -54,11 +54,11 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM
 
 model = Sequential()
-model.add(LSTM(40, activation='relu', input_shape=(5,1))) #(행, 열, 몇개씩자르는지)
-model.add(Dense(60))
+model.add(LSTM(80, activation='relu', input_shape=(5,1))) #(행, 열, 몇개씩자르는지)
+model.add(Dense(100))
+model.add(Dense(120))
+model.add(Dense(100))
 model.add(Dense(80))
-model.add(Dense(60))
-model.add(Dense(40))
 model.add(Dense(1))
 
 model.summary() 
@@ -66,13 +66,13 @@ model.summary()
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
 from tensorflow.keras.callbacks import EarlyStopping
-early_stopping = EarlyStopping(monitor='loss', patience=20, mode='auto')
-model.fit(x_train, y_train, epochs=2000, batch_size=16, callbacks=[early_stopping], validation_data=(x_val, y_val))
+early_stopping = EarlyStopping(monitor='loss', patience=30, mode='auto')
+model.fit(x_train, y_train, epochs=2000, batch_size=32, callbacks=[early_stopping], validation_data=(x_val, y_val))
 
 
 
 # 4. 평가, 예측
-loss = model.evaluate(x_test, y_test, batch_size=16)
+loss = model.evaluate(x_test, y_test, batch_size=32)
 
 
 
@@ -96,3 +96,18 @@ print(y_pred)
 #  [103.43354 ]
 #  [104.51292 ]
 #  [105.59781 ]]
+
+# loss :  0.00543704628944397
+# [[101.12535 ]
+#  [102.145424]
+#  [103.16653 ]
+#  [104.188644]
+#  [105.21184 ]]
+
+# random_state, node증가, batch 32
+# loss :  0.0006526882061734796
+# [[101.14891]
+#  [102.18159]
+#  [103.21732]
+#  [104.25617]
+#  [105.29785]]

@@ -45,10 +45,8 @@ early_stopping = EarlyStopping(monitor='loss', patience=20, mode='auto')
 model.fit(x, y, epochs=2000, batch_size=16, callbacks=[early_stopping])
 
 
-
 # 4. 평가, 예측
 loss = model.evaluate(x, y, batch_size=16)
-
 
 x_pred = np.array([[8,9,10,11]])
 y_pred = model.predict(x_pred)
