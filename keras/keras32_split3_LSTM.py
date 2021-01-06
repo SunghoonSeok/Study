@@ -32,18 +32,18 @@ y = dataset[:, -1]
 
 pred = split_x(range(96,106),6)
 x_pred = pred[:, :-1]
+
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True, random_state=66)
 x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, train_size=0.8, shuffle=True)
 
-# from sklearn.preprocessing import MinMaxScaler
-# scaler = MinMaxScaler()
-# scaler.fit(x_train)
-# x_train = scaler.transform(x_train)
-# x_val = scaler.transform(x_val)
-# x_test = scaler.transform(x_test)
-# x_pred = scaler.transform(x_pred)
-
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+scaler.fit(x_train)
+x_train = scaler.transform(x_train)
+x_val = scaler.transform(x_val)
+x_test = scaler.transform(x_test)
+x_pred = scaler.transform(x_pred)
 
 x_train = x_train.reshape(x_train.shape[0],x_train.shape[1],1)
 x_val = x_val.reshape(x_val.shape[0],x_val.shape[1],1)
@@ -51,10 +51,10 @@ x_test = x_test.reshape(x_test.shape[0],x_test.shape[1],1)
 
 # 2. 모델구성
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, LSTM
+from tensorflow.keras.layers import Dense, LSTM # SimpleRNN
 
 model = Sequential()
-model.add(LSTM(80, activation='relu', input_shape=(5,1))) #(행, 열, 몇개씩자르는지)
+model.add(LSTM(80, activation='relu', input_shape=(5,1)))
 model.add(Dense(100))
 model.add(Dense(120))
 model.add(Dense(100))
@@ -73,8 +73,6 @@ model.fit(x_train, y_train, epochs=2000, batch_size=32, callbacks=[early_stoppin
 
 # 4. 평가, 예측
 loss = model.evaluate(x_test, y_test, batch_size=32)
-
-
 
 x_pred = x_pred.reshape(5,5,1)
 y_pred = model.predict(x_pred)
@@ -119,3 +117,11 @@ print(y_pred)
 #  [102.9251  ]
 #  [103.91171 ]
 #  [104.897255]]
+
+# SimpleRNN
+# loss :  2.5407537123101065e-06
+# [[100.997536]
+#  [101.996   ]
+#  [102.99076 ]
+#  [103.98553 ]
+#  [104.977684]]
