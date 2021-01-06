@@ -36,13 +36,13 @@ from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True, random_state=66)
 x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, train_size=0.8, shuffle=True)
 
-from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
-scaler.fit(x_train)
-x_train = scaler.transform(x_train)
-x_val = scaler.transform(x_val)
-x_test = scaler.transform(x_test)
-x_pred = scaler.transform(x_pred)
+# from sklearn.preprocessing import MinMaxScaler
+# scaler = MinMaxScaler()
+# scaler.fit(x_train)
+# x_train = scaler.transform(x_train)
+# x_val = scaler.transform(x_val)
+# x_test = scaler.transform(x_test)
+# x_pred = scaler.transform(x_pred)
 
 
 x_train = x_train.reshape(x_train.shape[0],x_train.shape[1],1)
@@ -111,3 +111,11 @@ print(y_pred)
 #  [103.21732]
 #  [104.25617]
 #  [105.29785]]
+
+# Minmax 제거
+# loss :  0.00018929583893623203
+# [[100.94876 ]
+#  [101.93744 ]
+#  [102.9251  ]
+#  [103.91171 ]
+#  [104.897255]]
