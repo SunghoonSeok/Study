@@ -16,7 +16,9 @@ model.add(Dense(4))
 model.add(Dense(1))
 
 #3. 컴파일, 훈련
-model.compile(loss='mse', optimizer='adam')
+from tensorflow.keras.optimizers import Adam, SGD
+# model.compile(loss='mse', optimizer='adam')
+model.compile(loss='mse', optimizer=Adam(learning_rate=0.1))
 model.fit(x, y, epochs=137, batch_size=1 )
 
 #4. 평가, 예측
