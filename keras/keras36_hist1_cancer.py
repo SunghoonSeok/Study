@@ -31,17 +31,17 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 
 model = Sequential()
-model.add(Dense(200, activation='sigmoid', input_shape=(30,)))
-model.add(Dense(150, activation='sigmoid'))
-model.add(Dense(100, activation='sigmoid'))
-model.add(Dense(50, activation='sigmoid'))
-model.add(Dense(30, activation='sigmoid'))
+model.add(Dense(64, activation='sigmoid', input_shape=(30,)))
+model.add(Dense(128, activation='sigmoid'))
+model.add(Dense(256, activation='sigmoid'))
+model.add(Dense(128, activation='sigmoid'))
+model.add(Dense(64, activation='sigmoid'))
 model.add(Dense(1, activation='sigmoid')) # 이진분류일때 마지막 activation은 반드시 sigmoid
 
 # 3. 컴파일, 훈련
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc']) # 이진분류일때 loss는 binary_crossentropy
 from tensorflow.keras.callbacks import EarlyStopping
-early_stopping = EarlyStopping(monitor='loss', patience=30, mode='auto')
+early_stopping = EarlyStopping(monitor='loss', patience=20, mode='auto')
 hist = model.fit(x_train, y_train, epochs=400, validation_data=(x_val, y_val), callbacks=[early_stopping])
 
 # 그래프
@@ -80,3 +80,9 @@ print(y_recovery)
 
 # loss= 0.046165917068719864 
 # acc =0.9912280440330505
+
+# 0.05473927780985832 0.9824561476707458
+# 0.0580778531730175 0.9824561476707458
+# 0.06058778613805771 0.9736841917037964
+# 0.05078306794166565 0.9824561476707458
+# 0.055828072130680084 0.9912280440330505

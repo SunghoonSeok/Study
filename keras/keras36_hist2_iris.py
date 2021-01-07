@@ -53,7 +53,7 @@ model.add(Dense(3, activation='softmax')) # softmax를 활용하면 node의 개�
 # 3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc']) # 다중분류일때 loss는 categorical_crossentropy
 from tensorflow.keras.callbacks import EarlyStopping
-early_stopping = EarlyStopping(monitor='loss', patience=30, mode='auto')
+early_stopping = EarlyStopping(monitor='loss', patience=20, mode='auto')
 hist = model.fit(x_train, y_train, epochs=400, validation_data=(x_val, y_val), callbacks=[early_stopping])
 
 # 그래프
@@ -82,3 +82,20 @@ y_recovery = np.argmax(y_pred, axis=1).reshape(-1,1)
 print(y_recovery)
 # 결과치 나오게 코딩할것 # argmax
 
+# 0.002801266498863697 1.0
+# [[0.0000000e+00 4.0494348e-25 1.0000000e+00]
+#  [0.0000000e+00 2.2388051e-23 1.0000000e+00]
+#  [0.0000000e+00 1.1332989e-24 1.0000000e+00]
+#  [0.0000000e+00 1.1197788e-25 1.0000000e+00]]
+
+# 0.03470752760767937 0.9666666388511658
+# [[0.0000000e+00 1.1491760e-16 1.0000000e+00]
+#  [0.0000000e+00 2.9781458e-15 1.0000000e+00]
+#  [0.0000000e+00 4.4913393e-16 1.0000000e+00]
+#  [0.0000000e+00 4.8619284e-17 1.0000000e+00]]
+
+# 0.0018509665969759226 1.0
+# [[6.2294304e-37 3.6528328e-20 1.0000000e+00]
+#  [4.8576592e-34 1.7516075e-18 1.0000000e+00]
+#  [8.5207671e-36 1.6631836e-19 1.0000000e+00]
+#  [1.9210618e-37 8.1843447e-21 1.0000000e+00]]

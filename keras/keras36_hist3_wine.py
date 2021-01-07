@@ -51,8 +51,8 @@ model.add(Dense(3, activation='softmax')) # softmax를 활용하면 node의 개�
 # 3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc']) # 다중분류일때 loss는 categorical_crossentropy
 from tensorflow.keras.callbacks import EarlyStopping
-early_stopping = EarlyStopping(monitor='loss', patience=30, mode='auto')
-hist = model.fit(x_train, y_train, epochs=512, validation_data=(x_val, y_val), callbacks=[early_stopping])
+early_stopping = EarlyStopping(monitor='loss', patience=20, mode='auto')
+hist = model.fit(x_train, y_train, epochs=200, validation_data=(x_val, y_val), callbacks=[early_stopping], batch_size=8)
 
 print(hist)
 print(hist.history.keys()) # loss, acc, val_loss, val_acc
