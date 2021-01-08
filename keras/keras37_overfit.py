@@ -10,4 +10,6 @@ train loss는 줄어드는데 test/val loss는 어느순간 올라가거나 요�
 3. regularization(정규화)
 4. Dropout(딥러닝전용)
 
+5?. 앙상블? 통상 2~5% 향상이 있다고 하는 놈들이 있다. (검증 안됨)
+
 '''

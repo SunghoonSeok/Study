@@ -25,6 +25,7 @@ def split_x(seq, size):
 dataset1 = split_x(data, size)
 x1 = dataset1[:,:-1]
 y1 = dataset1[:,-1]
+pred = split_x(range(507, 515), 5)
 
 
 from sklearn.datasets import load_boston
@@ -39,9 +40,25 @@ from sklearn.model_selection import train_test_split
 x1_train, x1_test, y1_train, y1_test = train_test_split(x1, y1, train_size=0.8, shuffle=True, random_state=66)
 x1_train, x1_val, y1_train, y1_val = train_test_split(x1_train, y1_train, train_size=0.8, shuffle=True)
 
-x1_train, x1_test, y1_train, y1_test = train_test_split(x1, y1, train_size=0.8, shuffle=True, random_state=66)
-x1_train, x1_test, y1_train, y1_test = train_test_split(x1, y1, train_size=0.8, shuffle=True, random_state=66)
+x2_train, x2_test, y2_train, y2_test = train_test_split(x2, y2, train_size=0.8, shuffle=True, random_state=66)
+x2_train, x2_val, y2_train, y2_val = train_test_split(x2_train, y2_train, train_size=0.8, shuffle=True, random_state=66)
+
 from sklearn.preprocessing import MinMaxScaler
 scaler1 = MinMaxScaler()
-scaler1.fit(x1)
+scaler1.fit(x1_train)
+scaler1.transform(x1_train)
+scaler1.transform(x1_val)
+scaler1.transform(x1_test)
 
+scaler2 = MinMaxScaler()
+scaler2.fit(x2_train)
+scaler2.transform(x2_train)
+scaler2.transform(x2_val)
+scaler2.transform(x2_test)
+
+x1_train = x1_train.reshape(x1_train.shape[0], x1_train.shape[1], 1)
+x1_val = x1_val.reshape(x1_val.shape[0], x1_val.shape[1], 1)
+x1_test = x1_test.reshape(x1_test.shape[0], x1_test.shape[1], 1)
+
+
+# 모델 구성
