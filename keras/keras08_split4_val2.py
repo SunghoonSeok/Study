@@ -20,8 +20,8 @@ y = np.array(range(1,101))
 # # 리스트의 슬라이싱
 
 from sklearn.model_selection import train_test_split
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.6, shuffle=True) # 6:4
-x_test, x_val, y_test, y_val = train_test_split(x_test, y_test, test_size = 0.5, shuffle=True) # 6:2:2
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.6, shuffle=True, random_state=66) # 6:4
+x_test, x_val, y_test, y_val = train_test_split(x_test, y_test, test_size = 0.5, shuffle=True, random_state=66) # 6:2:2
  #(x, y, train_size=0.6, shuffle=False) 라고 하면 안섞이고 순서대로 나옴
 print(x_train)
 print(x_train.shape)
@@ -80,3 +80,16 @@ print("R2 : ", r2)
 # mae :  0.0488809272646904
 # RMSE :  0.05532017991865325
 # R2 :  0.9999963419965022
+
+
+# random state 1번 적용
+# loss :  0.003895718138664961
+# mae :  0.050696857273578644
+# RMSE :  0.062415688687206886
+# R2 :  0.9999956697883708
+
+# random state 2번 적용
+# loss :  0.0009398360853083432
+# mae :  0.026937980204820633
+# RMSE :  0.030656745409469652
+# R2 :  0.999998987122858
