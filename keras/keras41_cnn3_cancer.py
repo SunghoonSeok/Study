@@ -38,10 +38,10 @@ model.add(Dropout(0.2))
 model.add(Dense(120, activation='sigmoid'))
 model.add(Dense(60, activation='sigmoid'))
 model.add(Dense(30, activation='sigmoid'))
-model.add(Dense(1, activation='sigmoid')) # 이진분류일때 마지막 activation은 반드시 sigmoid
+model.add(Dense(1, activation='sigmoid'))
 
 # 3. 컴파일, 훈련
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc']) # 이진분류일때 loss는 binary_crossentropy
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc'])
 from tensorflow.keras.callbacks import EarlyStopping
 early_stopping = EarlyStopping(monitor='loss', patience=30, mode='auto')
 model.fit(x_train, y_train, epochs=400, validation_split=0.2, callbacks=[early_stopping], batch_size=16)
