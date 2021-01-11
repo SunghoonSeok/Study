@@ -18,17 +18,13 @@ print(x_train[0])
 print(y_train[0])
 print(x_train[0].shape) # (28, 28)
 
-# plt.imshow(x_train[0], 'gray')
-# # plt.imshow(x_train[0])
-# plt.show()
-
 x_train = x_train.reshape(x_train.shape[0], x_train.shape[1]*x_train.shape[2])/255.  # 전처리
 x_test = x_test.reshape(x_test.shape[0], x_test.shape[1]*x_test.shape[2])/255.  # 전처리
 
 # OneHotEncoding
 from sklearn.preprocessing import OneHotEncoder
 
-y_train = y_train.reshape(-1,1) # reshape에서 -1은 재배열의 의미이다.
+y_train = y_train.reshape(-1,1)
 y_test = y_test.reshape(-1,1)
 
 ohencoder = OneHotEncoder()
@@ -37,7 +33,7 @@ y_train = ohencoder.transform(y_train).toarray()
 y_test = ohencoder.transform(y_test).toarray()
 
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout
+from tensorflow.keras.layers import Dense, Dropout
 
 model = Sequential()
 model.add(Dense(40, activation='relu', input_shape=(784,)))
@@ -64,6 +60,7 @@ print("loss : ", loss)
 print("acc : ", acc)
 
 
+# CNN
 # poolsize=6
 # loss :  0.05597861856222153
 # acc :  0.9905999898910522
@@ -71,3 +68,21 @@ print("acc : ", acc)
 # DNN
 # loss :  0.2799952030181885
 # acc :  0.9646999835968018
+
+# loss :  0.25460025668144226
+# acc :  0.9643999934196472
+
+# node값 수정 - 80,60,40,20,10,10
+# loss :  0.17857107520103455
+# acc :  0.9696000218391418
+
+# loss :  0.1557396650314331
+# acc :  0.9771999716758728
+
+# node값 수정 - 120,80,60,40,20,10, batch size 64
+# loss :  0.12488779425621033
+# acc :  0.9794999957084656
+
+# node값 수정 - 400,200,100,80,40,10, batch size 128
+# loss :  0.08968839794397354
+# acc :  0.9811999797821045
