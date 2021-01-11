@@ -45,7 +45,7 @@ model.summary()
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 early_stopping = EarlyStopping(monitor='val_loss', patience=10, mode='auto')
-modelpath= './modelCheckpoint/k46_fashion_{epoch:02d}-{val_loss:.4f}.hdf5'
+modelpath= './modelCheckpoint/k46_1_fashion_{epoch:02d}-{val_loss:.4f}.hdf5'
 cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
 model.fit(x_train, y_train, batch_size=128, epochs=70, validation_split=0.2, callbacks=[early_stopping, cp])
 

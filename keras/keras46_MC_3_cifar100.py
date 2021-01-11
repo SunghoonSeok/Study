@@ -30,16 +30,14 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout
 
 model = Sequential()
-model.add(Conv2D(filters=64, activation='relu',  kernel_size=(3, 3),
-                 padding='same', input_shape=(32, 32, 3)))
-model.add(Dropout(0.1))
+model.add(Conv2D(filters=64, kernel_size=(3, 3), padding='same',
+                 strides=1,activation='relu', input_shape=(32, 32, 3)))
 model.add(MaxPooling2D(pool_size=2))
-model.add(Conv2D(64, 3, padding='same', activation='relu'))
-model.add(Dropout(0.2))
+model.add(Conv2D(64, 3, activation='relu'))
 model.add(MaxPooling2D(pool_size=2))
 model.add(Flatten())
-model.add(Dense(64, activation='relu'))
-model.add(Dropout(0.3))
+model.add(Dropout(0.2))
+model.add(Dense(40, activation='relu'))
 model.add(Dense(100, activation='softmax'))
 
 model.summary()
@@ -47,13 +45,13 @@ model.summary()
 # 3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-early_stopping = EarlyStopping(monitor='val_loss', patience=10, mode='auto')
-modelpath= './modelCheckpoint/k45_3_cifar100_{epoch:02d}-{val_loss:.4f}.hdf5'
+early_stopping = EarlyStopping(monitor='val_loss', patience=20, mode='auto')
+modelpath= './modelCheckpoint/k46_3_cifar100_{epoch:02d}-{val_loss:.4f}.hdf5'
 cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
-model.fit(x_train, y_train, batch_size=128, epochs=100, validation_split=0.2, callbacks=[early_stopping, cp])
+model.fit(x_train, y_train, batch_size=64, epochs=100, validation_split=0.2, callbacks=[early_stopping, cp])
 
 # 4. 평가, 예측
-loss, acc = model.evaluate(x_test, y_test, batch_size=128)
+loss, acc = model.evaluate(x_test, y_test, batch_size=64)
 y_pred = model.predict(x_test[:-10])
 y_recovery = np.argmax(y_pred, axis=1).reshape(-1,1)
 print(y_recovery)
@@ -62,5 +60,5 @@ print("y_pred : ", y_recovery)
 print("loss : ", loss)
 print("acc : ", acc)
 
-# loss :  2.524397611618042
-# acc :  0.3813000023365021
+# loss :  2.593092441558838
+# acc :  0.36340001225471497
