@@ -1,7 +1,7 @@
 import numpy as np
 
-x = np.load('./data/boston_x.npy')
-y = np.load('./data/boston_y.npy')
+x = np.load('../data/boston_x.npy')
+y = np.load('../data/boston_y.npy')
 
 
 from sklearn.model_selection import train_test_split

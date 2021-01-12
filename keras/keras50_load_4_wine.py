@@ -1,7 +1,7 @@
 import numpy as np
 
-x = np.load('./data/wine_x.npy')
-y = np.load('./data/wine_y.npy')
+x = np.load('../data/wine_x.npy')
+y = np.load('../data/wine_y.npy')
 
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True)

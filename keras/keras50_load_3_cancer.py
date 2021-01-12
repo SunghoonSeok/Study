@@ -1,7 +1,7 @@
 import numpy as np
 
-x = np.load('./data/cancer_x.npy')
-y = np.load('./data/cancer_y.npy')
+x = np.load('../data/cancer_x.npy')
+y = np.load('../data/cancer_y.npy')
 
 
 from sklearn.model_selection import train_test_split

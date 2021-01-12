@@ -18,6 +18,6 @@ print(dataset.filename) # C:\Users\ai\Anaconda3\lib\site-packages\sklearn\datase
 
 print(type(x_data), type(y_data))
 
-np.save('./data/iris_x.npy', arr=x_data)
-np.save('./data/iris_y.npy', arr=y_data)
+np.save('../data/iris_x.npy', arr=x_data)
+np.save('../data/iris_y.npy', arr=y_data)
 

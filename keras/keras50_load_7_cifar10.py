@@ -1,9 +1,9 @@
 import numpy as np
 
-x_train = np.load('./data/cifar10_x_train.npy')
-x_test = np.load('./data/cifar10_x_test.npy')
-y_train = np.load('./data/cifar10_y_train.npy')
-y_test = np.load('./data/cifar10_y_test.npy')
+x_train = np.load('../data/cifar10_x_train.npy')
+x_test = np.load('../data/cifar10_x_test.npy')
+y_train = np.load('../data/cifar10_y_train.npy')
+y_test = np.load('../data/cifar10_y_test.npy')
 
 x_train = x_train.astype('float32')/255.  # 전처리
 x_test = x_test.astype('float32')/255.  # 전처리

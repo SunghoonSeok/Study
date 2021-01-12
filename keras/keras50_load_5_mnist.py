@@ -1,9 +1,9 @@
 import numpy as np
 
-x_train = np.load('./data/mnist_x_train.npy')
-x_test = np.load('./data/mnist_x_test.npy')
-y_train = np.load('./data/mnist_y_train.npy')
-y_test = np.load('./data/mnist_y_test.npy')
+x_train = np.load('../data/mnist_x_train.npy')
+x_test = np.load('../data/mnist_x_test.npy')
+y_train = np.load('../data/mnist_y_train.npy')
+y_test = np.load('../data/mnist_y_test.npy')
 
 
 x_train = x_train.reshape(60000, 28, 28, 1).astype('float32')/255.  # 전처리

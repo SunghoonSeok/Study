@@ -47,7 +47,7 @@ model.add(Dense(3, activation='softmax')) # softmax를 활용하면 node의 개�
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc']) # 다중분류일때 loss는 categorical_crossentropy
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 early_stopping = EarlyStopping(monitor='val_loss', patience=30, mode='auto')
-modelpath= './modelCheckpoint/k46_8_wine_{epoch:02d}-{val_loss:.4f}.hdf5'
+modelpath= '../modelCheckpoint/k46_8_wine_{epoch:02d}-{val_loss:.4f}.hdf5'
 cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
 model.fit(x_train, y_train, epochs=400, validation_split=0.2, callbacks=[early_stopping,cp])
 

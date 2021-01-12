@@ -1,9 +1,9 @@
 import numpy as np
 
-x_train = np.load('./data/fashion_x_train.npy')
-x_test = np.load('./data/fashion_x_test.npy')
-y_train = np.load('./data/fashion_y_train.npy')
-y_test = np.load('./data/fashion_y_test.npy')
+x_train = np.load('../data/fashion_x_train.npy')
+x_test = np.load('../data/fashion_x_test.npy')
+y_train = np.load('../data/fashion_y_train.npy')
+y_test = np.load('../data/fashion_y_test.npy')
 
 x_train = x_train.reshape(60000, 28, 28, 1).astype('float32')/255.  # 전처리
 x_test = x_test.reshape(10000, 28, 28, 1)/255.  # 전처리
