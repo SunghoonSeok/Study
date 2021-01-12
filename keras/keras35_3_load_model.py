@@ -19,7 +19,7 @@ x = x.reshape(x.shape[0],x.shape[1],1)
 
 # 2. 모델 구성
 from tensorflow.keras.models import load_model
-model = load_model('./model/save_keras35.h5')
+model = load_model("../data/h5/save_keras35.h5")
 
 model.summary()
 

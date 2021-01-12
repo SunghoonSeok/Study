@@ -1,9 +1,9 @@
 import numpy as np
 
-x_train = np.load('../data/cifar10_x_train.npy')
-x_test = np.load('../data/cifar10_x_test.npy')
-y_train = np.load('../data/cifar10_y_train.npy')
-y_test = np.load('../data/cifar10_y_test.npy')
+x_train = np.load('../data/npy/cifar10_x_train.npy')
+x_test = np.load('../data/npy/cifar10_x_test.npy')
+y_train = np.load('../data/npy/cifar10_y_train.npy')
+y_test = np.load('../data/npy/cifar10_y_test.npy')
 
 x_train = x_train.astype('float32')/255.  # 전처리
 x_test = x_test.astype('float32')/255.  # 전처리
@@ -43,7 +43,7 @@ model.summary()
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 early_stopping = EarlyStopping(monitor='val_loss', patience=10, mode='auto')
-# modelpath= './modelCheckpoint/k46_2_cifar10_{epoch:02d}-{val_loss:.4f}.hdf5'
+# modelpath= '../data/modelcheckpoint/k46_2_cifar10_{epoch:02d}-{val_loss:.4f}.hdf5'
 # cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
 model.fit(x_train, y_train, batch_size=128, epochs=10, validation_split=0.2, callbacks=[early_stopping])
 

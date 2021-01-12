@@ -20,7 +20,7 @@ x = x.reshape(x.shape[0],x.shape[1],1)
 # 2. 모델 구성
 from tensorflow.keras.models import load_model
 
-model = load_model('./model/save_keras35.h5')
+model = load_model("../data/h5/save_keras35.h5")
 # 모델 추가되는지 테스트
 from tensorflow.keras.layers import Dense
 model.add(Dense(5, name='add_dense1'))  # model load해서 가져올때, 이름 겹치는거 주의

@@ -24,7 +24,7 @@ pred = split_x(range(96,106),5)
 x_pred = pred[:, :-1]
 
 # 2. 모델 구성
-model = load_model('./model/save_keras35.h5')
+model = load_model("../data/h5/save_keras35.h5")
 model.add(Dense(5,name='add_model_1'))
 model.add(Dense(1,name='add_model_2'))
 

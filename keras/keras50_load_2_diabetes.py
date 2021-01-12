@@ -1,7 +1,7 @@
 import numpy as np
 
-x = np.load('../data/diabetes_x.npy')
-y = np.load('../data/diabetes_y.npy')
+x = np.load('../data/npy/diabetes_x.npy')
+y = np.load('../data/npy/diabetes_y.npy')
 
 
 from sklearn.model_selection import train_test_split
@@ -40,7 +40,7 @@ model.summary()
 model.compile(loss='mse', optimizer='adam', metrics=['mae'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 early_stopping = EarlyStopping(monitor='val_loss', patience=30, mode='auto')
-# modelpath= './modelCheckpoint/k46_5_diabetes_{epoch:02d}-{val_loss:.4f}.hdf5'
+# modelpath= '../data/modelcheckpoint/k46_5_diabetes_{epoch:02d}-{val_loss:.4f}.hdf5'
 # cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
 model.fit(x_train, y_train, batch_size=8, epochs=500, validation_data=(x_val, y_val), callbacks=[early_stopping])
 

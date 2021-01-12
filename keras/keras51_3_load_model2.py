@@ -1,9 +1,9 @@
 import numpy as np
 
-x_train = np.load('../data/mnist_x_train.npy')
-x_test = np.load('../data/mnist_x_test.npy')
-y_train = np.load('../data/mnist_y_train.npy')
-y_test = np.load('../data/mnist_y_test.npy')
+x_train = np.load('../data/npy/mnist_x_train.npy')
+x_test = np.load('../data/npy/mnist_x_test.npy')
+y_train = np.load('../data/npy/mnist_y_train.npy')
+y_test = np.load('../data/npy/mnist_y_test.npy')
 
 
 x_train = x_train.reshape(60000, 28, 28, 1).astype('float32')/255.  # 전처리
@@ -41,11 +41,11 @@ from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropou
 # model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 # from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 # early_stopping = EarlyStopping(monitor='val_loss', patience=5, mode='auto')
-# # modelpath= './modelCheckpoint/k45_mnist_{epoch:02d}-{val_loss:.4f}.hdf5'
+# # modelpath= '../data/modelcheckpoint/k45_mnist_{epoch:02d}-{val_loss:.4f}.hdf5'
 # # cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
 # hist = model.fit(x_train, y_train, batch_size=128, epochs=7, validation_split=0.2, callbacks=[early_stopping])
 
-model = load_model('./model/k51_1_model2.h5') # 컴파일 후 모델 세이브하면 결과 바로 나옴(가중치가 저장된다는 것)
+model = load_model('../data/h5/k51_1_model2.h5') # 컴파일 후 모델 세이브하면 결과 바로 나옴(가중치가 저장된다는 것)
 # 4. 평가, 예측
 result = model.evaluate(x_test, y_test, batch_size=128)
 y_pred = model.predict(x_test[:-10])

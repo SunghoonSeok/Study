@@ -1,9 +1,9 @@
 import numpy as np
 
-x_train = np.load('../data/fashion_x_train.npy')
-x_test = np.load('../data/fashion_x_test.npy')
-y_train = np.load('../data/fashion_y_train.npy')
-y_test = np.load('../data/fashion_y_test.npy')
+x_train = np.load('../data/npy/fashion_x_train.npy')
+x_test = np.load('../data/npy/fashion_x_test.npy')
+y_train = np.load('../data/npy/fashion_y_train.npy')
+y_test = np.load('../data/npy/fashion_y_test.npy')
 
 x_train = x_train.reshape(60000, 28, 28, 1).astype('float32')/255.  # 전처리
 x_test = x_test.reshape(10000, 28, 28, 1)/255.  # 전처리
@@ -40,7 +40,7 @@ model.summary()
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 early_stopping = EarlyStopping(monitor='val_loss', patience=10, mode='auto')
-# modelpath= './modelCheckpoint/k46_1_fashion_{epoch:02d}-{val_loss:.4f}.hdf5'
+# modelpath= '../data/modelcheckpoint/k46_1_fashion_{epoch:02d}-{val_loss:.4f}.hdf5'
 # cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
 model.fit(x_train, y_train, batch_size=128, epochs=7, validation_split=0.2, callbacks=[early_stopping])
 

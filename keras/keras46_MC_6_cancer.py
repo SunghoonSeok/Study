@@ -44,7 +44,7 @@ model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 early_stopping = EarlyStopping(monitor='val_loss', patience=30, mode='auto')
-modelpath= '../modelCheckpoint/k46_6_cancer_{epoch:02d}-{val_loss:.4f}.hdf5'
+modelpath= '../data/modelcheckpoint/k46_6_cancer_{epoch:02d}-{val_loss:.4f}.hdf5'
 cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
 model.fit(x_train, y_train, epochs=400, validation_split=0.2, callbacks=[early_stopping, cp], batch_size=16)
 
