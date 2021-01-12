@@ -47,15 +47,17 @@ model.add(Dense(30, activation='relu'))
 model.add(Dense(10, activation='relu'))
 model.add(Dense(10, activation='softmax'))
 
-model.summary()
+model.save('./model/k51_1_model1.h5')
 
 # 3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 early_stopping = EarlyStopping(monitor='val_loss', patience=5, mode='auto')
-modelpath= '../modelCheckpoint/k45_mnist_{epoch:02d}-{val_loss:.4f}.hdf5'
-cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
-hist = model.fit(x_train, y_train, batch_size=128, epochs=7, validation_split=0.2, callbacks=[early_stopping, cp])
+# modelpath= '../modelCheckpoint/k45_mnist_{epoch:02d}-{val_loss:.4f}.hdf5'
+# cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
+hist = model.fit(x_train, y_train, batch_size=128, epochs=7, validation_split=0.2, callbacks=[early_stopping])
+
+model.save('./model/k51_1_model2.h5')
 
 # 4. 평가, 예측
 result = model.evaluate(x_test, y_test, batch_size=128)
@@ -94,35 +96,6 @@ plt.legend(loc='lower right')
 
 plt.show()
 
-
-
-
-
-
-# epochs=50, kernel_size=4, relu 여러번, batch_size=128
-# loss :  0.08771087229251862
-# acc :  0.9876999855041504
-
-# batch = 64
-# loss :  0.08473846316337585
-# acc :  0.987500011920929
-
-# relu 한번
-# loss :  0.08864498883485794
-# acc :  0.9847000241279602
-
-# kernel = 2 relu 여러번
-# loss :  0.13287419080734253
-# acc :  0.9810000061988831
-
-# dropout 삭제, kernel=4, poolsize=4
-# loss :  0.07026660442352295
-# acc :  0.9882000088691711
-
-# poolsize=8
-# loss :  0.12860116362571716
-# acc :  0.9811000227928162
-
 # poolsize=7, conv2d 두번째 50, 첫 dense=40
 # loss :  0.06115453317761421
 # acc :  0.9900000095367432
@@ -130,3 +103,4 @@ plt.show()
 # poolsize=6
 # loss :  0.05597861856222153
 # acc :  0.9905999898910522
+
