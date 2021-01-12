@@ -12,7 +12,7 @@ x_test = x_test.reshape(10000, 28, 28, 1)/255.  # 전처리
 # OneHotEncoding
 from sklearn.preprocessing import OneHotEncoder
 
-y_train = y_train.reshape(-1,1) # reshape에서 -1은 재배열의 의미이다.
+y_train = y_train.reshape(-1,1)
 y_test = y_test.reshape(-1,1)
 
 ohencoder = OneHotEncoder()
