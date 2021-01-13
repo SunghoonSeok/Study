@@ -30,11 +30,8 @@ y = y[6:]
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True, random_state=66)
 
-x_pred = x_data[-1,:,:]
-x_pred = x_pred.reshape(1,6,11)
 print(x_train.shape, x_test.shape) 
 print(y_train.shape, y_test.shape) 
-print(x_pred.shape) 
 
 
 #2. 모델구성 및 컴파일
@@ -60,6 +57,8 @@ from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
 print("R2 : ", r2)
 
+x_pred = x_data[-1,:,:]
+x_pred = x_pred.reshape(1,6,11)
 y_predict = model.predict(x_pred)
 y_price = int(np.round(y_predict[0]))
 print(y_predict)
@@ -82,4 +81,6 @@ print("익일 삼성 주가 : ", y_price, "원")
 # RMSE :  889.8269283543508
 # R2 :  0.9953219792309843
 # [[90480.94]]
-# 익일 삼성 주가 :  90481 원
+# 익일 삼성 주가 :  90481 원  -1
+# 익일 삼성 주가 :  90476 원  -2
+# 익일 삼성 주가 :  90447 원  -3

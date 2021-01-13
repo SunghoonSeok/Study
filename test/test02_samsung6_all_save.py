@@ -40,19 +40,19 @@ print(x_pred.shape) # (1, 6, 11)
 #2. 모델구성
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Input, LSTM, Dropout, Conv1D, Flatten, MaxPooling1D
-# inputs = Input(shape=(6,11))
-# dense1 = Conv1D(1000, 2, padding='same')(inputs)
-# dense1 = MaxPooling1D(pool_size=2)(dense1)
-# dense1 = Conv1D(500, 2)(dense1)
-# dense1 = Conv1D(400, 2)(dense1)
-# dense1 = Flatten()(dense1)
-
 inputs = Input(shape=(6,11))
-dense1 = LSTM(1000)(inputs)
-# dense1 = Dropout(0.2)(dense1)
-dense1 = Dense(500)(dense1)
-# dense1 = Dropout(0.2)(dense1)
-dense1 = Dense(400)(dense1)
+dense1 = Conv1D(1000, 2, padding='same', activation='relu')(inputs)
+dense1 = MaxPooling1D(pool_size=2)(dense1)
+dense1 = Conv1D(500, 2, activation='relu')(dense1)
+dense1 = Conv1D(400, 2,activation='relu')(dense1)
+dense1 = Flatten()(dense1)
+
+# inputs = Input(shape=(6,11))
+# dense1 = LSTM(1000)(inputs)
+# # dense1 = Dropout(0.2)(dense1)
+# dense1 = Dense(500)(dense1)
+# # dense1 = Dropout(0.2)(dense1)
+# dense1 = Dense(400)(dense1)
 dense1 = Dense(300)(dense1)
 dense1 = Dense(200)(dense1)
 dense1 = Dense(100)(dense1)
@@ -68,11 +68,11 @@ model = Model(inputs=inputs, outputs=outputs)
 model.compile(loss='mse', optimizer='adam', metrics=['mae'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 es = EarlyStopping(monitor='val_loss', patience=60, mode='auto')
-modelpath= 'c:/data/test/samsung6_checkpoint.hdf5'
-cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
-model.fit(x_train, y_train, batch_size=64, epochs=1000, validation_split=0.2, callbacks=[cp,es])
+# modelpath= 'c:/data/test/samsung6_checkpoint.hdf5'
+# cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
+model.fit(x_train, y_train, batch_size=64, epochs=1000, validation_split=0.2, callbacks=[es])
 
-model.save('c:/data/test/samsung6_model.h5')
+# model.save('c:/data/test/samsung6_model.h5')
 
 #4. 평가, 예측
 loss, mae = model.evaluate(x_test, y_test, batch_size=64)
