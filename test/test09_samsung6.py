@@ -5,7 +5,7 @@ data = np.load('./test/samsung_data.npy')
 x = data[:,:-1]
 y = data[:,-1]
 
-print(x.shape, y.shape) # (2397, 14) (2397,)
+print(x.shape, y.shape) 
 
 
 from sklearn.preprocessing import MinMaxScaler
@@ -35,19 +35,18 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffl
 
 x_pred = x_data[-1,:,:]
 x_pred = x_pred.reshape(1,6,14)
-print(x_train.shape, x_test.shape) # (1912, 6, 14) (479, 6, 14)
-print(y_train.shape, y_test.shape) # (1912, )  (479,)
+print(x_train.shape, x_test.shape) 
+print(y_train.shape, y_test.shape) 
 print(x_pred.shape) # (1, 6, 14)
 
 
 
 
 #2. 모델구성
-from tensorflow.keras.models import Model, load_model
+from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Input, LSTM
 inputs = Input(shape=(6,14))
 dense1 = LSTM(512)(inputs)
-dense1 = Dense(256)(dense1)
 dense1 = Dense(256)(dense1)
 dense1 = Dense(128)(dense1)
 dense1 = Dense(64)(dense1)
@@ -55,6 +54,7 @@ dense1 = Dense(32)(dense1)
 dense1 = Dense(16)(dense1)
 dense1 = Dense(8)(dense1)
 dense1 = Dense(4)(dense1)
+dense1 = Dense(2)(dense1)
 outputs = Dense(1)(dense1)
 
 model = Model(inputs=inputs, outputs=outputs)
@@ -63,12 +63,12 @@ model.summary()
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam', metrics=['mae'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-# early_stopping = EarlyStopping(monitor='val_loss', patience=60, mode='auto')
-modelpath= './test/samsung5_checkpoint.hdf5'
+# early_stopping = EarlyStopping(monitor='loss', patience=30, mode='auto')
+modelpath= './test/samsung6_checkpoint.hdf5'
 cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
-model.fit(x_train, y_train, batch_size=64, epochs=500, validation_split=0.2, callbacks=[cp])
+model.fit(x_train, y_train, batch_size=64, epochs=1000, validation_split=0.2, callbakcs=[cp])
 
-model.save('./test/samsung5_model.h5')
+model.save('./test/samsung6_model.h5')
 
 #4. 평가, 예측
 loss, mae = model.evaluate(x_test, y_test, batch_size=64)
@@ -89,17 +89,12 @@ print("R2 : ", r2)
 y_predict = model.predict(x_pred)
 print(y_predict)
 
-# loss, mae :  1428569.375 895.7993774414062
-# RMSE :  1195.2277438453937
-# R2 :  0.9747082894609304
-# [[89665.516]]
+# loss, mae :  1972171.875 1097.6455078125
+# RMSE :  1404.3402901598788
+# R2 :  0.9730702480193972
+# [[91408.875]]
 
-# loss, mae :  1283006.25 889.0049438476562
-# RMSE :  1132.6986843189306
-# R2 :  0.9772853701647488
-# [[92528.85]]
-
-# loss, mae :  1323854.625 901.7225952148438
-# RMSE :  1150.5888599829568
-# R2 :  0.9765621807110992
-# [[92427.43]]
+# loss, mae :  1357250.625 908.9234008789062
+# RMSE :  1165.010832079855
+# R2 :  0.9816344505215461
+# [[89429.48]]

@@ -14,7 +14,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Conv1D, MaxPooling1D, Flatten
 
 model = Sequential()
-model.add(Conv1D(20, 2, padding='same', activation='relu', input_shape=(3,1))) #(행, 열, 몇개씩자르는지)
+model.add(Conv1D(20, 4, padding='same', activation='relu', input_shape=(3,1))) #(행, 열, 몇개씩자르는지)
 model.add(MaxPooling1D(2))
 model.add(Flatten())
 model.add(Dense(40))
@@ -24,7 +24,7 @@ model.add(Dense(20))
 model.add(Dense(1))
 
 model.summary() 
-
+'''
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
 from tensorflow.keras.callbacks import EarlyStopping
@@ -76,3 +76,4 @@ print(y_pred)
 
 # loss: 3.2777e-11
 # [[80.00001]]
+'''

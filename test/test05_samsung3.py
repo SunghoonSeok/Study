@@ -68,11 +68,11 @@ model.summary()
 model.compile(loss='mse', optimizer='adam', metrics=['mae'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 # early_stopping = EarlyStopping(monitor='loss', patience=30, mode='auto')
-modelpath= './test/samsung_checkpoint.hdf5'
+modelpath= './test/samsung3_checkpoint.hdf5'
 cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
 model.fit(x_train, y_train, batch_size=64, epochs=1000, validation_split=0.2, callbacks=[cp])
 
-model.save('./test/samsung_model.h5')
+model.save('./test/samsung3_model.h5')
 
 #4. 평가, 예측
 loss, mae = model.evaluate(x_test, y_test, batch_size=64)
@@ -102,3 +102,8 @@ print(y_predict)
 # RMSE :  1165.010832079855
 # R2 :  0.9816344505215461
 # [[89429.48]]
+
+# loss, mae :  1346956.75 878.3052978515625
+# RMSE :  1160.584646124029
+# R2 :  0.9763041431702614
+# [[91939.41]]
