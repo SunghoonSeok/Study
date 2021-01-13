@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from pandas import read_csv
-df = read_csv('./test/삼성전자.csv', index_col=0, header=0) # header가 없으면 none이라 해준다.
+df = read_csv('c:/data/test/삼성전자.csv', index_col=0, header=0) # header가 없으면 none이라 해준다.
 
 print(df.shape) # (2400, 14)
 print(df.columns) #Index(['시가', '고가', '저가', '종가', '등락률', '거래량', '금액(백만)', '신용비', '개인', '기관',
@@ -41,4 +41,4 @@ print(samsung) # numpy는 데이터 타입을 하나로 통일해야함 그래�
 
 
 
-np.save('./test/samsung_data.npy', arr=samsung)
+# np.save('c:/data/test/samsung_data.npy', arr=samsung)

@@ -1,18 +1,16 @@
 import numpy as np
 import pandas as pd
 
-x = np.load('./test/samsung_data_x.npy')
-y = np.load('./test/samsung_data_y.npy')
-
-print(x.shape, y.shape) # (662, 14) (662,)
-
+# 1. 데이터
+data = np.load('c:/data/test/samsung_jusik2.npy')
+x = data[:,:-1]
+y = data[:,-1]
+print(x.shape, y.shape) 
 
 from sklearn.preprocessing import MinMaxScaler
 scaler = MinMaxScaler()
 scaler.fit(x)
 x = scaler.transform(x)
-
-
 
 size = 6
 
@@ -20,7 +18,7 @@ def split_x(seq, size):
     aaa = []
     for i in range(len(seq)-size+1):
         subset = seq[i : (i+size)]
-        aaa.append([item for item in subset])  # [subset]과의 차이는?
+        aaa.append([item for item in subset])
     print(type(aaa))
     return np.array(aaa)
 x_data = split_x(x, size)
@@ -30,28 +28,30 @@ x = x_data[:-1,:,:]
 y = y[6:]
 
 from sklearn.model_selection import train_test_split
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True)
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True, random_state=66)
 
-# x_train = x[:500,:,:]
-# x_test_data = x[500:,:,:]
-# y_train = y[6:506]
-# y_test = y[506:]
-# x_test = x_test_data[:-1,:,:]
 x_pred = x_data[-1,:,:]
-x_pred = x_pred.reshape(1,6,14)
-print(x_train.shape, x_test.shape)
-print(y_train.shape, y_test.shape)
-print(x_pred.shape)
-
-
+x_pred = x_pred.reshape(1,6,11)
+print(x_train.shape, x_test.shape) 
+print(y_train.shape, y_test.shape) 
+print(x_pred.shape) # (1, 6, 11)
 
 
 #2. 모델구성
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Dense, Input, LSTM
-inputs = Input(shape=(6,14))
+from tensorflow.keras.layers import Dense, Input, LSTM, Dropout, Conv1D, Flatten, MaxPooling1D
+# inputs = Input(shape=(6,11))
+# dense1 = Conv1D(1000, 2, padding='same')(inputs)
+# dense1 = MaxPooling1D(pool_size=2)(dense1)
+# dense1 = Conv1D(500, 2)(dense1)
+# dense1 = Conv1D(400, 2)(dense1)
+# dense1 = Flatten()(dense1)
+
+inputs = Input(shape=(6,11))
 dense1 = LSTM(1000)(inputs)
+# dense1 = Dropout(0.2)(dense1)
 dense1 = Dense(500)(dense1)
+# dense1 = Dropout(0.2)(dense1)
 dense1 = Dense(400)(dense1)
 dense1 = Dense(300)(dense1)
 dense1 = Dense(200)(dense1)
@@ -62,17 +62,17 @@ dense1 = Dense(10)(dense1)
 outputs = Dense(1)(dense1)
 
 model = Model(inputs=inputs, outputs=outputs)
-model.summary()
+
 
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam', metrics=['mae'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-# early_stopping = EarlyStopping(monitor='loss', patience=30, mode='auto')
-modelpath= './test/samsung3_checkpoint.hdf5'
+es = EarlyStopping(monitor='val_loss', patience=60, mode='auto')
+modelpath= 'c:/data/test/samsung6_checkpoint.hdf5'
 cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
-model.fit(x_train, y_train, batch_size=64, epochs=1000, validation_split=0.2, callbacks=[cp])
+model.fit(x_train, y_train, batch_size=64, epochs=1000, validation_split=0.2, callbacks=[cp,es])
 
-model.save('./test/samsung3_model.h5')
+model.save('c:/data/test/samsung6_model.h5')
 
 #4. 평가, 예측
 loss, mae = model.evaluate(x_test, y_test, batch_size=64)
@@ -83,8 +83,6 @@ from sklearn.metrics import mean_squared_error
 def RMSE(y_test, y_predict):
     return np.sqrt(mean_squared_error(y_test, y_predict))
 print("RMSE : ", RMSE(y_test, y_predict))
-#print("mse : ", mean_squared_error(y_test, y_predict))
-
 
 from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
@@ -103,7 +101,7 @@ print(y_predict)
 # R2 :  0.9816344505215461
 # [[89429.48]]
 
-# loss, mae :  1346956.75 878.3052978515625
-# RMSE :  1160.584646124029
-# R2 :  0.9763041431702614
-# [[91939.41]]
+# loss, mae :  855456.5625 642.3980712890625
+# RMSE :  924.9085310904956
+# R2 :  0.9949458441779632
+# [[91100.04]]
