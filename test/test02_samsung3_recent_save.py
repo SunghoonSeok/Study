@@ -39,16 +39,16 @@ print(y_train.shape, y_test.shape)
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Input, LSTM, Dropout
 inputs = Input(shape=(6,x.shape[2]))
-dense1 = LSTM(512, activation='relu')(inputs)
+dense1 = LSTM(512)(inputs)
 # dense1 = Dense(512)(dense1)
-dense1 = Dense(256, activation='relu')(dense1)
-dense1 = Dense(128, activation='relu')(dense1)
-dense1 = Dense(64, activation='relu')(dense1)
-dense1 = Dense(32, activation='relu')(dense1)
-dense1 = Dense(16, activation='relu')(dense1)
-dense1 = Dense(8, activation='relu')(dense1)
-dense1 = Dense(4, activation='relu')(dense1)
-dense1 = Dense(2, activation='relu')(dense1)
+dense1 = Dense(256)(dense1)
+dense1 = Dense(128)(dense1)
+dense1 = Dense(64)(dense1)
+dense1 = Dense(32)(dense1)
+dense1 = Dense(16)(dense1)
+dense1 = Dense(8)(dense1)
+dense1 = Dense(4)(dense1)
+dense1 = Dense(2)(dense1)
 outputs = Dense(1)(dense1)
 
 model = Model(inputs=inputs, outputs=outputs)
@@ -56,12 +56,12 @@ model = Model(inputs=inputs, outputs=outputs)
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam', metrics=['mae'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-# es = EarlyStopping(monitor='loss', patience=80, mode='auto')
-modelpath= 'c:/data/test/samsung3_checkpoint_2.hdf5'
+# es = EarlyStopping(monitor='loss', patience=100, mode='auto')
+modelpath= 'c:/data/test/samsung3_checkpoint_3.hdf5'
 cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
-model.fit(x_train, y_train, batch_size=64, epochs=1000, validation_split=0.2, callbacks=[cp])
+model.fit(x_train, y_train, batch_size=64, epochs=1100, validation_split=0.23, callbacks=[cp])
 
-model.save('c:/data/test/samsung3_model.h5')
+model.save('c:/data/test/samsung3_model_3.h5')
 
 #4. 평가, 예측
 loss, mae = model.evaluate(x_test, y_test, batch_size=64)
@@ -89,3 +89,18 @@ for i in range(1,(x_pred.shape[0])):
     print(subset)
 print("--------------------------------")
 print("익일 삼성 주가 : ", y_price, "원")
+
+# 모델 2
+# loss, mae :  1303524.25 838.7462158203125
+# RMSE :  1141.7198306777173
+# R2 :  0.9751952448930796
+# 이전 값들과 비교
+# [84694, 82200.0]
+# [84967, 82900.0]
+# [88074, 88800.0]
+# [91000, 91000.0]
+# [90766, 90600.0]
+# [90169, 89700.0]
+# [89948, 89700.0]
+# --------------------------------
+# 익일 삼성 주가 :  90827 원

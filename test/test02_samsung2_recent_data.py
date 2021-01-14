@@ -30,8 +30,8 @@ df2 = df2.drop(['전일비','Unnamed: 6'], axis=1)
 
 # 중복 데이터 제거
 print(df.shape)
-df = df.drop(['2021-01-13'])
-print(df.shape)
+df2 = df2.drop(['2021-01-13'])
+print(df2.shape)
 
 # 데이터 역전
 df = df[::-1]

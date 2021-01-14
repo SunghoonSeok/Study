@@ -24,11 +24,27 @@ df['외국계'] =df['외국계'].str.replace(',','').astype('int64')
 df['프로그램'] =df['프로그램'].str.replace(',','').astype('int64')
 print(df.shape)
 
+# 데이터 추가, str -> float
+df2 = read_csv('c:/data/test/삼성전자2.csv', encoding='cp949', index_col=0, header=0, thousands=',')
+df2 = df2.dropna()
+df2 = df2.drop(['전일비','Unnamed: 6'], axis=1)
+
+# 중복 데이터 제거
+print(df.shape)
+df2 = df2.drop(['2021-01-13'])
+print(df2.shape)
+
+
 # 액면분할 이전 데이터 주가변환
 df = df[::-1]
 df.loc[:'2018-05-04','시가':'종가'] = (df.loc[:'2018-05-04','시가':'종가'])/50.
 df.loc[:'2018-05-04','거래량'] = (df.loc[:'2018-05-04','거래량'])*50.
 df.loc[:'2018-05-04','개인':'프로그램'] = (df.loc[:'2018-05-04','개인':'프로그램'])*50.
+
+# 데이터 병합
+df = pd.concat([df, df2], axis=0)
+print(df.shape)
+print(df.tail())
 
 # 타겟(y값) 설정
 dataset_y = df.iloc[:,3]
@@ -36,6 +52,7 @@ df['Target'] = dataset_y
 
 # 불필요한 특성 제거
 df = df.drop(['거래량','신용비','외인비'], axis=1)
+df = df.drop(['개인','기관','외인(수량)','외국계','프로그램'], axis=1)
 print(df.shape)
 
 # csv -> npy 후 저장

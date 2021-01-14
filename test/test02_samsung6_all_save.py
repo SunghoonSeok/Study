@@ -5,7 +5,9 @@ import pandas as pd
 data = np.load('c:/data/test/samsung_jusik2.npy')
 x = data[:,:-1]
 y = data[:,-1]
-print(x.shape, y.shape) 
+print(x.shape, y.shape)
+print(data) 
+print(y)
 
 from sklearn.preprocessing import MinMaxScaler
 scaler = MinMaxScaler()
@@ -26,33 +28,31 @@ print(x.shape)
 
 x = x_data[:-1,:,:]
 y = y[6:]
+print(y)
 
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True, random_state=66)
 
-x_pred = x_data[-1,:,:]
-x_pred = x_pred.reshape(1,6,11)
 print(x_train.shape, x_test.shape) 
 print(y_train.shape, y_test.shape) 
-print(x_pred.shape) # (1, 6, 11)
 
 
 #2. 모델구성
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Input, LSTM, Dropout, Conv1D, Flatten, MaxPooling1D
-inputs = Input(shape=(6,11))
-dense1 = Conv1D(1000, 2, padding='same', activation='relu')(inputs)
-dense1 = MaxPooling1D(pool_size=2)(dense1)
-dense1 = Conv1D(500, 2, activation='relu')(dense1)
-dense1 = Conv1D(400, 2,activation='relu')(dense1)
-dense1 = Flatten()(dense1)
+# inputs = Input(shape=(6, x.shape[2]))
+# dense1 = Conv1D(1000, 2, padding='same', activation='relu')(inputs)
+# dense1 = MaxPooling1D(pool_size=2)(dense1)
+# dense1 = Conv1D(500, 2, activation='relu')(dense1)
+# dense1 = Conv1D(400, 2,activation='relu')(dense1)
+# dense1 = Flatten()(dense1)
 
-# inputs = Input(shape=(6,11))
-# dense1 = LSTM(1000)(inputs)
-# # dense1 = Dropout(0.2)(dense1)
-# dense1 = Dense(500)(dense1)
-# # dense1 = Dropout(0.2)(dense1)
-# dense1 = Dense(400)(dense1)
+inputs = Input(shape=(6,x.shape[2]))
+dense1 = LSTM(1000)(inputs)
+# dense1 = Dropout(0.2)(dense1)
+dense1 = Dense(500)(dense1)
+# dense1 = Dropout(0.2)(dense1)
+dense1 = Dense(400)(dense1)
 dense1 = Dense(300)(dense1)
 dense1 = Dense(200)(dense1)
 dense1 = Dense(100)(dense1)
@@ -67,12 +67,12 @@ model = Model(inputs=inputs, outputs=outputs)
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam', metrics=['mae'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-es = EarlyStopping(monitor='val_loss', patience=60, mode='auto')
-# modelpath= 'c:/data/test/samsung6_checkpoint.hdf5'
-# cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
-model.fit(x_train, y_train, batch_size=64, epochs=1000, validation_split=0.2, callbacks=[es])
+es = EarlyStopping(monitor='val_loss', patience=80, mode='auto')
+modelpath= 'c:/data/test/samsung6_checkpoint.hdf5'
+cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
+model.fit(x_train, y_train, batch_size=64, epochs=1000, validation_split=0.2, callbacks=[es, cp])
 
-# model.save('c:/data/test/samsung6_model.h5')
+model.save('c:/data/test/samsung6_model.h5')
 
 #4. 평가, 예측
 loss, mae = model.evaluate(x_test, y_test, batch_size=64)
@@ -88,8 +88,17 @@ from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
 print("R2 : ", r2)
 
+x_pred = x_data[-8:,:,:]
+x_pred = x_pred.reshape(x_pred.shape[0],6,x_pred.shape[-1])
 y_predict = model.predict(x_pred)
-print(y_predict)
+y_price = int(np.round(y_predict[-1]))
+
+for i in range(1,(x_pred.shape[0])):
+    subset = ([int(y_predict[i-1]),y[-(x_pred.shape[0])+i]])
+    print(subset)
+
+
+print("익일 삼성 주가 : ", y_price, "원")
 
 # loss, mae :  1972171.875 1097.6455078125
 # RMSE :  1404.3402901598788

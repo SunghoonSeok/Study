@@ -6,7 +6,7 @@ data = np.load('c:/data/test/samsung_jusik2.npy')
 x = data[:,:-1]
 y = data[:,-1]
 
-print(x.shape, y.shape) # (2397, 14) (2397,)
+print(x.shape, y.shape) 
 
 from sklearn.preprocessing import MinMaxScaler
 scaler = MinMaxScaler()
@@ -28,7 +28,7 @@ x = x_data[:-1,:,:]
 y = y[6:]
 
 from sklearn.model_selection import train_test_split
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True, random_state=66)
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True)
 
 print(x_train.shape, x_test.shape) 
 print(y_train.shape, y_test.shape) 
@@ -57,11 +57,14 @@ from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
 print("R2 : ", r2)
 
-x_pred = x_data[-7:,:,:]
-x_pred = x_pred.reshape(x_pred.shape[0],6,11)
+x_pred = x_data[-8:,:,:]
+x_pred = x_pred.reshape(x_pred.shape[0],6,x_pred.shape[-1])
 y_predict = model.predict(x_pred)
-y_price = int(np.round(y_predict[0]))
-print(y_predict)
+y_price = int(np.round(y_predict[-1]))
+
+for i in range(1,(x_pred.shape[0])):
+    subset = ([int(y_predict[i-1]),y[-(x_pred.shape[0])+i]])
+    print(subset)
 print("익일 삼성 주가 : ", y_price, "원")
 
 # loss, mae :  1428569.375 895.7993774414062
