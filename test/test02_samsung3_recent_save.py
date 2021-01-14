@@ -59,7 +59,7 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 # es = EarlyStopping(monitor='loss', patience=100, mode='auto')
 modelpath= 'c:/data/test/samsung3_checkpoint_3.hdf5'
 cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
-model.fit(x_train, y_train, batch_size=64, epochs=1100, validation_split=0.23, callbacks=[cp])
+model.fit(x_train, y_train, batch_size=64, epochs=1100, validation_split=0.22, callbacks=[cp])
 
 model.save('c:/data/test/samsung3_model_3.h5')
 

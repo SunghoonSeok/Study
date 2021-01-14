@@ -48,9 +48,9 @@ df['Target'] = dataset_y
 print(df)
 print(df.iloc[-663:,:])
 
-# # 불필요한 특성 제거
-# df = df.drop(['신용비','외인(수량)'], axis=1)
-# print(df.shape)
+# 불필요한 특성 제거
+df = df.drop(['신용비','외인(수량)'], axis=1)
+print(df.shape)
 
 # csv -> npy 변환 후 저장
 data = df.iloc[-663:,:].values

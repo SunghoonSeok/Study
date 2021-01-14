@@ -41,7 +41,7 @@ from tensorflow.keras.layers import Dense, Input, LSTM
 
 
 
-# model = load_model('c:/data/test/samsung_model.h5')  # 제일 잘 나오는 모델
+# model = load_model('c:/data/test/samsung_model.h5') 
 
 model = load_model('c:/data/test/samsung3_checkpoint_3.hdf5')
 
@@ -118,3 +118,16 @@ print("익일 삼성 주가 : ", y_price, "원")
 # [90169, 89700.0]
 # [89948, 89700.0]
 # 익일 삼성 주가 :  90827 원
+
+# check 3
+# loss, mae :  736000.4375 673.4077758789062
+# RMSE :  857.9046540225801
+# R2 :  0.989360245494436
+# [82063, 82200.0]
+# [82589, 82900.0]
+# [87916, 88800.0]
+# [90193, 91000.0]
+# [90464, 90600.0]
+# [89339, 89700.0]
+# [89923, 89700.0]
+# 익일 삼성 주가 :  90017 원
