@@ -6,8 +6,8 @@ from pandas import read_csv
 df = read_csv('c:/data/test/삼성전자.csv', index_col=0, header=0)
 
 print(df.shape) # (2400, 14)
-# Index(['시가', '고가', '저가', '종가', '등락률', '거래량', '금액(백만)', '신용비', '개인', '기관',
-#        '외인(수량)', '외국계', '프로그램', '외인비']
+# column=['시가', '고가', '저가', '종가', '등락률', '거래량', '금액(백만)', '신용비', '개인', '기관',
+#      '외인(수량)', '외국계', '프로그램', '외인비']
 
 # str -> int, 불필요한 행 제거
 df = df.drop(['2018-05-03','2018-05-02','2018-04-30'])
@@ -23,19 +23,39 @@ df['외인(수량)'] =df['외인(수량)'].str.replace(',','').astype('int64')
 df['외국계'] =df['외국계'].str.replace(',','').astype('int64')
 df['프로그램'] =df['프로그램'].str.replace(',','').astype('int64')
 
+# 데이터 추가, str -> float
+df2 = read_csv('c:/data/test/삼성전자2.csv', encoding='cp949', index_col=0, header=0, thousands=',')
+df2 = df2.dropna()
+df2 = df2.drop(['전일비','Unnamed: 6'], axis=1)
+
+# 중복 데이터 제거
+print(df.shape)
+df = df.drop(['2021-01-13'])
+print(df.shape)
+
 # 데이터 역전
 df = df[::-1]
-print(df.iloc[-662:,:])
+df2 = df2[::-1]
+
+# 데이터 병합
+df = pd.concat([df, df2], axis=0)
+print(df.shape)
+print(df.tail())
 
 # 타겟(y값) 설정
 dataset_y = df.iloc[:,3]
 df['Target'] = dataset_y
 print(df)
+print(df.iloc[-663:,:])
+
+# # 불필요한 특성 제거
+# df = df.drop(['신용비','외인(수량)'], axis=1)
+# print(df.shape)
 
 # csv -> npy 변환 후 저장
-data = df.iloc[-662:,:].values
+data = df.iloc[-663:,:].values
 print(data)
-np.save('./test/samsung_data.npy', arr=data)
+np.save('c:/data/test/samsung_data.npy', arr=data)
 
 
 # 상관계수

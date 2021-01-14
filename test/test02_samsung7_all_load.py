@@ -57,8 +57,8 @@ from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
 print("R2 : ", r2)
 
-x_pred = x_data[-1,:,:]
-x_pred = x_pred.reshape(1,6,11)
+x_pred = x_data[-7:,:,:]
+x_pred = x_pred.reshape(x_pred.shape[0],6,11)
 y_predict = model.predict(x_pred)
 y_price = int(np.round(y_predict[0]))
 print(y_predict)
@@ -81,6 +81,4 @@ print("익일 삼성 주가 : ", y_price, "원")
 # RMSE :  889.8269283543508
 # R2 :  0.9953219792309843
 # [[90480.94]]
-# 익일 삼성 주가 :  90481 원  -1
-# 익일 삼성 주가 :  90476 원  -2
-# 익일 삼성 주가 :  90447 원  -3
+# 익일 삼성 주가 :  90481 원  

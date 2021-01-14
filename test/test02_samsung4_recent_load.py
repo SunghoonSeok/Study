@@ -6,7 +6,7 @@ data = np.load('c:/data/test/samsung_data.npy')
 x = data[:,:-1]
 y = data[:,-1]
 
-print(x.shape, y.shape) # (662, 14) (662,)
+print(x.shape, y.shape)
 
 from sklearn.preprocessing import MinMaxScaler
 scaler = MinMaxScaler()
@@ -39,10 +39,13 @@ print(y_train.shape, y_test.shape)
 from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.layers import Dense, Input, LSTM
 
-# model = load_model('c:/data/test/samsung3_checkpoint.hdf5')
 
-model = load_model('c:/data/test/samsung_model.h5')
 
+model = load_model('c:/data/test/samsung_model.h5')  # 제일 잘 나오는 모델
+
+# model = load_model('c:/data/test/samsung3_checkpoint_2.hdf5')
+
+# model = load_model('c:/data/test/samsung3_model.h5')
 
 #3. 평가, 예측
 loss, mae = model.evaluate(x_test, y_test, batch_size=64)
@@ -58,11 +61,16 @@ from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
 print("R2 : ", r2)
 
-x_pred = x_data[-6,:,:]
-x_pred = x_pred.reshape(1,6,14)
+x_pred = x_data[-8:,:,:]
+x_pred = x_pred.reshape(x_pred.shape[0],6,x_pred.shape[-1])
 y_predict = model.predict(x_pred)
-y_price = int(np.round(y_predict[0]))
-print(y_predict)
+y_price = int(np.round(y_predict[-1]))
+
+for i in range(1,(x_pred.shape[0])):
+    subset = ([int(y_predict[i-1]),y[-(x_pred.shape[0])+i]])
+    print(subset)
+
+
 print("익일 삼성 주가 : ", y_price, "원")
 
 
@@ -77,9 +85,27 @@ print("익일 삼성 주가 : ", y_price, "원")
 # RMSE :  1005.1668662647304
 # R2 :  0.9850373516274966
 # [[89429.48]]
-# 익일 삼성 주가 :  89429 원  -1
-# 익일 삼성 주가 :  90096 원  -2
-# 익일 삼성 주가 :  91019 원  -3
-# 익일 삼성 주가 :  90806 원  -4
-# 익일 삼성 주가 :  88169 원  -5
-# 익일 삼성 주가 :  83425 원  -6
+# 익일 삼성 주가 :  89429 원  
+# [[83793.31 ]  83900
+#  [81961.82 ]  82200
+#  [83425.086]  82900
+#  [88169.164]  88800
+#  [90805.984]  91000
+#  [91019.36 ]  90600
+#  [90096.3  ]  89700
+#  [89429.49 ]]
+
+# 체크포인트
+# loss, mae :  768879.25 675.6148071289062
+# RMSE :  876.8574945244251
+# R2 :  0.9892928020686379
+# [[89346.195]]
+# 익일 삼성 주가 :  89346 원
+# [[81483.39 ] 83900
+#  [80841.766] 82200
+#  [83013.27 ] 82900
+#  [89141.   ] 88800
+#  [90992.34 ] 91000
+#  [90229.1  ] 90600
+#  [89698.36 ] 89700
+#  [89346.195]]

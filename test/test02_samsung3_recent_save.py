@@ -6,7 +6,7 @@ data = np.load('c:/data/test/samsung_data.npy')
 x = data[:,:-1]
 y = data[:,-1]
 
-print(x.shape, y.shape) # (662, 14) (662,)
+print(x.shape, y.shape)
 
 from sklearn.preprocessing import MinMaxScaler
 scaler = MinMaxScaler()
@@ -31,26 +31,24 @@ y = y[6:]
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True)
 
-x_pred = x_data[-1,:,:]
-x_pred = x_pred.reshape(1,6,14)
-
 print(x_train.shape, x_test.shape)
 print(y_train.shape, y_test.shape)
-print(x_pred.shape)
+
 
 #2. 모델구성
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Dense, Input, LSTM
-inputs = Input(shape=(6,14))
-dense1 = LSTM(1000)(inputs)
-dense1 = Dense(500)(dense1)
-dense1 = Dense(400)(dense1)
-dense1 = Dense(300)(dense1)
-dense1 = Dense(200)(dense1)
-dense1 = Dense(100)(dense1)
-dense1 = Dense(50)(dense1)
-dense1 = Dense(30)(dense1)
-dense1 = Dense(10)(dense1)
+from tensorflow.keras.layers import Dense, Input, LSTM, Dropout
+inputs = Input(shape=(6,x.shape[2]))
+dense1 = LSTM(512, activation='relu')(inputs)
+# dense1 = Dense(512)(dense1)
+dense1 = Dense(256, activation='relu')(dense1)
+dense1 = Dense(128, activation='relu')(dense1)
+dense1 = Dense(64, activation='relu')(dense1)
+dense1 = Dense(32, activation='relu')(dense1)
+dense1 = Dense(16, activation='relu')(dense1)
+dense1 = Dense(8, activation='relu')(dense1)
+dense1 = Dense(4, activation='relu')(dense1)
+dense1 = Dense(2, activation='relu')(dense1)
 outputs = Dense(1)(dense1)
 
 model = Model(inputs=inputs, outputs=outputs)
@@ -58,8 +56,8 @@ model = Model(inputs=inputs, outputs=outputs)
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam', metrics=['mae'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-# es = EarlyStopping(monitor='loss', patience=60, mode='auto')
-modelpath= 'c:/data/test/samsung3_checkpoint.hdf5'
+# es = EarlyStopping(monitor='loss', patience=80, mode='auto')
+modelpath= 'c:/data/test/samsung3_checkpoint_2.hdf5'
 cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
 model.fit(x_train, y_train, batch_size=64, epochs=1000, validation_split=0.2, callbacks=[cp])
 
@@ -80,20 +78,14 @@ from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
 print("R2 : ", r2)
 
+x_pred = x_data[-8:,:,:]
+x_pred = x_pred.reshape(x_pred.shape[0],6,x_pred.shape[-1])
 y_predict = model.predict(x_pred)
-print(y_predict)
+y_price = int(np.round(y_predict[-1]))
 
-# loss, mae :  1972171.875 1097.6455078125
-# RMSE :  1404.3402901598788
-# R2 :  0.9730702480193972
-# [[91408.875]]
-
-# loss, mae :  1357250.625 908.9234008789062
-# RMSE :  1165.010832079855
-# R2 :  0.9816344505215461
-# [[89429.48]]
-
-# loss, mae :  1346956.75 878.3052978515625
-# RMSE :  1160.584646124029
-# R2 :  0.9763041431702614
-# [[91939.41]]
+print("이전 값들과 비교")
+for i in range(1,(x_pred.shape[0])):
+    subset = ([int(y_predict[i-1]),y[-(x_pred.shape[0])+i]])
+    print(subset)
+print("--------------------------------")
+print("익일 삼성 주가 : ", y_price, "원")
