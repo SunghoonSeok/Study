@@ -39,7 +39,7 @@ print(y_train.shape, y_test.shape)
 
 #2. 모델구성
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Dense, Input, LSTM, Dropout, Conv1D, Flatten, MaxPooling1D
+from tensorflow.keras.layers import Dense, Input, LSTM, Dropout, Conv1D, Flatten, MaxPooling1D, GRU, SimpleRNN
 # inputs = Input(shape=(6, x.shape[2]))
 # dense1 = Conv1D(1000, 2, padding='same', activation='relu')(inputs)
 # dense1 = MaxPooling1D(pool_size=2)(dense1)
@@ -48,7 +48,7 @@ from tensorflow.keras.layers import Dense, Input, LSTM, Dropout, Conv1D, Flatten
 # dense1 = Flatten()(dense1)
 
 inputs = Input(shape=(6,x.shape[2]))
-dense1 = LSTM(1000)(inputs)
+dense1 = GRU(1000)(inputs)
 # dense1 = Dropout(0.2)(dense1)
 dense1 = Dense(500)(dense1)
 # dense1 = Dropout(0.2)(dense1)
@@ -67,10 +67,10 @@ model = Model(inputs=inputs, outputs=outputs)
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam', metrics=['mae'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-es = EarlyStopping(monitor='val_loss', patience=80, mode='auto')
+# es = EarlyStopping(monitor='val_loss', patience=80, mode='auto')
 modelpath= 'c:/data/test/samsung6_checkpoint.hdf5'
 cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
-model.fit(x_train, y_train, batch_size=64, epochs=1000, validation_split=0.2, callbacks=[es, cp])
+model.fit(x_train, y_train, batch_size=64, epochs=1000, validation_split=0.2, callbacks=[cp])
 
 model.save('c:/data/test/samsung6_model.h5')
 
