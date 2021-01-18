@@ -19,13 +19,8 @@ def split_xy(dataset, timesteps_x, timesteps_y):
         y.append(tmp_y)
     return np.array(x), np.array(y)
 
-dataset = np.array(range(1,101))
+
 timesteps_x = 5
 timesteps_y =2 
-x, y = split_xy(dataset, timesteps_x, timesteps_y)
-print(x) 
-print(y)  
-print(x.shape, y.shape) # (94, 5) (94, 2)
-
 x, y = split_xy(data, timesteps_x, timesteps_y)
 print(x.shape, y.shape) # (2393, 5, 15) (2393, 2, 15)

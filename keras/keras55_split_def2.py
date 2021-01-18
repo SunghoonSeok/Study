@@ -4,6 +4,7 @@ import pandas as pd
 data = np.load('c:/data/test/samsung_jusik_all.npy')
 print(data.shape) # (2399, 15)
 # x를 5일치 y를 2일치로 잡아서 자르는 함수 만들자
+# x의 특성은 14개 y의 특성은 5개
 
 
 def split_xy(dataset, timesteps_x, timesteps_y, feature_x, feature_y):
