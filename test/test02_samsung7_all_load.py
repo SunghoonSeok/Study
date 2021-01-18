@@ -57,15 +57,18 @@ from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
 print("R2 : ", r2)
 
-x_pred = x_data[-8:,:,:]
-x_pred = x_pred.reshape(x_pred.shape[0],6,x_pred.shape[-1])
-y_predict = model.predict(x_pred)
-y_price = int(np.round(y_predict[-1]))
+x1_pred = x1_data[-2:,:,:]
+x2_pred = x2_data[-2:,:,:]
+x1_pred = x1_pred.reshape(x1_pred.shape[0],6,x1_pred.shape[-1])
+x2_pred = x2_pred.reshape(x2_pred.shape[0],6,x2_pred.shape[-1])
+y_predict = model.predict([x1_pred,x2_pred])
 
-for i in range(1,(x_pred.shape[0])):
-    subset = ([int(y_predict[i-1]),y[-(x_pred.shape[0])+i]])
-    print(subset)
-print("익일 삼성 주가 : ", y_price, "원")
+print(y_predict)
+
+
+print("월요일 삼성 시가 : ", int(np.round(y_predict[0])), "원")
+print("화요일 삼성 시가 : ", int(np.round(y_predict[1])), "원")
+
 
 # loss, mae :  1428569.375 895.7993774414062
 # RMSE :  1195.2277438453937

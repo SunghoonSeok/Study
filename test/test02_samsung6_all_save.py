@@ -5,9 +5,11 @@ import pandas as pd
 data1 = np.load('c:/data/test/samsung_jusik_all.npy')
 data2 = np.load('c:/data/test/kodex_jusik_all.npy')
 
-x1 = data1[:,:-1]
-y = data1[:,-1]
-x2 = data2[:,:]
+x1 = data1[1314:,:-1]
+y = data1[1314:,-1]
+x2 = data2
+print(x1.shape, y.shape, x2.shape)
+
 
 from sklearn.preprocessing import MinMaxScaler
 scaler1 = MinMaxScaler()
@@ -30,24 +32,13 @@ def split_x(seq, size):
 x1_data = split_x(x1, size)
 x2_data = split_x(x2, size)
 
-size=2
-def split_y(seq, size):
-    aaa = []
-    for i in range(len(seq)-size+1):
-        subset = seq[i : (i+size)]
-        aaa.append([item for item in subset])
-    print(type(aaa))
-    return np.array(aaa)
-
-x = x_data[:-1,:,:]
-y = y[6:]
-print(y)
+x1 = x1_data[:-2,:,:]
+x2 = x2_data[:-2,:,:]
+y = y[7:]
+print(x1.shape, y.shape, x2.shape)
 
 from sklearn.model_selection import train_test_split
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True, random_state=66)
-
-print(x_train.shape, x_test.shape) 
-print(y_train.shape, y_test.shape) 
+x1_train, x1_test, x2_train, x2_test, y_train, y_test = train_test_split(x1, x2, y, train_size=0.8, shuffle=True, random_state=66)
 
 
 #2. 모델구성
@@ -60,8 +51,9 @@ from tensorflow.keras.layers import Dense, Input, LSTM, Dropout, Conv1D, Flatten
 # dense1 = Conv1D(400, 2,activation='relu')(dense1)
 # dense1 = Flatten()(dense1)
 
-inputs = Input(shape=(6,x.shape[2]))
-dense1 = GRU(1000)(inputs)
+# 모델1
+input1 = Input(shape=(6,x1.shape[2]))
+dense1 = LSTM(1000)(input1)
 # dense1 = Dropout(0.2)(dense1)
 dense1 = Dense(500)(dense1)
 # dense1 = Dropout(0.2)(dense1)
@@ -72,24 +64,54 @@ dense1 = Dense(100)(dense1)
 dense1 = Dense(50)(dense1)
 dense1 = Dense(30)(dense1)
 dense1 = Dense(10)(dense1)
-outputs = Dense(1)(dense1)
 
-model = Model(inputs=inputs, outputs=outputs)
+# 모델2
+input2 = Input(shape=(6,x1.shape[2]))
+dense2 = GRU(1000)(input2)
+# dense2 = Dropout(0.2)(dense2)
+dense2 = Dense(500)(dense2)
+# dense2 = Dropout(0.2)(dense2)
+dense2 = Dense(400)(dense2)
+dense2 = Dense(300)(dense2)
+dense2 = Dense(200)(dense2)
+dense2 = Dense(100)(dense2)
+dense2 = Dense(50)(dense2)
+dense2 = Dense(30)(dense2)
+dense2 = Dense(10)(dense2)
+
+
+from tensorflow.keras.layers import concatenate, Concatenate
+merge1 = concatenate([dense1, dense2])
+middle1 = Dense(128)(merge1)
+middle1 = Dense(64)(middle1)
+middle1 = Dense(32)(middle1)
+middle1 = Dense(16)(middle1)
+middle1 = Dense(8)(middle1)
+middle1 = Dense(4)(middle1)
+middle1 = Dense(2)(middle1)
+outputs = Dense(1)(middle1)
+
+
+
+
+
+model = Model(inputs=[input1,input2], outputs=outputs)
 
 
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam', metrics=['mae'])
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-# es = EarlyStopping(monitor='val_loss', patience=80, mode='auto')
-modelpath= 'c:/data/test/samsung6_checkpoint.hdf5'
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
+es = EarlyStopping(monitor='val_loss', patience=80, mode='auto')
+modelpath= 'c:/data/test/samsung6_checkpoint2_{val_loss}.hdf5'
 cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
-model.fit(x_train, y_train, batch_size=64, epochs=1000, validation_split=0.2, callbacks=[cp])
+reduce_lr =ReduceLROnPlateau(monitor='val_loss', patience=40, factor=0.5, verbose=1)
+model.fit([x1_train,x2_train], y_train, batch_size=64, epochs=1000, validation_split=0.2, callbacks=[cp, es, reduce_lr])
 
-model.save('c:/data/test/samsung6_model.h5')
+model.save('c:/data/test/samsung6_model2.h5')
 
 #4. 평가, 예측
-loss, mae = model.evaluate(x_test, y_test, batch_size=64)
-y_predict = model.predict(x_test)
+loss, mae = model.evaluate([x1_test,x2_test], y_test, batch_size=64)
+y_predict = model.predict([x1_test,x2_test])
 print("loss, mae : ", loss, mae)
 
 from sklearn.metrics import mean_squared_error
@@ -101,29 +123,34 @@ from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
 print("R2 : ", r2)
 
-x_pred = x_data[-8:,:,:]
-x_pred = x_pred.reshape(x_pred.shape[0],6,x_pred.shape[-1])
-y_predict = model.predict(x_pred)
-y_price = int(np.round(y_predict[-1]))
+x1_pred = x1_data[-2:,:,:]
+x2_pred = x2_data[-2:,:,:]
+x1_pred = x1_pred.reshape(x1_pred.shape[0],6,x1_pred.shape[-1])
+x2_pred = x2_pred.reshape(x2_pred.shape[0],6,x2_pred.shape[-1])
 
-for i in range(1,(x_pred.shape[0])):
-    subset = ([int(y_predict[i-1]),y[-(x_pred.shape[0])+i]])
-    print(subset)
+y_predict = model.predict([x1_pred,x2_pred])
+
+print(y_predict)
 
 
-print("익일 삼성 주가 : ", y_price, "원")
+print("월요일 삼성 시가 : ", int(np.round(y_predict[0])), "원")
+print("화요일 삼성 시가 : ", int(np.round(y_predict[1])), "원")
 
-# loss, mae :  1972171.875 1097.6455078125
-# RMSE :  1404.3402901598788
-# R2 :  0.9730702480193972
-# [[91408.875]]
 
-# loss, mae :  1357250.625 908.9234008789062
-# RMSE :  1165.010832079855
-# R2 :  0.9816344505215461
-# [[89429.48]]
+# 로드 모델
+#loss, mae :  2541032.0 1262.46630859375
+# RMSE :  1594.061363025406
+# R2 :  0.9729504677582311
+# [[91914.98]
+#  [88692.26]]
+# 월요일 삼성 시가 :  91915 원
+# 화요일 삼성 시가 :  88692 원
 
-# loss, mae :  855456.5625 642.3980712890625
-# RMSE :  924.9085310904956
-# R2 :  0.9949458441779632
-# [[91100.04]]
+# check
+# loss, mae :  2288014.0 1166.26708984375
+# RMSE :  1512.6178212770928
+# R2 :  0.9756438794913104
+# [[90409.25]
+#  [88900.08]]
+# 월요일 삼성 시가 :  90409 원
+# 화요일 삼성 시가 :  88900 원

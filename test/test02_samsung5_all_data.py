@@ -52,7 +52,7 @@ dataset_y = df.iloc[:,0]
 df['Target'] = dataset_y
 
 # 불필요한 특성 제거
-df = df.drop(['외인비'], axis=1)
+# df = df.drop(['외인비'], axis=1)
 # df = df.drop(['개인','기관','외인(수량)','외국계','프로그램'], axis=1)
 print(df.shape)
 
@@ -73,7 +73,8 @@ print(df3)
 df3 = df3[::-1]
 
 # 불필요한 특성 제거
-df3 = df3.drop(['외인비'], axis=1)
+df3 = df3.drop(['2018/05/03','2018/05/02','2018/04/30'])
+# df3 = df3.drop(['외인비'], axis=1)
 # df3 = df3.drop(['개인','기관','외인(수량)','외국계','프로그램'], axis=1)
 print(df3.shape)
 
