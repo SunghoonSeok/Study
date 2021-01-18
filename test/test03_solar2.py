@@ -28,7 +28,7 @@ x = x[:,:,:,3:]
 y = y[:,:,:,3:]
 print(x.shape, y.shape) # (1087, 7, 48, 6) (1087, 2, 48, 6)
 
-
+y = y.reshape(1087, 2*48*6)
 
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True, random_state=66)
@@ -37,14 +37,16 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffl
 
 #2. 모델구성
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Dense, Input, LSTM, Dropout, Conv2D
+from tensorflow.keras.layers import Dense, Input, LSTM, Dropout, Conv2D, Reshape, Flatten
 inputs = Input(shape=(7,48,6))
-dense1 = Conv2D(128, 2, padding='same')(inputs)
-dense1 = Dense(64)(dense1)
+dense1 = Conv2D(512, 2, padding='same')(inputs)
+dense1 = Conv2D(256,2)(dense1)
+dense1 = Conv2D(128,2)(dense1)
 dense1 = Dense(32)(dense1)
 dense1 = Dense(16)(dense1)
 dense1 = Dense(8)(dense1)
-outputs = Dense(2,48,6)(dense1)
+dense1 = Flatten()(dense1)
+outputs = Dense(2*48*6)(dense1)
 
 model = Model(inputs=inputs, outputs=outputs)
 
@@ -57,7 +59,7 @@ es = EarlyStopping(monitor='val_loss', patience=80, mode='auto')
 modelpath= 'c:/data/test/solar/solar_checkpoint_{val_loss}.hdf5'
 cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
 reduce_lr =ReduceLROnPlateau(monitor='val_loss', patience=40, factor=0.5, verbose=1)
-model.fit(x_train, y_train, batch_size=64, epochs=5, validation_split=0.2, callbacks=[cp, es, reduce_lr])
+model.fit(x_train, y_train, batch_size=64, epochs=500, validation_split=0.2, callbacks=[cp, es, reduce_lr])
 
 model.save('c:/data/test/solar/solar_model.h5')
 
