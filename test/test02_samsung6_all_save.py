@@ -2,17 +2,21 @@ import numpy as np
 import pandas as pd
 
 # 1. 데이터
-data = np.load('c:/data/test/samsung_jusik2.npy')
-x = data[:,:-1]
-y = data[:,-1]
-print(x.shape, y.shape)
-print(data) 
-print(y)
+data1 = np.load('c:/data/test/samsung_jusik_all.npy')
+data2 = np.load('c:/data/test/kodex_jusik_all.npy')
+
+x1 = data1[:,:-1]
+y = data1[:,-1]
+x2 = data2[:,:]
 
 from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
-scaler.fit(x)
-x = scaler.transform(x)
+scaler1 = MinMaxScaler()
+scaler1.fit(x1)
+x1 = scaler1.transform(x1)
+
+scaler2 = MinMaxScaler()
+scaler2.fit(x2)
+x2 = scaler2.transform(x2)
 
 size = 6
 
@@ -23,8 +27,17 @@ def split_x(seq, size):
         aaa.append([item for item in subset])
     print(type(aaa))
     return np.array(aaa)
-x_data = split_x(x, size)
-print(x.shape)
+x1_data = split_x(x1, size)
+x2_data = split_x(x2, size)
+
+size=2
+def split_y(seq, size):
+    aaa = []
+    for i in range(len(seq)-size+1):
+        subset = seq[i : (i+size)]
+        aaa.append([item for item in subset])
+    print(type(aaa))
+    return np.array(aaa)
 
 x = x_data[:-1,:,:]
 y = y[6:]

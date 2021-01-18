@@ -51,10 +51,9 @@ print(y_train.shape, y_test.shape)
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Input, LSTM, Dropout, GRU, SimpleRNN, Conv1D, Flatten, LeakyReLU
 inputs = Input(shape=(6,x.shape[2]))
-dense1 = LSTM(1024)(inputs)
-dense1 = LeakyReLU()(dense1)
-dense1 = Dense(512)(dense1)
-dense1 = Dense(256)(dense1)
+# dense1 = LSTM(512)(inputs)
+# # dense1 = Dense(512)(dense1)
+dense1 = LSTM(256)(inputs)
 dense1 = Dense(128)(dense1)
 dense1 = Dense(64)(dense1)
 dense1 = Dense(32)(dense1)
@@ -67,7 +66,9 @@ outputs = Dense(1)(dense1)
 model = Model(inputs=inputs, outputs=outputs)
 
 #3. 컴파일, 훈련
-model.compile(loss='mse', optimizer='adam', metrics=['mae'])
+from tensorflow.keras import optimizers
+adam = optimizers.Adam(lr=0.001)
+model.compile(loss='mse', optimizer=adam, metrics=['mae'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 es = EarlyStopping(monitor='loss', patience=100, mode='auto')
 modelpath= 'c:/data/test/tune/samsung3_checkpoint_{val_loss:.4f}.hdf5'

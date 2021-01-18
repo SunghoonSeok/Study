@@ -25,15 +25,16 @@ df['프로그램'] =df['프로그램'].str.replace(',','').astype('int64')
 print(df.shape)
 
 # 데이터 추가, str -> float
-df2 = read_csv('c:/data/test/삼성전자2.csv', encoding='cp949', index_col=0, header=0, thousands=',')
+df2 = read_csv('c:/data/test/삼성전자0115.csv', encoding='cp949', index_col=0, header=0, thousands=',')
 df2 = df2.dropna()
 df2 = df2.drop(['전일비','Unnamed: 6'], axis=1)
 
 # 중복 데이터 제거
 print(df.shape)
-df2 = df2.drop(['2021-01-13'])
+df2 = df2.drop(df2.index[3:])
+df = df.drop(['2021-01-13'])
 print(df2.shape)
-
+df2.index=['2021-01-15','2021-01-14','2021-01-13']
 
 # 액면분할 이전 데이터 주가변환
 df = df[::-1]
@@ -47,18 +48,40 @@ print(df.shape)
 print(df.tail())
 
 # 타겟(y값) 설정
-dataset_y = df.iloc[:,3]
+dataset_y = df.iloc[:,0]
 df['Target'] = dataset_y
 
 # 불필요한 특성 제거
-df = df.drop(['거래량','신용비','외인비'], axis=1)
-df = df.drop(['개인','기관','외인(수량)','외국계','프로그램'], axis=1)
+df = df.drop(['외인비'], axis=1)
+# df = df.drop(['개인','기관','외인(수량)','외국계','프로그램'], axis=1)
 print(df.shape)
 
 # csv -> npy 후 저장
 data = df.values
 print(data)
-np.save('c:/data/test/samsung_jusik2.npy', arr=data)
+np.save('c:/data/test/samsung_jusik_all.npy', arr=data)
+
+
+# KODEX data
+
+df3 = read_csv('c:/data/test/KODEX 코스닥150 선물인버스.csv', index_col=0, header=0, encoding='cp949', thousands=',')
+df3 = df3.dropna()
+df3 = df3.drop(['전일비','Unnamed: 6'], axis=1)
+print(df3)
+
+# 데이터 역전
+df3 = df3[::-1]
+
+# 불필요한 특성 제거
+df3 = df3.drop(['외인비'], axis=1)
+# df3 = df3.drop(['개인','기관','외인(수량)','외국계','프로그램'], axis=1)
+print(df3.shape)
+
+# csv -> npy 후 저장
+data2 = df3.values
+print(data2)
+np.save('c:/data/test/kodex_jusik_all.npy', arr=data2)
+
 
 # 상관계수
 # import matplotlib.pyplot as plt

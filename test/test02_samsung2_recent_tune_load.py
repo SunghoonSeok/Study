@@ -29,7 +29,7 @@ x = x_data[:-1,:,:]
 y = y[6:]
 
 from sklearn.model_selection import train_test_split
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.75, shuffle=True)
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True)
 
 print(x_train.shape, x_test.shape)
 print(y_train.shape, y_test.shape)
@@ -40,15 +40,15 @@ from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.layers import Dense, Input, LSTM
 
 
-
 # model = load_model('c:/data/test/samsung_model.h5') 
 
-model = load_model('c:/data/test/tune/samsung3_checkpoint_7_1040128.5000.hdf5')
+model = load_model('c:/data/test/tune/samsung3_checkpoint_1_738187.0625.hdf5')
 
 # model = load_model('c:/data/test/samsung3_model_2.h5')
 
+
 #3. 평가, 예측
-loss, mae = model.evaluate(x_test, y_test, batch_size=64)
+loss, mae = model.evaluate(x_test, y_test, batch_size=32)
 y_predict = model.predict(x_test)
 print("loss, mae : ", loss, mae)
 
@@ -84,29 +84,3 @@ print("익일 삼성 주가 : ", y_price, "원")
 # [89669, 89700.0]
 # [89790, 89700.0]
 # 익일 삼성 주가 :  90547 원
-
-# 2차 GRU, node 1024 ~ 1
-# loss, mae :  1165629.25 755.9816284179688
-# RMSE :  1079.6427087728032
-# R2 :  0.9832344529700237
-# [82091, 82200.0]
-# [87312, 82900.0]
-# [87931, 88800.0]
-# [88699, 91000.0]
-# [89767, 90600.0]
-# [89488, 89700.0]
-# [89417, 89700.0]
-# 익일 삼성 주가 :  89370 원
-
-# LSTM 1024~1
-# loss, mae :  902311.0625 738.9931640625
-# RMSE :  949.9005281334481
-# R2 :  0.9883271253464256
-# [82664, 82200.0]
-# [82861, 82900.0]
-# [85004, 88800.0]
-# [88732, 91000.0]
-# [87724, 90600.0]
-# [87808, 89700.0]
-# [89016, 89700.0]
-# 익일 삼성 주가 :  89694 원
