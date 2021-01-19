@@ -27,7 +27,6 @@ def preprocess_data(data, is_train=True):
 
 
 df_train = preprocess_data(train)
-df_train.iloc[:48]
 
 df_test = []
 
@@ -41,11 +40,12 @@ X_test = pd.concat(df_test)
 X_test.shape
 
 from sklearn.model_selection import train_test_split
-X_train_1, X_valid_1, Y_train_1, Y_valid_1 = train_test_split(df_train.iloc[:, :-2], df_train.iloc[:, -2], test_size=0.3, random_state=0)
-X_train_2, X_valid_2, Y_train_2, Y_valid_2 = train_test_split(df_train.iloc[:, :-2], df_train.iloc[:, -1], test_size=0.3, random_state=0)
+X_train_1, X_valid_1, Y_train_1, Y_valid_1 = train_test_split(df_train.iloc[:, :-2], df_train.iloc[:, -2], test_size=0.3, random_state=32)
+X_train_2, X_valid_2, Y_train_2, Y_valid_2 = train_test_split(df_train.iloc[:, :-2], df_train.iloc[:, -1], test_size=0.3, random_state=32)
 
 quantiles = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-
+print(X_train_1.shape)
+'''
 from lightgbm import LGBMRegressor
 
 # Get the model and the predictions in (a) - (b)
@@ -97,3 +97,4 @@ submission.loc[submission.id.str.contains("Day7"), "q_0.1":] = results_1.sort_in
 submission.loc[submission.id.str.contains("Day8"), "q_0.1":] = results_2.sort_index().values
 
 submission.to_csv('c:/data/test/solar/sample_submission.csv', index=False)
+'''

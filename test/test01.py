@@ -13,14 +13,22 @@
 # print(x)
 import numpy as np
 import pandas as pd
-df = pd.DataFrame({'cat': ['A','A','A','A','A','B','B','B','B','B','B'],
-                   'sales': [10, 20, 30, 40, 50, 1, 2, 3, 4, 5,6]})
-df['sales'].quantile(q=0.5, interpolation='nearest')
+x = np.array(range(9))
+print(x)
 
-print(df['sales'].quantile(q=0.5, interpolation='nearest')) # 5
-df.groupby(['cat'])['sales'].quantile(q=0.50, interpolation='nearest')
+for i in range(9):
+    print('%d'%(i+1))
 
-print(df.groupby(['cat'])['sales'].quantile(q=0.50, interpolation='nearest'))
+x = np.array([1,2,3,4,5,6,7,8,9])
+print(x.shape)
+# df = pd.DataFrame({'cat': ['A','A','A','A','A','B','B','B','B','B','B'],
+#                    'sales': [10, 20, 30, 40, 50, 1, 2, 3, 4, 5,6]})
+# df['sales'].quantile(q=0.5, interpolation='nearest')
+
+# print(df['sales'].quantile(q=0.5, interpolation='nearest')) # 5
+# df.groupby(['cat'])['sales'].quantile(q=0.50, interpolation='nearest')
+
+# print(df.groupby(['cat'])['sales'].quantile(q=0.50, interpolation='nearest'))
 # cat
 # A    30
 # B     3
