@@ -45,7 +45,7 @@ X_train_2, X_valid_2, Y_train_2, Y_valid_2 = train_test_split(df_train.iloc[:, :
 
 quantiles = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 print(X_train_1.shape)
-'''
+
 from lightgbm import LGBMRegressor
 
 # Get the model and the predictions in (a) - (b)
@@ -97,4 +97,3 @@ submission.loc[submission.id.str.contains("Day7"), "q_0.1":] = results_1.sort_in
 submission.loc[submission.id.str.contains("Day8"), "q_0.1":] = results_2.sort_index().values
 
 submission.to_csv('c:/data/test/solar/sample_submission.csv', index=False)
-'''
