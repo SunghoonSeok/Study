@@ -1,5 +1,8 @@
 import numpy as np
 import pandas as pd
+import os
+import glob
+import random
 
 data = np.load('c:/data/test/solar/train.npy')
 print(data.shape)
@@ -42,8 +45,42 @@ model = load_model('c:/data/test/solar/solar_model.h5')
 
 loss, mae = model.evaluate(x_test, y_test, batch_size=64)
 
-data0 = read_csv('c:/data/test/0.csv', index_col=None, header=0)
-data0 = df.values
-print(data0.shape)
-np.save('c:/data/test/solar/train.npy', arr=data0)
-y_predict = model.predict(x_test)
+y_pred = []
+
+for i in range(81) :
+    filepath = '../data/test/solar/test/{}.csv'.format(i)
+    globals()['pred{}'.format(i)] = pd.read_csv(filepath,index_col=False)
+    globals()['pred_{}'.format(i)] = globals()['pred{}'.format(i)].iloc[:,3:]
+    globals()['pred_{}'.format(i)] = globals()['pred_{}'.format(i)].to_numpy()
+    globals()['pred_{}'.format(i)] = (globals()['pred_{}'.format(i)]).reshape(1,7, 48, 6)
+    globals()['y_pred_{}'.format(i)] = model.predict(globals()['pred_{}'.format(i)])
+    y_pred.append(globals()['y_pred_{}'.format(i)])
+y_pred = np.array(y_pred)
+y_pred = y_pred.reshape(81*96, 6)
+y_pred = np.round_(y_pred, 2)
+print(y_pred)
+
+
+df2 = pd.DataFrame(y_pred)
+print(df2)
+df2.to_csv('c:/data/sample_submission.csv', sep=',')
+'''
+from pandas import read_csv
+df = read_csv('c:/data/test/sample_submission.csv', index_col=0, header=0)
+print(df)
+
+print(df.shape, df2.shape)
+print(df2.loc[:,0:])
+
+df.loc[:, 'q_0.4':] = df2.loc[:,0:]
+print(df)
+'''
+
+'''
+# y = y.reshape(y.shape[0],96,6)
+# for b in range(81) :
+#     globals()['pred{}'.format(b)]= (globals()['pred{}'.format(b)]).reshape(1,336,6)
+result = model.predict(pred0)
+result = result.reshape(-1,96,6)
+print("\n",result)
+'''
