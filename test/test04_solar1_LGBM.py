@@ -43,6 +43,16 @@ from sklearn.model_selection import train_test_split
 X_train_1, X_valid_1, Y_train_1, Y_valid_1 = train_test_split(df_train.iloc[:, :-2], df_train.iloc[:, -2], test_size=0.3, random_state=32)
 X_train_2, X_valid_2, Y_train_2, Y_valid_2 = train_test_split(df_train.iloc[:, :-2], df_train.iloc[:, -1], test_size=0.3, random_state=32)
 
+from sklearn.preprocessing import MinMaxScaler
+scaler1 = MinMaxScaler()
+scaler1.fit(X_train_1)
+X_train_1 = scaler1.transform(X_train_1)
+X_valid_1 = scaler1.transform(X_valid_1)
+X_train_2 = scaler1.transform(X_train_2)
+X_valid_2 = scaler1.transform(X_valid_2)
+X_test = scaler1.transform(X_test)
+
+
 quantiles = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 print(X_train_1.shape)
 
