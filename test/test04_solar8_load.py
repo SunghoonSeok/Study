@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import tensorflow.keras.backend as K
-from tensorflow.keras.models import Model, Sequential
+from tensorflow.keras.models import Model, Sequential, load_model
 from tensorflow.keras.layers import Dense, Input, LSTM, Dropout, Conv1D, Flatten, MaxPooling1D, GRU, SimpleRNN
 from tensorflow.keras.backend import mean, maximum
 
@@ -103,12 +103,13 @@ bs = 32
 def hahaha(a, x_train, y_train, x_val, y_val, x_test):
     x = []
     for q in quantiles:
-        model = DaconModel()
         optimizer = Adam(lr=0.008)
-        model.compile(loss = lambda y_true,y_pred: quantile_loss(q,y_true,y_pred), optimizer = optimizer, metrics = [lambda y,y_pred: quantile_loss(q,y,y_pred)])
-        filepath = f'c:/data/test/solar/checkpoint/solar_checkpoint_{a}-{q}.hdf5'
-        cp = ModelCheckpoint(filepath, save_best_only=True, monitor = 'val_loss')
-        model.fit(x_train,y_train,epochs = epochs, batch_size = bs, validation_data = (x_val,y_val),callbacks = [es,lr,cp])
+        filepath_cp = f'c:/data/test/solar/checkpoint/solar_checkpoint_{a}-{q}.hdf5'
+        model = load_model(filepath_cp, compile = False)
+        # model.compile(loss = lambda y_true,y_pred: quantile_loss(q,y_true,y_pred), optimizer = optimizer, metrics = [lambda y,y_pred: quantile_loss(q,y,y_pred)])
+        # filepath = f'c:/data/test/solar/checkpoint/solar_checkpoint_{a}-{q}.hdf5'
+        # cp = ModelCheckpoint(filepath, save_best_only=True, monitor = 'val_loss')
+        # model.fit(x_train,y_train,epochs = epochs, batch_size = bs, validation_data = (x_val,y_val),callbacks = [es,lr,cp])
         pred = pd.DataFrame(model.predict(x_test).round(2))
         x.append(pred)
     df_temp = pd.concat(x, axis = 1)
@@ -122,4 +123,4 @@ print(num_temp1.shape, num_temp2.shape) # (3888, 63) (3888, 63)
 
 sub.loc[sub.id.str.contains("Day7"), "q_0.1":] = num_temp1.round(2)
 sub.loc[sub.id.str.contains("Day8"), "q_0.1":] = num_temp2.round(2)
-sub.to_csv('c:/data/test/solar/sample_submission7.csv', index=False)
+sub.to_csv('c:/data/test/solar/sample_submission7_check.csv', index=False)

@@ -9,44 +9,24 @@ from tensorflow.keras.backend import mean, maximum
 train = pd.read_csv('c:/data/test/solar/train/train.csv')
 sub = pd.read_csv('c:/data/test/solar/sample_submission.csv')
 
-def preprocess_data(data, is_train=True):
-    
-    temp = data.copy()
-    temp = temp[['Hour', 'TARGET', 'DHI', 'DNI', 'WS', 'RH', 'T']]
+xy_train = train.copy()
+xy_train = xy_train[['Hour', 'TARGET', 'DHI', 'DNI', 'WS', 'RH', 'T']]
 
-    if is_train==True:          
-    
-        temp['Target1'] = temp['TARGET'].shift(-48).fillna(method='ffill')
-        temp['Target2'] = temp['TARGET'].shift(-48*2).fillna(method='ffill')
-        temp = temp.dropna()
-        
-        return temp.iloc[:-96]
+print(xy_train.shape)
 
-    elif is_train==False:
-        
-        temp = temp[['Hour', 'TARGET', 'DHI', 'DNI', 'WS', 'RH', 'T']]
-                              
-        return temp.iloc[-48:, :]
+xy_train = xy_train.reshape(5840, 9, 7)
 
-
-df_train = preprocess_data(train)
-print(df_train.shape) # (52464, 9)
-
-df_test = []
-
+'''
+df_test=[]
 for i in range(81):
     file_path = 'c:/data/test/solar/test/' + str(i) + '.csv'
     temp = pd.read_csv(file_path)
-    temp = preprocess_data(temp, is_train=False)
     df_test.append(temp)
 
 x_test = pd.concat(df_test)
 print(x_test.shape) # (3888,7)
 
-
-from sklearn.model_selection import train_test_split
-x_train1, x_val1, y_train1, y_val1 = train_test_split(df_train.iloc[:, :-2], df_train.iloc[:, -2], test_size=0.3, random_state=32)
-x_train2, x_val2, y_train2, y_val2 = train_test_split(df_train.iloc[:, :-2], df_train.iloc[:, -1], test_size=0.3, random_state=32)
+print(train.shape)
 
 
 from sklearn.preprocessing import StandardScaler
@@ -58,19 +38,17 @@ x_train2 = scaler.transform(x_train2)
 x_val2 = scaler.transform(x_val2)
 x_test = scaler.transform(x_test)
 
+from sklearn.model_selection import train_test_split
+x_train1, x_val1, y_train1, y_val1 = train_test_split(df_train.iloc[:, :-2], df_train.iloc[:, -2], test_size=0.3, random_state=32)
+x_train2, x_val2, y_train2, y_val2 = train_test_split(df_train.iloc[:, :-2], df_train.iloc[:, -1], test_size=0.3, random_state=32)
+
+
+
 def quantile_loss(q, y_true, y_pred):
     err = (y_true - y_pred)
     return K.mean(K.maximum(q*err, (q-1)*err), axis=-1)
 
 quantiles = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-
-x_train1 = x_train1.reshape(x_train1.shape[0], 1, x_train1.shape[1])
-x_train2 = x_train2.reshape(x_train2.shape[0], 1, x_train2.shape[1])
-x_val1 = x_val1.reshape(x_val1.shape[0], 1, x_val1.shape[1])
-x_val2 = x_val2.reshape(x_val2.shape[0], 1, x_val2.shape[1])
-x_test = x_test.reshape(x_test.shape[0], 1, x_test.shape[1])
-
-
 
 
 # 3. 컴파일, 훈련
@@ -123,3 +101,4 @@ print(num_temp1.shape, num_temp2.shape) # (3888, 63) (3888, 63)
 sub.loc[sub.id.str.contains("Day7"), "q_0.1":] = num_temp1.round(2)
 sub.loc[sub.id.str.contains("Day8"), "q_0.1":] = num_temp2.round(2)
 sub.to_csv('c:/data/test/solar/sample_submission7.csv', index=False)
+'''

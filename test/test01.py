@@ -13,14 +13,18 @@
 # print(x)
 import numpy as np
 import pandas as pd
-x = np.array(range(9))
+x = np.array([[0.254534, 0.4235656, 13.4423, 15.35363],[13.5345634,41.5234534,13.53456,55.45345]])
+x = x.round(2)
+# x = np.round(x, 2)
 print(x)
+# x = np.array(range(9))
+# print(x)
 
-for i in range(9):
-    print('%d'%(i+1))
+# for i in range(9):
+#     print('%d'%(i+1))
 
-x = np.array([1,2,3,4,5,6,7,8,9])
-print(x.shape)
+# x = np.array([1,2,3,4,5,6,7,8,9])
+# print(x.shape)
 # df = pd.DataFrame({'cat': ['A','A','A','A','A','B','B','B','B','B','B'],
 #                    'sales': [10, 20, 30, 40, 50, 1, 2, 3, 4, 5,6]})
 # df['sales'].quantile(q=0.5, interpolation='nearest')
