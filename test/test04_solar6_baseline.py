@@ -63,7 +63,7 @@ num_features = train_df.shape[1]
 train_mean = train_df.mean()
 train_std  = train_df.std()
 
-train_df = (train_df - train_mean) / train_std9
+train_df = (train_df - train_mean) / train_std
 val_df   =  (val_df - train_mean) / train_std
 test_df  = (test_df - train_mean) / train_std
 

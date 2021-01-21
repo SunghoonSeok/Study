@@ -52,7 +52,13 @@ y = split_x(y, 2)
 
 print(x.shape, y.shape) # (1087, 2, 48, 5) (1087, 2, 48)
 
+x = x.reshape(1094, 2*48*5)
+from sklearn.preprocessing import StandardScaler
+scaler1 = StandardScaler()
+scaler1.fit(x)
+x = scaler1.transform(x)
 
+x = x.reshape(1094, 2, 48, 5)
 y = y.reshape(-1, 96)
 
 #2. 모델구성
@@ -80,6 +86,8 @@ def ConvModel():
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 early_stopping = EarlyStopping(monitor='val_loss', patience=12, mode='auto')
 lr = ReduceLROnPlateau(monitor = 'val_loss', factor = 0.5, patience = 6, verbose = 1)
+
+def 
 for q in quantiles:
     model = ConvModel()
     model.compile(loss = lambda y_true, y_pred: quantile_loss(q, y_true, y_pred), optimizer='adam', metrics=[lambda y, pred: quantile_loss(q, y, pred)])
@@ -93,6 +101,9 @@ for q in quantiles:
         testx = testx.reshape(1,7,48,6)
         
         testx = testx[:,5:,:,:-1]
+        testx = testx.reshape(1, 2*48*5)
+        testx = scaler1.transform(testx)
+        testx = testx.reshape(1, 2, 48, 5)
         y_pred = model.predict(testx)
         y_pred = y_pred.reshape(2,48)
           
@@ -106,8 +117,8 @@ for q in quantiles:
     c = np.array(c)
     c = c.reshape(81*2*48,)
     submission.loc[:, "q_%d"%q] = c
-submission = submission.iloc[:,:-1]
-submission.to_csv('c:/data/test/solar/sample_submission5.csv', index=False)
+# submission = submission.iloc[:,:-1]
+submission.to_csv('c:/data/test/solar/sample_submission6.csv', index=False)
 
 
 # #3. 컴파일 훈련
