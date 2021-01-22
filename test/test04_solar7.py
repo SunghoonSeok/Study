@@ -50,6 +50,7 @@ def preprocess_data(data, is_train=True):
 
 
 df_train = preprocess_data(train)
+
 # 상관계수
 import matplotlib.pyplot as plt
 import seaborn as sns
