@@ -44,7 +44,7 @@ def split_x(seq, size):
     aaa = []
     for i in range(len(seq)-size+1):
         subset = seq[i : (i+size)]
-        aaa.append([item for item in subset])  # [subset]과의 차이는?
+        aaa.append([item for item in subset])
     print(type(aaa))
     return np.array(aaa)
 x2 = data[7:,:,3:8]

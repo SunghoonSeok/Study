@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import tensorflow.keras.backend as K
 from tensorflow.keras.models import Model, Sequential
-from tensorflow.keras.layers import Dense, Input, LSTM, Dropout, Conv1D, Flatten, MaxPooling1D, GRU, SimpleRNN
+from tensorflow.keras.layers import Dense, Input, LSTM, Dropout, Conv1D, Flatten, MaxPooling1D, GRU, SimpleRNN, 
 from tensorflow.keras.backend import mean, maximum
 
 
@@ -22,23 +22,10 @@ def preprocess_data(data, is_train=True):
     temp = temp[['Hour', 'TARGET','GHI', 'DHI', 'DNI', 'WS', 'RH', 'T']]
 
     if is_train==True:          
-        def split_xy(temp, timesteps_x, timesteps_y, feature_x, feature_y):
-            x, y = list(), list()
     
-            for i in range(len(data)):
-                x_end_number = i + timesteps_x
-                y_end_number = x_end_number + timesteps_y
-                if y_end_number > len(temp):
-                    break
-                tmp_x = temp[i : x_end_number]
-                tmp_y = temp[x_end_number : y_end_number]
-                x.append(tmp_x)
-                y.append(tmp_y)
-            x = np.array(x)
-            y = np.array(y)
-            x = x[:,:,:,3:feature_x]
-            y = y[:,:,:,feature_y]
-            return x, y
+        temp['Target1'] = temp['TARGET'].shift(-48).fillna(method='ffill')
+        temp['Target2'] = temp['TARGET'].shift(-48*2).fillna(method='ffill')
+        temp = temp.dropna()
         
         return temp.iloc[:-96]
 
@@ -50,7 +37,6 @@ def preprocess_data(data, is_train=True):
 
 
 df_train = preprocess_data(train)
-
 # 상관계수
 import matplotlib.pyplot as plt
 import seaborn as sns
