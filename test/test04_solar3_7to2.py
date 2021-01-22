@@ -12,7 +12,9 @@ np.save('c:/data/test/solar/train.npy', arr=data)
 data =np.load('c:/data/test/solar/train.npy')
 
 data = data.reshape(1095, 48, 9)
+print(len(data)) # 1095
 
+'''
 def split_xy(dataset, timesteps_x, timesteps_y, feature_x, feature_y):
     x, y = list(), list()
     
@@ -96,3 +98,4 @@ for l in range(9):
     submission.loc[:, "q_0.%d"%(l+1)] = c
     # c = np.array(c) # (81, 2, 48)
 submission.to_csv('c:/data/test/solar/sample_submission3.csv', index=False)
+'''
