@@ -34,7 +34,8 @@ def preprocess_data(data):
 
 def DaconModel():
     model = Sequential()
-    model.add(Conv1D(128,2, padding='same', input_shape=(7, 7),activation='relu'))
+    model.add(Conv1D(256,2, padding='same', input_shape=(7, 7),activation='relu'))
+    model.add(Conv1D(128,2, padding='same',activation='relu'))
     model.add(Conv1D(64,2, padding='same',activation='relu'))
     model.add(Conv1D(32,2, padding='same',activation='relu'))
     model.add(Flatten())
@@ -44,13 +45,16 @@ def DaconModel():
     model.add(Dense(8,activation='relu'))
     model.add(Dense(1))
     return model
+from tensorflow.keras.optimizers import Adam, Adadelta, Adamax, Adagrad
+from tensorflow.keras.optimizers import RMSprop, SGD, Nadam
 def only_compile(a, x_train, y_train, x_val, y_val):
     
     for q in quantiles:
         print('Day'+str(i)+' ' +str(q)+'실행중입니다.')
         model = DaconModel()
-        model.compile(loss = lambda y_true,y_pred: quantile_loss(q,y_true,y_pred), optimizer = 'adam', metrics = [lambda y,y_pred: quantile_loss(q,y,y_pred)])
-        filepath = f'c:/data/test/solar/checkpoint/solar_checkpoint4_time{i}-{a}-{q}.hdf5'
+        optimizer = Adam(lr=0.002)
+        model.compile(loss = lambda y_true,y_pred: quantile_loss(q,y_true,y_pred), optimizer = optimizer, metrics = [lambda y,y_pred: quantile_loss(q,y,y_pred)])
+        filepath = f'c:/data/test/solar/checkpoint/solar_checkpoint5_time{i}-{a}-{q}.hdf5'
         cp = ModelCheckpoint(filepath, save_best_only=True, monitor = 'val_loss')
         model.fit(x_train,y_train,epochs = epochs, batch_size = bs, validation_data = (x_val,y_val),callbacks = [es,lr,cp])
         
@@ -96,7 +100,8 @@ test_data = test_data.reshape(27216,7)
 
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
 es = EarlyStopping(monitor = 'val_loss', patience = 10)
-lr = ReduceLROnPlateau(monitor = 'val_loss', patience = 5, factor = 0.3, verbose = 1)
+lr = ReduceLROnPlateau(monitor = 'val_loss', patience = 5, factor = 0.5, verbose = 1)
+
 
 for i in range(48):
     train_sort = train_data[1095*(i):1095*(i+1)]

@@ -35,7 +35,7 @@ def preprocess_data(data):
 def hahaha(a, x_train, y_train, x_val, y_val, x_test):
     x = []
     for q in quantiles:
-        filepath_cp = f'c:/data/test/solar/checkpoint/solar_checkpoint4_time{i}-{a}-{q}.hdf5'
+        filepath_cp = f'c:/data/test/solar/checkpoint/solar_checkpoint5_time{i}-{a}-{q}.hdf5'
         model = load_model(filepath_cp, compile = False)
         pred = pd.DataFrame(model.predict(x_test).round(2))
         x.append(pred)
@@ -69,52 +69,60 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCh
 es = EarlyStopping(monitor = 'val_loss', patience = 10)
 lr = ReduceLROnPlateau(monitor = 'val_loss', patience = 5, factor = 0.3, verbose = 1)
 
-e=[]
-f=[]
+x_test_data = []
 for j in range(81):
     file_path = 'c:/data/test/solar/test/' + str(j) + '.csv'
     temp = pd.read_csv(file_path)
     temp = preprocess_data(temp)
-    temp = np.array(temp)
-    b=[]
-    c=[]
-    for i in range(48):
-        train_sort = train_data[1095*(i):1095*(i+1)]
-        train_sort = np.array(train_sort)
-        y = train_sort[7:,-1] #(1088,)
+    x_test_data.append(temp)
+x_test_data = pd.concat(x_test_data)
+print(x_test_data.shape) # (27216,7)
+x_test_data = np.array(x_test_data)
+x_test_data = x_test_data.reshape(81,7,48,7)
+x_test_data = np.transpose(x_test_data, axes=(2,0,1,3))
 
-        from sklearn.preprocessing import StandardScaler
-        scaler = StandardScaler()
-        scaler.fit(train_sort)
-        train_sort = scaler.transform(train_sort)
+b=[]
+c=[]
+x_test=[]
+for i in range(48):
+    train_sort = train_data[1095*(i):1095*(i+1)]
+    train_sort = np.array(train_sort)
+    y = train_sort[7:,-1] #(1088,)
 
-        x = split_x(train_sort, 7)
-        x = x[:-2,:] #(1087,7,7)
-        y1 = y[:-1] #(1087,)
-        y2 = y[1:] #(1087,)
+    from sklearn.preprocessing import StandardScaler
+    scaler = StandardScaler()
+    scaler.fit(train_sort)
+    train_sort = scaler.transform(train_sort)
 
-        from sklearn.model_selection import train_test_split
-        x_train, x_val, y1_train, y1_val, y2_train, y2_val = train_test_split(x, y1, y2, train_size=0.8, shuffle=True, random_state=32)
+    x = split_x(train_sort, 7)
+    x = x[:-2,:] #(1087,7,7)
+    y1 = y[:-1] #(1087,)
+    y2 = y[1:] #(1087,)
 
-        temp = temp.reshape(7,48,7)
-        temp = np.transpose(temp, axes=(1,0,2))
-        x_test = temp[i,:,:]
-        x_test = scaler.transform(x_test)
-        x_test = x_test.reshape(1,7,7)
-        temp_day7 = hahaha(0, x_train, y1_train, x_val, y1_val, x_test)
-        temp_day8 = hahaha(1, x_train, y2_train, x_val, y2_val, x_test)
-        b.append(temp_day7)
-        c.append(temp_day8)
-    one_day7 = pd.concat(b, axis = 0)
-    one_day8 = pd.concat(c, axis = 0)
-    e.append(one_day7)
-    f.append(one_day8)
-day7 = pd.concat(e, axis=0)
-day8 = pd.concat(f, axis=0)
+    from sklearn.model_selection import train_test_split
+    x_train, x_val, y1_train, y1_val, y2_train, y2_val = train_test_split(x, y1, y2, train_size=0.8, shuffle=True, random_state=32)
+
+    x_test = x_test_data[i,:,:,:]
+    x_test = x_test.reshape(567,7)
+    x_test = scaler.transform(x_test)
+    x_test = x_test.reshape(81,7,7)
+    temp_day7 = hahaha(0, x_train, y1_train, x_val, y1_val, x_test)
+    temp_day8 = hahaha(1, x_train, y2_train, x_val, y2_val, x_test)
+    b.append(temp_day7)
+    c.append(temp_day8)
+day7 = pd.concat(b, axis = 0)
+day8 = pd.concat(c, axis = 0)
+
 day7 = day7.to_numpy()
 day8 = day8.to_numpy()
+day7 = day7.reshape(48,81,9)
+day8 = day8.reshape(48,81,9)
+day7 = np.transpose(day7, axes=(1,0,2))
+day8 = np.transpose(day8, axes=(1,0,2))
+day7 = day7.reshape(3888, 9)
+day8 = day8.reshape(3888, 9)
 sub.loc[sub.id.str.contains("Day7"), "q_0.1":] = day7.round(2)
 sub.loc[sub.id.str.contains("Day8"), "q_0.1":] = day8.round(2)
 
-sub.to_csv('c:/data/test/solar/sample_submission9_check.csv', index=False)        
+sub.to_csv('c:/data/test/solar/sample_submission11_check.csv', index=False)        
 
