@@ -10,6 +10,12 @@ def Add_features(data):
     data['cos'] = np.cos(np.pi/2 - np.abs(data['Hour']%12 - 6)/6*np.pi/2)
     data.insert(1,'GHI',data['DNI']*data['cos']+data['DHI'])
     data.drop(['cos'], axis= 1, inplace = True)
+    c = 243.12
+    b = 17.62
+    gamma = (b * (data['T']) / (c + (data['T']))) + np.log(data['RH'] / 100)
+    dp = ( c * gamma) / (b - gamma)
+    data.insert(1,'Td',dp) 
+    data.insert(1,'T-Td',data['T']-data['Td'])
     return data
 
 def split_x(data, size):
@@ -29,12 +35,12 @@ quantiles = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 def preprocess_data(data):
     data = Add_features(data)
     temp = data.copy()
-    temp = temp[['GHI', 'DHI', 'DNI', 'WS', 'RH', 'T','TARGET']]                          
+    temp = temp[['GHI', 'DHI', 'DNI', 'WS', 'RH', 'T','T-Td','TARGET']]                          
     return temp.iloc[:, :]
 
 def DaconModel():
     model = Sequential()
-    model.add(Conv1D(256,2, padding='same', input_shape=(7, 7),activation='relu'))
+    model.add(Conv1D(256,2, padding='same', input_shape=(7, 8),activation='relu'))
     model.add(Conv1D(128,2, padding='same',activation='relu'))
     model.add(Conv1D(64,2, padding='same',activation='relu'))
     model.add(Conv1D(32,2, padding='same',activation='relu'))
@@ -54,7 +60,7 @@ def only_compile(a, x_train, y_train, x_val, y_val):
         model = DaconModel()
         optimizer = Adam(lr=0.002)
         model.compile(loss = lambda y_true,y_pred: quantile_loss(q,y_true,y_pred), optimizer = optimizer, metrics = [lambda y,y_pred: quantile_loss(q,y,y_pred)])
-        filepath = f'c:/data/test/solar/checkpoint/solar_checkpoint5_time{i}-{a}-{q}.hdf5'
+        filepath = f'c:/data/test/solar/checkpoint/solar_checkpoint8_time{i}-{a}-{q}.hdf5'
         cp = ModelCheckpoint(filepath, save_best_only=True, monitor = 'val_loss')
         model.fit(x_train,y_train,epochs = epochs, batch_size = bs, validation_data = (x_val,y_val),callbacks = [es,lr,cp])
         
@@ -83,6 +89,19 @@ train_trans = pd.read_csv('c:/data/test/solar/train_trans.csv')
 train_data = preprocess_data(train_trans) # (52560,7)
 
 
+df_test = []
+for i in range(81):
+    file_path = 'c:/data/test/solar/test/' + str(i) + '.csv'
+    temp = pd.read_csv(file_path)
+    temp = preprocess_data(temp)
+    df_test.append(temp)
+test = pd.concat(df_test) # (27216, 7)
+test_data = test.values
+test_data = test_data.reshape(81,7,48,8)
+test_data = np.transpose(test_data, axes=(0,2,1,3))
+test_data = test_data.reshape(27216,8)
+
+
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
 es = EarlyStopping(monitor = 'val_loss', patience = 15)
 lr = ReduceLROnPlateau(monitor = 'val_loss', patience = 5, factor = 0.5, verbose = 1)
@@ -106,7 +125,7 @@ for i in range(48):
     from sklearn.model_selection import train_test_split
     x_train, x_val, y1_train, y1_val, y2_train, y2_val = train_test_split(x, y1, y2, train_size=0.8, shuffle=True, random_state=32)
     
-    epochs = 1000
+    epochs = 10000
     bs = 32
     only_compile(0, x_train, y1_train, x_val, y1_val)
     only_compile(1, x_train, y2_train, x_val, y2_val)

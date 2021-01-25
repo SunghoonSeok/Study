@@ -54,7 +54,7 @@ def only_compile(a, x_train, y_train, x_val, y_val):
         model = DaconModel()
         optimizer = Adam(lr=0.002)
         model.compile(loss = lambda y_true,y_pred: quantile_loss(q,y_true,y_pred), optimizer = optimizer, metrics = [lambda y,y_pred: quantile_loss(q,y,y_pred)])
-        filepath = f'c:/data/test/solar/checkpoint/solar_checkpoint5_time{i}-{a}-{q}.hdf5'
+        filepath = f'c:/data/test/solar/checkpoint/solar_checkpoint7_time{i}-{a}-{q}.hdf5'
         cp = ModelCheckpoint(filepath, save_best_only=True, monitor = 'val_loss')
         model.fit(x_train,y_train,epochs = epochs, batch_size = bs, validation_data = (x_val,y_val),callbacks = [es,lr,cp])
         
@@ -87,8 +87,8 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCh
 es = EarlyStopping(monitor = 'val_loss', patience = 15)
 lr = ReduceLROnPlateau(monitor = 'val_loss', patience = 5, factor = 0.5, verbose = 1)
 
-
-for i in range(48):
+modi = [7,18]
+for i in modi:
     train_sort = train_data[1095*(i):1095*(i+1)]
     train_sort = np.array(train_sort)
     y = train_sort[7:,-1] #(1088,)
@@ -106,7 +106,7 @@ for i in range(48):
     from sklearn.model_selection import train_test_split
     x_train, x_val, y1_train, y1_val, y2_train, y2_val = train_test_split(x, y1, y2, train_size=0.8, shuffle=True, random_state=32)
     
-    epochs = 1000
+    epochs = 1000000
     bs = 32
     only_compile(0, x_train, y1_train, x_val, y1_val)
     only_compile(1, x_train, y2_train, x_val, y2_val)

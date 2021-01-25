@@ -45,8 +45,10 @@ def DaconModel():
     model.add(Dense(8,activation='relu'))
     model.add(Dense(1))
     return model
+
 from tensorflow.keras.optimizers import Adam, Adadelta, Adamax, Adagrad
 from tensorflow.keras.optimizers import RMSprop, SGD, Nadam
+
 def only_compile(a, x_train, y_train, x_val, y_val):
     
     for q in quantiles:
@@ -59,7 +61,6 @@ def only_compile(a, x_train, y_train, x_val, y_val):
         model.fit(x_train,y_train,epochs = epochs, batch_size = bs, validation_data = (x_val,y_val),callbacks = [es,lr,cp])
         
     return 
-
 
 
 # 1. 데이터
@@ -80,22 +81,7 @@ df.loc[:,:] = data
 df.to_csv('c:/data/test/solar/train_trans.csv', index=False)
 # 시간별 모델 따로 생성
 train_trans = pd.read_csv('c:/data/test/solar/train_trans.csv')
-train_data = preprocess_data(train_trans) # (52560,7)
-
-
-
-
-df_test = []
-for i in range(81):
-    file_path = 'c:/data/test/solar/test/' + str(i) + '.csv'
-    temp = pd.read_csv(file_path)
-    temp = preprocess_data(temp)
-    df_test.append(temp)
-test = pd.concat(df_test) # (27216, 6)
-test_data = test.values
-test_data = test_data.reshape(81,7,48,6)
-test_data = np.transpose(test_data, axes=(0,2,1,3))
-test_data = test_data.reshape(27216,6)
+train_data = preprocess_data(train_trans) # (52560,6)
 
 
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
@@ -114,7 +100,7 @@ for i in range(48):
     train_sort = scaler.transform(train_sort)
 
     x = split_x(train_sort, 7)
-    x = x[:-2,:] #(1087,7,7)
+    x = x[:-2,:] #(1087,7,6)
     y1 = y[:-1] #(1087,)
     y2 = y[1:] #(1087,)
 

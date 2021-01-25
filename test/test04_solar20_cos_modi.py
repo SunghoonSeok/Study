@@ -7,9 +7,26 @@ from tensorflow.keras.backend import mean, maximum
 
 # 필요 함수 정의
 def Add_features(data):
-    data['cos'] = np.cos(np.pi/2 - np.abs(data['Hour']%12 - 6)/6*np.pi/2)
+    def make_cos(data): 
+        data /=data
+        c = data.dropna()
+        d = c.to_numpy()
+
+        def into_cosine(seq):
+            for i in range(len(seq)):
+                if i < len(seq)/2:
+                    seq[i] = float((len(seq)-1)/2) - (i)
+                if i >= len(seq)/2:
+                    seq[i] = seq[len(seq) - i - 1]
+            seq = seq/ np.max(seq) * np.pi/2
+            seq = np.cos(seq)
+            return seq
+
+        d = into_cosine(d)
+        data = data.replace(to_replace = np.NaN, value = 0)
+        data.loc[data['cos'] == 1] = d
+        return dataframe
     data.insert(1,'GHI',data['DNI']*data['cos']+data['DHI'])
-    data.drop(['cos'], axis= 1, inplace = True)
     return data
 
 def split_x(data, size):
@@ -27,8 +44,9 @@ def quantile_loss(q, y_true, y_pred):
 quantiles = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 
 def preprocess_data(data):
-    data = Add_features(data)
     temp = data.copy()
+    temp['cos'] = data.loc[:,'TARGET']
+    temp = Add_features(temp)
     temp = temp[['GHI', 'DHI', 'DNI', 'WS', 'RH', 'T','TARGET']]                          
     return temp.iloc[:, :]
 
@@ -45,8 +63,10 @@ def DaconModel():
     model.add(Dense(8,activation='relu'))
     model.add(Dense(1))
     return model
+
 from tensorflow.keras.optimizers import Adam, Adadelta, Adamax, Adagrad
 from tensorflow.keras.optimizers import RMSprop, SGD, Nadam
+
 def only_compile(a, x_train, y_train, x_val, y_val):
     
     for q in quantiles:
@@ -54,7 +74,7 @@ def only_compile(a, x_train, y_train, x_val, y_val):
         model = DaconModel()
         optimizer = Adam(lr=0.002)
         model.compile(loss = lambda y_true,y_pred: quantile_loss(q,y_true,y_pred), optimizer = optimizer, metrics = [lambda y,y_pred: quantile_loss(q,y,y_pred)])
-        filepath = f'c:/data/test/solar/checkpoint/solar_checkpoint5_time{i}-{a}-{q}.hdf5'
+        filepath = f'c:/data/test/solar/checkpoint/solar_checkpoint9_time{i}-{a}-{q}.hdf5'
         cp = ModelCheckpoint(filepath, save_best_only=True, monitor = 'val_loss')
         model.fit(x_train,y_train,epochs = epochs, batch_size = bs, validation_data = (x_val,y_val),callbacks = [es,lr,cp])
         
@@ -87,8 +107,8 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCh
 es = EarlyStopping(monitor = 'val_loss', patience = 15)
 lr = ReduceLROnPlateau(monitor = 'val_loss', patience = 5, factor = 0.5, verbose = 1)
 
-
-for i in range(48):
+mode=[]
+for i in modi:
     train_sort = train_data[1095*(i):1095*(i+1)]
     train_sort = np.array(train_sort)
     y = train_sort[7:,-1] #(1088,)
@@ -106,13 +126,7 @@ for i in range(48):
     from sklearn.model_selection import train_test_split
     x_train, x_val, y1_train, y1_val, y2_train, y2_val = train_test_split(x, y1, y2, train_size=0.8, shuffle=True, random_state=32)
     
-    epochs = 1000
+    epochs = 1000000
     bs = 32
     only_compile(0, x_train, y1_train, x_val, y1_val)
     only_compile(1, x_train, y2_train, x_val, y2_val)
-
-
-    
-
-
-

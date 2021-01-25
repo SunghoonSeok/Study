@@ -7,9 +7,26 @@ from tensorflow.keras.backend import mean, maximum
 
 # 필요 함수 정의
 def Add_features(data):
-    data['cos'] = np.cos(np.pi/2 - np.abs(data['Hour']%12 - 6)/6*np.pi/2)
+    def make_cos(data): 
+        data /=data
+        c = data.dropna()
+        d = c.to_numpy()
+
+        def into_cosine(seq):
+            for i in range(len(seq)):
+                if i < len(seq)/2:
+                    seq[i] = float((len(seq)-1)/2) - (i)
+                if i >= len(seq)/2:
+                    seq[i] = seq[len(seq) - i - 1]
+            seq = seq/ np.max(seq) * np.pi/2
+            seq = np.cos(seq)
+            return seq
+
+        d = into_cosine(d)
+        data = data.replace(to_replace = np.NaN, value = 0)
+        data.loc[data['cos'] == 1] = d
+        return dataframe
     data.insert(1,'GHI',data['DNI']*data['cos']+data['DHI'])
-    data.drop(['cos'], axis= 1, inplace = True)
     return data
 
 def split_x(data, size):
@@ -27,15 +44,16 @@ def quantile_loss(q, y_true, y_pred):
 quantiles = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 
 def preprocess_data(data):
-    data = Add_features(data)
     temp = data.copy()
+    temp['cos'] = data.loc[:,'TARGET']
+    temp = Add_features(temp)
     temp = temp[['GHI', 'DHI', 'DNI', 'WS', 'RH', 'T','TARGET']]                          
     return temp.iloc[:, :]
 
 def hahaha(a, x_train, y_train, x_val, y_val, x_test):
     x = []
     for q in quantiles:
-        filepath_cp = f'c:/data/test/solar/checkpoint/solar_checkpoint5_time{i}-{a}-{q}.hdf5'
+        filepath_cp = f'c:/data/test/solar/checkpoint/solar_checkpoint9_time{i}-{a}-{q}.hdf5'
         model = load_model(filepath_cp, compile = False)
         pred = pd.DataFrame(model.predict(x_test).round(2))
         x.append(pred)
@@ -120,5 +138,5 @@ day8 = day8.reshape(3888, 9)
 sub.loc[sub.id.str.contains("Day7"), "q_0.1":] = day7.round(2)
 sub.loc[sub.id.str.contains("Day8"), "q_0.1":] = day8.round(2)
 
-sub.to_csv('c:/data/test/solar/sample_submission11_check.csv', index=False)        
+sub.to_csv('c:/data/test/solar/sample_submission15_check.csv', index=False)        
 

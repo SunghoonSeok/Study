@@ -62,7 +62,7 @@ df.loc[:,:] = data
 df.to_csv('c:/data/test/solar/train_trans.csv', index=False)
 # 시간별 모델 따로 생성
 train_trans = pd.read_csv('c:/data/test/solar/train_trans.csv')
-train_data = preprocess_data(train_trans) # (52560,7)
+train_data = preprocess_data(train_trans) # (52560,6)
 
 
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
@@ -76,7 +76,7 @@ for j in range(81):
     temp = preprocess_data(temp)
     x_test_data.append(temp)
 x_test_data = pd.concat(x_test_data)
-print(x_test_data.shape) # (27216,7)
+print(x_test_data.shape) # (27216,6)
 x_test_data = np.array(x_test_data)
 x_test_data = x_test_data.reshape(81,7,48,6)
 x_test_data = np.transpose(x_test_data, axes=(2,0,1,3))
@@ -95,7 +95,7 @@ for i in range(48):
     train_sort = scaler.transform(train_sort)
 
     x = split_x(train_sort, 7)
-    x = x[:-2,:] #(1087,7,7)
+    x = x[:-2,:] #(1087,7,6)
     y1 = y[:-1] #(1087,)
     y2 = y[1:] #(1087,)
 
