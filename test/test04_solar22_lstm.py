@@ -34,15 +34,13 @@ def preprocess_data(data):
 
 def DaconModel():
     model = Sequential()
-    model.add(Conv1D(256,2, padding='same', input_shape=(7, 7),activation='relu'))
-    model.add(Conv1D(128,2, padding='same',activation='relu'))
-    model.add(Conv1D(64,2, padding='same',activation='relu'))
-    model.add(Conv1D(32,2, padding='same',activation='relu'))
-    model.add(Flatten())
+    model.add(LSTM(256, activation='relu', input_shape=(7,7)))
+    model.add(Dense(128,activation='relu'))
     model.add(Dense(64,activation='relu'))
     model.add(Dense(32,activation='relu'))
     model.add(Dense(16,activation='relu'))
     model.add(Dense(8,activation='relu'))
+    model.add(Dense(4,activation='relu'))
     model.add(Dense(1))
     return model
 
@@ -56,7 +54,7 @@ def only_compile(a, x_train, y_train, x_val, y_val):
         model = DaconModel()
         optimizer = Adam(lr=0.002)
         model.compile(loss = lambda y_true,y_pred: quantile_loss(q,y_true,y_pred), optimizer = optimizer, metrics = [lambda y,y_pred: quantile_loss(q,y,y_pred)])
-        filepath = f'c:/data/test/solar/checkpoint/solar_checkpoint7_time{i}-{a}-{q}.hdf5'
+        filepath = f'c:/data/test/solar/checkpoint/solar_checkpoint10_time{i}-{a}-{q}.hdf5'
         cp = ModelCheckpoint(filepath, save_best_only=True, monitor = 'val_loss')
         model.fit(x_train,y_train,epochs = epochs, batch_size = bs, validation_data = (x_val,y_val),callbacks = [es,lr,cp])
         
@@ -112,4 +110,9 @@ for i in range(48):
     bs = 32
     only_compile(0, x_train, y1_train, x_val, y1_val)
     only_compile(1, x_train, y2_train, x_val, y2_val)
+
+
+    
+
+
 

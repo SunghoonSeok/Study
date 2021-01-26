@@ -6,28 +6,42 @@ from tensorflow.keras.layers import Dense, Input, LSTM, Dropout, Conv1D, Flatten
 from tensorflow.keras.backend import mean, maximum
 
 # 필요 함수 정의
-def Add_features(data):
-    def make_cos(data): 
-        data /=data
-        c = data.dropna()
-        d = c.to_numpy()
+train = pd.read_csv('c:/data/test/solar/train/train.csv')
+sub = pd.read_csv('c:/data/test/solar/sample_submission.csv')
 
-        def into_cosine(seq):
-            for i in range(len(seq)):
-                if i < len(seq)/2:
-                    seq[i] = float((len(seq)-1)/2) - (i)
-                if i >= len(seq)/2:
-                    seq[i] = seq[len(seq) - i - 1]
-            seq = seq/ np.max(seq) * np.pi/2
-            seq = np.cos(seq)
-            return seq
+def make_cos(dataframe): 
+    dataframe /=dataframe
+    c = dataframe.dropna()
+    d = c.to_numpy()
 
-        d = into_cosine(d)
-        data = data.replace(to_replace = np.NaN, value = 0)
-        data.loc[data['cos'] == 1] = d
-        return dataframe
+    def into_cosine(seq):
+        for i in range(len(seq)):
+            if i < len(seq)/2:
+                seq[i] = float((len(seq)-1)/2) - (i)
+            if i >= len(seq)/2:
+                seq[i] = seq[len(seq) - i - 1]
+        seq = seq/ np.max(seq) * np.pi/2
+        seq = np.cos(seq)
+        return seq
+
+    d = into_cosine(d)
+    dataframe = dataframe.replace(to_replace = np.NaN, value = 0)
+    dataframe.loc[dataframe['cos'] == 1] = d
+    return dataframe
+
+
+def preprocess_data(data, is_train = True):
+    a = pd.DataFrame()
+    for i in range(int(len(data)/48)):
+        tmp = pd.DataFrame()
+        tmp['cos'] = data.loc[i*48:(i+1)*48-1,'TARGET']
+        tmp['cos'] = make_cos(tmp)
+        a = pd.concat([a,tmp])
+    data['cos'] = a
     data.insert(1,'GHI',data['DNI']*data['cos']+data['DHI'])
-    return data
+    temp = data.copy()
+    temp = temp[['GHI','DHI','DNI','WS','RH','T','TARGET']]
+    return temp.iloc[:, :]
 
 def split_x(data, size):
     x = []
@@ -42,13 +56,8 @@ def quantile_loss(q, y_true, y_pred):
     return K.mean(K.maximum(q*err, (q-1)*err), axis=-1)
 
 quantiles = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-
-def preprocess_data(data):
-    temp = data.copy()
-    temp['cos'] = data.loc[:,'TARGET']
-    temp = Add_features(temp)
-    temp = temp[['GHI', 'DHI', 'DNI', 'WS', 'RH', 'T','TARGET']]                          
-    return temp.iloc[:, :]
+                      
+    
 
 def DaconModel():
     model = Sequential()
@@ -83,11 +92,11 @@ def only_compile(a, x_train, y_train, x_val, y_val):
 
 
 # 1. 데이터
-train = pd.read_csv('c:/data/test/solar/train/train.csv')
-sub = pd.read_csv('c:/data/test/solar/sample_submission.csv')
 
-data = train.values
+
+data = preprocess_data(train, is_train=True)
 print(data.shape)
+'''
 np.save('c:/data/test/solar/train.npy', arr=data)
 data =np.load('c:/data/test/solar/train.npy')
 
@@ -130,3 +139,9 @@ for i in range(48):
     bs = 32
     only_compile(0, x_train, y1_train, x_val, y1_val)
     only_compile(1, x_train, y2_train, x_val, y2_val)
+
+
+
+'''
+
+
