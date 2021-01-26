@@ -60,7 +60,7 @@ quantiles = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 def hahaha(a, x_train, y_train, x_val, y_val, x_test):
     x = []
     for q in quantiles:
-        filepath_cp = f'c:/data/test/solar/checkpoint/solar_checkpoint9_time{i}-{a}-{q}.hdf5'
+        filepath_cp = f'c:/data/test/solar/checkpoint/solar_checkpoint_time{i}-{a}-{q}.hdf5'
         model = load_model(filepath_cp, compile = False)
         pred = pd.DataFrame(model.predict(x_test).round(2))
         x.append(pred)
@@ -146,4 +146,4 @@ day8 = day8.reshape(3888, 9)
 sub.loc[sub.id.str.contains("Day7"), "q_0.1":] = day7.round(2)
 sub.loc[sub.id.str.contains("Day8"), "q_0.1":] = day8.round(2)
 
-sub.to_csv('c:/data/test/solar/sample_submission16_check.csv', index=False)        
+sub.to_csv('c:/data/test/solar/sample_submission17_check.csv', index=False)        
