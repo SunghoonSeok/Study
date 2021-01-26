@@ -1,3 +1,7 @@
+# 날짜7일로 날짜2일 묶어서 출력 -> 잘못된 방법
+# 총 일수, 묶은 일수, 일당 데이터, 컬럼 4차원 행렬
+# conv2d
+
 import numpy as np
 import pandas as pd
 

@@ -1,3 +1,6 @@
+# Td, T-Td 컬럼 생성
+# 결과는 별로였음
+
 import numpy as np
 import pandas as pd
 import tensorflow.keras.backend as K

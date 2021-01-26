@@ -1,3 +1,6 @@
+# LGBM 베이스라인
+# MinMax 전처리
+
 import pandas as pd
 import numpy as np
 

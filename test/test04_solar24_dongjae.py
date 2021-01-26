@@ -1,3 +1,7 @@
+# 동재가 만든 
+# csv파일 합치고 중간값을 선택하여 다시 csv파일 생성
+# 이상치를 없애는 효과를 기대 -> 효과가 있다!
+
 import numpy as np
 import pandas as pd
 import tensorflow.keras.backend as K

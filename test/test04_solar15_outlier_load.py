@@ -1,3 +1,5 @@
+# solar 14,15에서 생성된 체크포인트 로드하기
+
 import numpy as np
 import pandas as pd
 import tensorflow.keras.backend as K

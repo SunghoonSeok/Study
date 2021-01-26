@@ -1,3 +1,6 @@
+# 7일과 2일 같이 묶은걸 앙상블
+# quantile을 하려 했지만 그냥 모델만 9번 돌린것뿐...
+
 import pandas as pd
 import numpy as np
 

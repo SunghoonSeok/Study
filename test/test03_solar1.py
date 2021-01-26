@@ -1,3 +1,6 @@
+# data 로드하기
+# index = None
+
 import numpy as np
 import pandas as pd
 

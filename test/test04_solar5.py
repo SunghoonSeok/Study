@@ -1,3 +1,5 @@
+
+
 import pandas as pd
 import numpy as np
 
@@ -37,13 +39,6 @@ for i in range(81):
 
 X_test = pd.concat(df_test)
 X_test.shape
-
-
-
-
-
-
-
 
 
 

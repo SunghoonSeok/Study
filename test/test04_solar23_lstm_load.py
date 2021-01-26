@@ -1,3 +1,5 @@
+# modify할 부분이 너무 많아 modify 생략...
+
 import numpy as np
 import pandas as pd
 import tensorflow.keras.backend as K

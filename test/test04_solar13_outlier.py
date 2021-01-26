@@ -1,3 +1,6 @@
+# 이상치를 잡기 위해 이상한 부분 다시 돌려 체크포인트 재 생성
+# 결과치 좋았음
+
 import numpy as np
 import pandas as pd
 import tensorflow.keras.backend as K

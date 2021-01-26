@@ -1,3 +1,5 @@
+# 원하는 부분(이상치가 생긴 부분) 따로 돌려 체크포인트 재생성
+
 import numpy as np
 import pandas as pd
 import tensorflow.keras.backend as K

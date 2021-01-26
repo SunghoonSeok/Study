@@ -1,3 +1,7 @@
+# 해가 뜨는 시간을 통일하는 것이 아닌
+# 각 날짜별 해 뜨는 시간 해지는 시간 나타내어 cos값 대입하고
+# GHI 구하기
+
 import numpy as np
 import pandas as pd
 import tensorflow.keras.backend as K
@@ -9,11 +13,12 @@ from tensorflow.keras.backend import mean, maximum
 train = pd.read_csv('c:/data/test/solar/train/train.csv')
 sub = pd.read_csv('c:/data/test/solar/sample_submission.csv')
 
+# 코사인 컬럼을 만들기 위한 함수
 def make_cos(dataframe): 
-    dataframe /=dataframe
-    c = dataframe.dropna()
+    dataframe /=dataframe # 데이터프레임을 데이터 프레임으로 나눈다. 원래값이 0이 아니라면 1이겠지?
+    c = dataframe.dropna() # 0인 값들은 NaN이 나오니 그 부분을 걸러내고 cos값 대입해줄거임
     d = c.to_numpy()
-
+    # 해가 중천에 뜬 곳을 0도로 잡고 지면을 절대값 90도로 잡아 각도를 잡고 cosine값 생성
     def into_cosine(seq):
         for i in range(len(seq)):
             if i < len(seq)/2:
@@ -25,14 +30,15 @@ def make_cos(dataframe):
         return seq
 
     d = into_cosine(d)
-    dataframe = dataframe.replace(to_replace = np.NaN, value = 0)
-    dataframe.loc[dataframe['cos'] == 1] = d
+    dataframe = dataframe.replace(to_replace = np.NaN, value = 0) # Nan이 떴던 곳은 0으로 대체
+    dataframe.loc[dataframe['cos'] == 1] = d # cos컬럼에 값 대입
     return dataframe
 
-
+# 데이터 열 선택
 def preprocess_data(data, is_train = True):
     a = pd.DataFrame()
-    for i in range(int(len(data)/48)):
+    # 일별로 나누어 생성후 합침, 그래야 해 뜨고 지는 시간을 일별로 계산 가능
+    for i in range(int(len(data)/48)): 
         tmp = pd.DataFrame()
         tmp['cos'] = data.loc[i*48:(i+1)*48-1,'TARGET']
         tmp['cos'] = make_cos(tmp)
@@ -90,6 +96,7 @@ def only_compile(a, x_train, y_train, x_val, y_val):
     return 
 
 # 1. 데이터
+# 데이터를 시간별로 나누기 전에 cos값을 대입하여 GHI를 구해내고 다시 시간별로 나눔
 data = train.copy()
 data = preprocess_data(data, is_train=True)
 print(data.shape)

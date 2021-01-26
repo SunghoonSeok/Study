@@ -1,3 +1,5 @@
+# WS 컬럼 제거 -> 결과 별로였음
+
 import numpy as np
 import pandas as pd
 import tensorflow.keras.backend as K

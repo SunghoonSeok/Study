@@ -1,3 +1,5 @@
+# solar13을 lstm으로 돌리기 -> 결과 별로
+
 import numpy as np
 import pandas as pd
 import tensorflow.keras.backend as K

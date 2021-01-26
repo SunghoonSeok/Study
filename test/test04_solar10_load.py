@@ -1,3 +1,5 @@
+# solar 9에서 생성된 체크포인트를 load
+
 import numpy as np
 import pandas as pd
 import tensorflow.keras.backend as K
@@ -32,6 +34,7 @@ def preprocess_data(data):
     temp = temp[['GHI', 'DHI', 'DNI', 'WS', 'RH', 'T','TARGET']]                          
     return temp.iloc[:, :]
 
+# 모델 로드를 위한 함수, a는 Day7,8을 구분하기 위한 변수이다
 def hahaha(a, x_train, y_train, x_val, y_val, x_test):
     x = []
     for q in quantiles:
@@ -40,7 +43,7 @@ def hahaha(a, x_train, y_train, x_val, y_val, x_test):
         pred = pd.DataFrame(model.predict(x_test).round(2))
         x.append(pred)
     df_temp = pd.concat(x, axis = 1)
-    df_temp[df_temp<0] = 0
+    df_temp[df_temp<0] = 0 # -값은 나올수 없기에 0으로 처리
      
     return df_temp
 
@@ -64,7 +67,7 @@ df.to_csv('c:/data/test/solar/train_trans.csv', index=False)
 train_trans = pd.read_csv('c:/data/test/solar/train_trans.csv')
 train_data = preprocess_data(train_trans) # (52560,7)
 
-
+# 테스트 데이터 불러오고 컬럼고르고 시간별 분류
 x_test_data = []
 for j in range(81):
     file_path = 'c:/data/test/solar/test/' + str(j) + '.csv'
@@ -80,6 +83,7 @@ x_test_data = np.transpose(x_test_data, axes=(2,0,1,3))
 b=[]
 c=[]
 x_test=[]
+# 시간별 데이터 나누고 모델 로드하기
 for i in range(48):
     train_sort = train_data[1095*(i):1095*(i+1)]
     train_sort = np.array(train_sort)
@@ -109,6 +113,7 @@ for i in range(48):
 day7 = pd.concat(b, axis = 0)
 day8 = pd.concat(c, axis = 0)
 
+# 시간별로 분류했던 데이터 원상복구
 day7 = day7.to_numpy()
 day8 = day8.to_numpy()
 day7 = day7.reshape(48,81,9)

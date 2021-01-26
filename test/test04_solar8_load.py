@@ -1,3 +1,5 @@
+# solar7 checkpoint 집어 넣기
+
 import numpy as np
 import pandas as pd
 import tensorflow.keras.backend as K

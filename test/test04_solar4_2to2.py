@@ -1,3 +1,5 @@
+# 2일 묶어서 2일 뽑는거만 코딩
+
 import pandas as pd
 import numpy as np
 
