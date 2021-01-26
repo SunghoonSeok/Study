@@ -83,7 +83,7 @@ def only_compile(a, x_train, y_train, x_val, y_val):
         model = DaconModel()
         optimizer = Adam(lr=0.002)
         model.compile(loss = lambda y_true,y_pred: quantile_loss(q,y_true,y_pred), optimizer = optimizer, metrics = [lambda y,y_pred: quantile_loss(q,y,y_pred)])
-        filepath = f'c:/data/test/solar/checkpoint/solar_checkpoint9_time{i}-{a}-{q}.hdf5'
+        filepath = f'c:/data/test/solar/checkpoint/solar_checkpoint11_time{i}-{a}-{q}.hdf5'
         cp = ModelCheckpoint(filepath, save_best_only=True, monitor = 'val_loss')
         model.fit(x_train,y_train,epochs = epochs, batch_size = bs, validation_data = (x_val,y_val),callbacks = [es,lr,cp])
         
@@ -108,8 +108,8 @@ train_data = train_trans.copy()
 
 
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
-es = EarlyStopping(monitor = 'val_loss', patience = 15)
-lr = ReduceLROnPlateau(monitor = 'val_loss', patience = 5, factor = 0.5, verbose = 1)
+es = EarlyStopping(monitor = 'val_loss', patience = 30)
+lr = ReduceLROnPlateau(monitor = 'val_loss', patience = 15, factor = 0.5, verbose = 1)
 
 
 for i in range(48):
