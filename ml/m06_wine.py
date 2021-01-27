@@ -8,6 +8,7 @@ from sklearn.svm import LinearSVC, SVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LogisticRegression
 
 # 1. 데이터
 dataset = load_wine()
@@ -22,15 +23,15 @@ from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True)
 
 
-from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
 scaler.fit(x_train)
 x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
 
 # 2. 모델 구성
 
-model = SVC()
+model = RandomForestClassifier()
 
 
 # 3. 컴파일, 훈련
@@ -48,10 +49,13 @@ print(acc)
 # KNeighborsClassifier 0.9722222222222222
 # RandomForestClassifier 1.0
 # DecisionTreeClassifier 0.9722222222222222
+# LogisticRegression 1.0
+
 
 # Standard
 # Linear SVC 1.0
 # SVC 0.97222222222222220
-# KNeighborsClassifier 0.9722222222222222
-# RandomForestClassifier 0.9722222222222222
+# KNeighborsClassifier 1.0
+# RandomForestClassifier 1.0
 # DecisionTreeClassifier 0.9722222222222222
+# LogisticRegression 1.0
