@@ -71,3 +71,6 @@ for i in models:
 # KNeighborsRegressor()
 # model.score : 0.8085705151414402
 # r2_score : 0.8085705151414402
+
+# Tensorflow
+# R2 :  0.8907404253138521

@@ -58,3 +58,6 @@ print(acc)
 # RandomForestClassifier 0.9666666666666667 ~ 1.0
 # DecisionTreeClassifier 0.9666666666666667 ~ 1.0
 # LogisticRegression 0.9666666666666667
+
+# Tensorflow
+# 1.0

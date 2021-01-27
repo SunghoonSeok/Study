@@ -55,3 +55,6 @@ print(acc)
 # RandomForestClassifier 0.956140350877193
 # DecisionTreeClassifier 0.956140350877193
 # LogisticRegression 0.9824561403508771
+
+# Tensorflow
+# acc :  0.9912280440330505

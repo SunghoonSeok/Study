@@ -9,6 +9,7 @@ from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.linear_model import LinearRegression
+
 # 1. 데이터
 dataset = load_diabetes()
 x = dataset.data
@@ -35,6 +36,7 @@ for i in models:
     print("model.score :",result)
     acc = r2_score(y_test, y_pred)
     print("r2_score :",acc)
+
 
 # MinMax
 # LinearRegression()
@@ -69,3 +71,6 @@ for i in models:
 # KNeighborsRegressor()
 # model.score : 0.48762179487052615
 # r2_score : 0.48762179487052615
+
+# Tensorflow
+# R2 :  0.5208084824108226

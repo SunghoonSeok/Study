@@ -35,14 +35,16 @@ outputs = Dense(1)(dense1)
 
 model = Model(inputs=inputs, outputs=outputs)
 model.summary()
-
+from tensorflow.keras.optimizers import Adam, Adamax, Adadelta, Adagrad, SGD, RMSprop
+optimizer = Adam(lr=0.01)
 #3. 컴파일, 훈련
-model.compile(loss='mse', optimizer='adam', metrics=['mae'])
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-early_stopping = EarlyStopping(monitor='val_loss', patience=30, mode='auto')
+model.compile(loss='mse', optimizer=optimizer, metrics=['mae'])
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
+early_stopping = EarlyStopping(monitor='val_loss', patience=45, mode='auto')
+lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, mode='min', patience=15, verbose=1)
 # modelpath= '../data/modelcheckpoint/k46_5_diabetes_{epoch:02d}-{val_loss:.4f}.hdf5'
 # cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
-model.fit(x_train, y_train, batch_size=8, epochs=500, validation_data=(x_val, y_val), callbacks=[early_stopping])
+model.fit(x_train, y_train, batch_size=8, epochs=500, validation_data=(x_val, y_val), callbacks=[early_stopping, lr])
 
 #4. 평가, 예측
 loss, mae = model.evaluate(x_test, y_test, batch_size=8)
@@ -63,3 +65,11 @@ print("R2 : ", r2)
 # loss, mae :  2578.749267578125 39.9632682800293
 # RMSE :  50.78138772576483
 # R2 :  0.5208084824108226
+
+# loss, mae :  3342.843994140625 48.52605056762695
+# RMSE :  57.817338081980395
+# R2 :  0.5532652625764469
+
+# loss, mae :  2130.432861328125 37.37997817993164
+# RMSE :  46.15661521714147
+# R2 :  0.5958565909931389
