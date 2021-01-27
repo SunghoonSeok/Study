@@ -3,7 +3,7 @@
 
 import numpy as np
 from sklearn.datasets import load_diabetes
-
+import matplotlib.pyplot as plt
 dataset = load_diabetes()
 x = dataset.data
 y = dataset.target
@@ -40,7 +40,7 @@ model.summary()
 
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam', metrics=['mae'])
-model.fit(x_train, y_train, batch_size=4, epochs=400)
+model.fit(x_train, y_train, batch_size=4, epochs=100)
 
 #4. 평가, 예측
 loss, mae = model.evaluate(x_test, y_test, batch_size=4)
@@ -58,6 +58,9 @@ from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
 print("R2 : ", r2)
 
+plt.scatter(x, y)
+plt.plot(x, y_predict, color='red')
+plt.show()
 
 
 # 1
