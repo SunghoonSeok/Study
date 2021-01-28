@@ -51,22 +51,38 @@ model.summary()
 
 # 3. 컴파일, 훈련
 import datetime
-date_now = datetime.datetime.now()
-print(date_now) # 2021-01-27 10:06:48.393984
 
 
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+filepath='../data/modelcheckpoint/'
+filename='_{epoch:02d}-{val_loss:.4f}.hdf5'
+modelpath = "".join([filepath, "k45_", '{timer}', filename])
+
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.python.util.tf_export import keras_export
+from tensorflow.python.distribute import distributed_file_utils
+@keras_export('keras.callbacks.ModelCheckpoint')
+class MyModelCheckpoint(tf.keras.callbacks.ModelCheckpoint):
+    def _get_file_path(self, epoch, logs):
+        """Returns the file path for checkpoint."""
+        # pylint: disable=protected-access
+        try:
+        # `filepath` may contain placeholders such as `{epoch:02d}` and
+        # `{mape:.2f}`. A mismatch between logged metrics and the path's
+        # placeholders can cause formatting to fail.
+            file_path = self.filepath.format(epoch=epoch + 1,timer=datetime.datetime.now().strftime('%m%d_%H%M%S'), **logs)
+        except KeyError as e:
+            raise KeyError('Failed to format this callback filepath: "{}". '
+                        'Reason: {}'.format(self.filepath, e))
+        self._write_filepath = distributed_file_utils.write_filepath(
+            file_path, self.model.distribute_strategy)
+        return self._write_filepath
+
+cp = MyModelCheckpoint(filepath=modelpath, monitor='val_loss', save_best_only=True, mode='auto')
 early_stopping = EarlyStopping(monitor='val_loss', patience=5, mode='auto')
-filepath = '../data/modelcheckpoint/'
-filename = '_{epoch:02d}-{val_loss:.4f}.hdf5'
-epochs =7
-
-modelpath = "".join([filepath, "k45_", date_now.strftime('%H%M%S'), filename])
-# modelpath= '../data/modelcheckpoint/k45_mnist_{epoch:02d}-{val_loss:.4f}.hdf5'
-cp = ModelCheckpoint(modelpath, monitor='val_loss', save_best_only=True, mode='auto')
-
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-hist = model.fit(x_train, y_train, batch_size=128, epochs=epochs, validation_split=0.2, callbacks=[early_stopping, cp])
+hist = model.fit(x_train, y_train, batch_size=128, epochs=7, validation_split=0.2, callbacks=[early_stopping, cp])
 
 # 4. 평가, 예측
 result = model.evaluate(x_test, y_test, batch_size=128)
