@@ -29,17 +29,6 @@ for i in model:
     print(f'\n{i}')
     print('scores :', score)
 
-'''
-# 3. 컴파일, 훈련
-model.fit(x_train, y_train)
-# 4. 평가, 예측
-y_pred = model.predict(x_test)
-result = model.score(x_test, y_test)
-print(result)
-acc = accuracy_score(y_test, y_pred)
-print(acc)
-
-'''
 # LinearSVC()
 # scores : [0.95833333 1.         1.         0.91666667 0.91666667]
 
