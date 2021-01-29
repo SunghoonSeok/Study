@@ -22,34 +22,43 @@ print("acc :", acc)
 
 df = pd.DataFrame(dataset.data, columns=dataset.feature_names)
 new_data=[]
+feature=[]
 a = np.percentile(model.feature_importances_, q=25)
 
-
-for i in range(30):
+for i in range(len(dataset.data[0])):
     if model.feature_importances_[i] > a:
        new_data.append(df.iloc[:,i])
-print(a)
+       feature.append(dataset.feature_names[i])
+
 new_data = pd.concat(new_data, axis=1)
-print(new_data.shape)
+
         
 x2_train, x2_test, y2_train, y2_test = train_test_split(new_data, dataset.target, train_size=0.8, random_state=32)
 model2 = RandomForestClassifier(max_depth=4)   
 model2.fit(x2_train,y2_train)
 acc2 = model2.score(x2_test, y2_test)
-print("acc :", acc2)
-
+print("acc2 :", acc2)
+print(new_data.shape)
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plot_feature_importances_dataset(model):
-    n_features = dataset.data.shape[1]
+def plot_feature_importances_dataset(model, feature_name, data):
+    n_features = data.shape[1]
     plt.barh(np.arange(n_features), model.feature_importances_, align='center')
-    plt.yticks(np.arange(n_features), dataset.feature_names)
+    plt.yticks(np.arange(n_features), feature_name)
     plt.xlabel("Feature Importances")
     plt.ylabel("features")
     plt.ylim(-1, n_features)
 
-plot_feature_importances_dataset(model)
+plot_feature_importances_dataset(model2, feature, new_data)
 plt.show()
 
+# [0.0295946  0.01001567 0.08977692 0.04423051 0.0032148  0.0159194
+#  0.05223735 0.11877736 0.00214684 0.00200252 0.00584998 0.00313769
+#  0.00316668 0.04947516 0.00243703 0.00214922 0.00660058 0.00231114
+#  0.00310829 0.00248001 0.07465984 0.01607539 0.14484727 0.12802913
+#  0.00983482 0.00900369 0.03418392 0.12575184 0.00497875 0.00400357]
+# acc : 0.9385964912280702
+# acc2 : 0.9385964912280702
+# (569, 22)
