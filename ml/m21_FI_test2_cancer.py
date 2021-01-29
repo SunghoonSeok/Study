@@ -21,9 +21,11 @@ print("acc :", acc)
 
 df = pd.DataFrame(dataset.data, columns=dataset.feature_names)
 new_data=[]
-for i in range(30):
+feature=[]
+for i in range(len(dataset.data[0])):
     if model.feature_importances_[i] !=0:
        new_data.append(df.iloc[:,i])
+       feature.append(dataset.feature_names[i])
 
 new_data = pd.concat(new_data, axis=1)
 print(new_data.shape)
@@ -38,15 +40,15 @@ print("acc :", acc2)
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plot_feature_importances_dataset(model):
-    n_features = dataset.data.shape[1]
+def plot_feature_importances_dataset(model, feature_name, data):
+    n_features = data.shape[1]
     plt.barh(np.arange(n_features), model.feature_importances_, align='center')
-    plt.yticks(np.arange(n_features), dataset.feature_names)
+    plt.yticks(np.arange(n_features), feature_name)
     plt.xlabel("Feature Importances")
     plt.ylabel("features")
     plt.ylim(-1, n_features)
 
-plot_feature_importances_dataset(model)
+plot_feature_importances_dataset(model2, feature, new_data)
 plt.show()
 
 # [0.         0.02671691 0.         0.         0.         0.
