@@ -30,10 +30,6 @@ dataset = load_iris()
 x = dataset.data
 y = dataset.target
 
-print(x.shape, y.shape) #(150, 4),  (150, )
-print(x[:5])
-print(y)
-
 x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2,random_state=32)
 
 kfold = KFold(n_splits=5, shuffle=True)

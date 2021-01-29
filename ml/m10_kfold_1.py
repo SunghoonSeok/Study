@@ -26,7 +26,7 @@ kfold = KFold(n_splits=5, shuffle=True)
 # 2. 모델 구성
 
 model = LogisticRegression()
-score = cross_val_score(model, x, y, cv=kfold)
+score = cross_val_score(model, x, y, cv=kfold) # cv=5
 print('scores :', score)
 
 '''
