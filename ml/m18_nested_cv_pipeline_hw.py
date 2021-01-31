@@ -46,7 +46,6 @@ search = [GridSearchCV, RandomizedSearchCV]
 
 kfold = KFold(n_splits=5, shuffle=True)
 
-# 2. 모델 구성
 a=[]
 
 i = 1
@@ -57,10 +56,17 @@ for train_index, test_index in kfold.split(x):
     pipe = Pipeline([("scaler", MinMaxScaler()),('mal', RandomForestRegressor())])
     model = RandomizedSearchCV(pipe, parameters)
     score = cross_val_score(model, x_train, y_train, cv=kfold)
-    y_pred = cross_val_predict(model, x_test, y_test, cv=kfold)
-    print(model.best_estimator_, model.best_score_)
-    print(score)
-    print(y_pred)
+    print("scores :",score)
     a.append(score)
-    i += 1  
-print(np.array(a))
+    i += 1
+
+# 1번째 kfold split
+# scores : [0.4502274  0.31406065 0.33323133 0.54070153 0.44111037]
+# 2번째 kfold split
+# scores : [0.54278944 0.25124213 0.37718554 0.47460629 0.45400059]
+# 3번째 kfold split
+# scores : [0.54559054 0.5922048  0.46075512 0.31789233 0.41273222]
+# 4번째 kfold split
+# scores : [0.42247993 0.39015017 0.50966969 0.55285347 0.44333145]
+# 5번째 kfold split
+# scores : [0.44477028 0.50576677 0.42131651 0.42976234 0.39110624]
