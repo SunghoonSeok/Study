@@ -25,9 +25,9 @@ x_train, x_test, y_train, y_test = train_test_split(
 #     print(time.time()-start,'초')
 
 
-model = XGBClassifier(n_jobs=-1)
+model = XGBClassifier(n_jobs=-1, use_label_encoder=False)
 
-model.fit(x_train,y_train)
+model.fit(x_train,y_train, eval_metric='logloss')
 
 #4. 평가, 예측
 acc = model.score(x_test, y_test)
@@ -51,7 +51,7 @@ new_data = pd.concat(new_data, axis=1)
 
         
 x2_train, x2_test, y2_train, y2_test = train_test_split(new_data, dataset.target, train_size=0.8, random_state=32)
-model2 = XGBClassifier(n_jobs=-1)   
+model2 = XGBClassifier(n_jobs=-1,eval_metric='mlogloss')   
 model2.fit(x2_train,y2_train)
 acc2 = model2.score(x2_test, y2_test)
 print("acc2 :", acc2)
