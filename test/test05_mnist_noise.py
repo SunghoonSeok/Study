@@ -18,33 +18,45 @@ submission = read_csv('../data/test/mnist/submission.csv', index_col=None, heade
 print(train.shape) # (2048, 787)
 print(test.shape) # (20480, 786)
 print(submission.shape) # (20480, 2)
-train_data = train.copy()
-train_data = train_data.values
-x = train_data[:,3:]
-y1 = train_data[:,1]
-y2 = train_data[:,2]
-print(x.shape, y1.shape, y2.shape) 
+# train_data = train.copy()
+# train_data = train_data.values
+# x = train_data[:,3:]
+# y1 = train_data[:,1]
+# y2 = train_data[:,2]
+# print(x.shape, y1.shape, y2.shape) 
 
-# pca = PCA()
-# x = pca.fit(x)
-# cumsum = np.cumsum(pca.explained_variance_ratio_)
-# print("cumsum :",cumsum)
+temp = pd.DataFrame(train)
+test_df = pd.DataFrame(test)
+x = temp.iloc[:,3:]/255
+y = temp.iloc[:,1]
+x_test = test_df.iloc[:,2:]/255
 
-# d = np.argmax(cumsum >=0.97)+1
-# print("cumsum >=0.95 :", cumsum>=0.97)
-# print("d :", d) # 147
+x = x.to_numpy()
+y1 = y.to_numpy()
+x_pred = x_test.to_numpy()
 
-pca = PCA(n_components=147)
-x = pca.fit_transform(x)
-x_train, x_test, y_train, y_test = train_test_split(x,y1, test_size=0.2, shuffle=True,random_state=66)
 
-model = XGBClassifier(n_jobs=8, eval_metric='mlogloss')
+x_train, x_test, y_train, y_test = train_test_split(x,y1, test_size=0.2, shuffle=True)
+
+model = XGBClassifier(n_jobs=8, eval_metric='mlogloss', object='multi:softmax')
 
 model.fit(x_train,y_train,verbose=True, eval_set=[(x_train,y_train),(x_test,y_test)])
 
-print(x_test.shape, y_test.shape)
-
 #4. 평가, 예측
-accuracy = model.score(x_test, y_test)
 
-print("acc :", accuracy)
+acc = model.score(x_test, y_test)
+y_pred = model.predict(x_pred)
+
+
+
+
+# model.save_model('../data/xgb_save/test5_mnist1.xgb.model')
+
+# model2 = XGBRegressor()
+# model2.load_model('../data/xgb_save/test5_mnist1.xgb.model')
+# print("=============== xgb model 불러오기 ===============")
+# print('불러왔다!')
+# r22 = model2.score(x_test, y_test)
+# print('r22 :',r22)
+submission.iloc[:,1] = y_pred.reshape(-1,1)
+submission.to_csv('c:/data/test/mnist/submission_mnist1.csv', index=False)  

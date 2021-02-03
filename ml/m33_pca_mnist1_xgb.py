@@ -17,7 +17,7 @@ x = x.reshape(70000, 28*28)
 # print("cumsum >=0.95 :", cumsum>=0.95)
 # print("d :", d) # d : 674 # 714
 
-pca = PCA(n_components=674)
+pca = PCA(n_components=154)
 x2 = pca.fit_transform(x)
 
 x2_train = x2[:60000,:]
