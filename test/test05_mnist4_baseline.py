@@ -39,33 +39,33 @@ test2 = test2/255.0
 idg = ImageDataGenerator(height_shift_range=(-1,1),width_shift_range=(-1,1))
 idg2 = ImageDataGenerator()
 
-# show augmented image data
-sample_data = train2[100].copy()
-sample = expand_dims(sample_data,0)
-sample_datagen = ImageDataGenerator(height_shift_range=(-1,1), width_shift_range=(-1,1))
-sample_generator = sample_datagen.flow(sample, batch_size=1)
+# # show augmented image data
+# sample_data = train2[100].copy()
+# sample = expand_dims(sample_data,0)
+# sample_datagen = ImageDataGenerator(height_shift_range=(-1,1), width_shift_range=(-1,1))
+# sample_generator = sample_datagen.flow(sample, batch_size=1)
 
-plt.figure(figsize=(16,10))
+# plt.figure(figsize=(16,10))
 
-for i in range(9) : 
-    plt.subplot(3,3,i+1)
-    sample_batch = sample_generator.next()
-    sample_image=sample_batch[0]
-    plt.imshow(sample_image.reshape(28,28))
+# for i in range(9) : 
+#     plt.subplot(3,3,i+1)
+#     sample_batch = sample_generator.next()
+#     sample_image=sample_batch[0]
+#     plt.imshow(sample_image.reshape(28,28))
 
 # cross validation
 skf = StratifiedKFold(n_splits=40, random_state=66, shuffle=True)
 
 
-lr = ReduceLROnPlateau(patience=20,verbose=1,factor=0.5) #learning rate scheduler
-es = EarlyStopping(patience=40, verbose=1)
+lr = ReduceLROnPlateau(patience=30,verbose=1,factor=0.5) #learning rate scheduler
+es = EarlyStopping(patience=90, verbose=1)
 
 val_loss_min = []
 result = 0
 nth = 0
 
 for train_index, valid_index in skf.split(train2,train['digit']) :
-    filepath = f'c:/data/test/mnist/checkpoint/mnist_checkpoint4-{nth}.hdf5'
+    filepath = f'c:/data/test/mnist/checkpoint/mnist_checkpoint5-{nth}.hdf5'
     mc = ModelCheckpoint(filepath, save_best_only=True, verbose=1)
     
     x_train = train2[train_index]
@@ -73,15 +73,16 @@ for train_index, valid_index in skf.split(train2,train['digit']) :
     y_train = train['digit'][train_index]
     y_valid = train['digit'][valid_index]
     
+
+    
     train_generator = idg.flow(x_train,y_train,batch_size=8)
-    valid_generator = idg2.flow(x_valid,y_valid)
+    valid_generator = idg2.flow(x_valid,y_valid,batch_size=8)
     test_generator = idg2.flow(test2,shuffle=False)
     
     model = Sequential()
     
     model.add(Conv2D(16,(3,3),activation='relu',input_shape=(28,28,1),padding='same'))
     model.add(BatchNormalization())
-    model.add(Dropout(0.3))
     
     model.add(Conv2D(32,(3,3),activation='relu',padding='same'))
     model.add(BatchNormalization())
@@ -92,29 +93,25 @@ for train_index, valid_index in skf.split(train2,train['digit']) :
     model.add(Conv2D(32,(5,5),activation='relu',padding='same'))
     model.add(BatchNormalization())
     model.add(MaxPooling2D((3,3)))
-    model.add(Dropout(0.3))
     
     model.add(Conv2D(64,(3,3),activation='relu',padding='same'))
     model.add(BatchNormalization())
     model.add(Conv2D(64,(5,5),activation='relu',padding='same')) 
     model.add(BatchNormalization())
     model.add(MaxPooling2D((3,3)))
-    model.add(Dropout(0.3))
     
     model.add(Flatten())
 
     model.add(Dense(128,activation='relu'))
     model.add(BatchNormalization())
-    model.add(Dropout(0.3))
     model.add(Dense(64,activation='relu'))
     model.add(BatchNormalization())
-    model.add(Dropout(0.3))
 
     model.add(Dense(10,activation='softmax'))
     
     model.compile(loss='sparse_categorical_crossentropy', optimizer=Adam(lr=0.002,epsilon=None),metrics=['acc'])
-    
-    learning_history = model.fit_generator(train_generator,epochs=2000, validation_data=valid_generator, callbacks=[es,mc,lr])
+    # epsilon : 0으로 나눠지는 것을 피하기 위함
+    learning_history = model.fit_generator(train_generator,epochs=1000, validation_data=valid_generator, callbacks=[es,mc,lr])
     
     # predict
     model.load_weights(filepath)
@@ -130,4 +127,4 @@ for train_index, valid_index in skf.split(train2,train['digit']) :
 
 sub['digit'] = result.argmax(1)
 
-sub.to_csv('c:/data/test/mnist/submission_mnist3.csv',index=False)
+sub.to_csv('c:/data/test/mnist/submission_mnist4.csv',index=False)
