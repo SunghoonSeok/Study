@@ -57,8 +57,8 @@ idg2 = ImageDataGenerator()
 skf = StratifiedKFold(n_splits=40, random_state=66, shuffle=True)
 
 
-lr = ReduceLROnPlateau(patience=30,verbose=1,factor=0.5) #learning rate scheduler
-es = EarlyStopping(patience=90, verbose=1)
+lr = ReduceLROnPlateau(patience=40,verbose=1,factor=0.5) #learning rate scheduler
+es = EarlyStopping(patience=120, verbose=1)
 
 val_loss_min1 = []
 val_loss_min2 = []
@@ -76,15 +76,15 @@ def convmodel(self):
     
     self.add(Conv2D(32,(3,3),activation='relu',padding='same'))
     self.add(BatchNormalization())
-    self.add(Conv2D(32,(5,5),activation='relu',padding='same')) 
+    self.add(Conv2D(64,(5,5),activation='relu',padding='same')) 
     self.add(BatchNormalization())
-    self.add(Conv2D(32,(5,5),activation='relu',padding='same'))
+    self.add(Conv2D(64,(5,5),activation='relu',padding='same'))
     self.add(BatchNormalization())
-    self.add(Conv2D(32,(5,5),activation='relu',padding='same'))
+    self.add(Conv2D(128,(5,5),activation='relu',padding='same'))
     self.add(BatchNormalization())
     self.add(MaxPooling2D((3,3)))
     
-    self.add(Conv2D(64,(3,3),activation='relu',padding='same'))
+    self.add(Conv2D(128,(3,3),activation='relu',padding='same'))
     self.add(BatchNormalization())
     self.add(Conv2D(64,(5,5),activation='relu',padding='same')) 
     self.add(BatchNormalization())
@@ -102,9 +102,9 @@ def convmodel(self):
 
 
 for train_index, valid_index in skf.split(train2,train['digit']) :
-    mc1 = ModelCheckpoint(f'c:/data/test/mnist/checkpoint/mnist_checkpoint8_1.hdf5', save_best_only=True, verbose=1)
-    mc2 = ModelCheckpoint(f'c:/data/test/mnist/checkpoint/mnist_checkpoint8_2.hdf5', save_best_only=True, verbose=1)
-    mc3 = ModelCheckpoint(f'c:/data/test/mnist/checkpoint/mnist_checkpoint8_3.hdf5', save_best_only=True, verbose=1)
+    mc1 = ModelCheckpoint(f'c:/data/test/mnist/checkpoint/mnist_checkpoint9_1.hdf5', save_best_only=True, verbose=1)
+    mc2 = ModelCheckpoint(f'c:/data/test/mnist/checkpoint/mnist_checkpoint9_2.hdf5', save_best_only=True, verbose=1)
+    mc3 = ModelCheckpoint(f'c:/data/test/mnist/checkpoint/mnist_checkpoint9_3.hdf5', save_best_only=True, verbose=1)
 
     
     x_train = train2[train_index]
@@ -112,10 +112,12 @@ for train_index, valid_index in skf.split(train2,train['digit']) :
     y_train = train['digit'][train_index]
     y_valid = train['digit'][valid_index]
     
-
     
-    train_generator = idg.flow(x_train,y_train,batch_size=8)
-    valid_generator = idg2.flow(x_valid,y_valid,batch_size=8)
+    train_generator1 = idg.flow(x_train,y_train,batch_size=16, seed=516)
+    train_generator2 = idg.flow(x_train,y_train,batch_size=16, seed=1993)
+    train_generator3 = idg.flow(x_train,y_train,batch_size=16, seed=821)
+
+    valid_generator = idg2.flow(x_valid,y_valid)
     test_generator = idg2.flow(test2,shuffle=False)
     model1 = Sequential()
     model2 = Sequential()
@@ -123,23 +125,21 @@ for train_index, valid_index in skf.split(train2,train['digit']) :
     convmodel(model1)
     convmodel(model2)
     convmodel(model3)
-
-
     
     model1.compile(loss='sparse_categorical_crossentropy', optimizer=Adam(lr=0.002,epsilon=None),metrics=['acc'])
     model2.compile(loss='sparse_categorical_crossentropy', optimizer=Adam(lr=0.002,epsilon=None),metrics=['acc'])
     model3.compile(loss='sparse_categorical_crossentropy', optimizer=Adam(lr=0.002,epsilon=None),metrics=['acc'])
 
     # epsilon : 0으로 나눠지는 것을 피하기 위함
-    learning_history_1 = model1.fit_generator(train_generator,epochs=1000, validation_data=valid_generator, callbacks=[es,mc1,lr])
-    learning_history_2 = model2.fit_generator(train_generator,epochs=1000, validation_data=valid_generator, callbacks=[es,mc2,lr])
-    learning_history_3 = model3.fit_generator(train_generator,epochs=1000, validation_data=valid_generator, callbacks=[es,mc3,lr])
+    learning_history_1 = model1.fit_generator(train_generator1,epochs=1000, validation_data=valid_generator, callbacks=[es,mc1,lr])
+    learning_history_2 = model2.fit_generator(train_generator2,epochs=1000, validation_data=valid_generator, callbacks=[es,mc2,lr])
+    learning_history_3 = model3.fit_generator(train_generator3,epochs=1000, validation_data=valid_generator, callbacks=[es,mc3,lr])
 
     
     # predict
-    model1.load_weights(f'c:/data/test/mnist/checkpoint/mnist_checkpoint8_1.hdf5')
-    model2.load_weights(f'c:/data/test/mnist/checkpoint/mnist_checkpoint8_2.hdf5')
-    model3.load_weights(f'c:/data/test/mnist/checkpoint/mnist_checkpoint8_3.hdf5')
+    model1.load_weights(f'c:/data/test/mnist/checkpoint/mnist_checkpoint9_1.hdf5')
+    model2.load_weights(f'c:/data/test/mnist/checkpoint/mnist_checkpoint9_2.hdf5')
+    model3.load_weights(f'c:/data/test/mnist/checkpoint/mnist_checkpoint9_3.hdf5')
 
     result1 += model1.predict_generator(test_generator,verbose=True)/40
     result2 += model2.predict_generator(test_generator,verbose=True)/40
@@ -173,4 +173,4 @@ for i in range(len(sub)) :
 
 
 sub = sub[['id', 'digit']]
-sub.to_csv('c:/data/test/mnist/submission_mnist6.csv',index=False)
+sub.to_csv('c:/data/test/mnist/submission_mnist7.csv',index=False)
