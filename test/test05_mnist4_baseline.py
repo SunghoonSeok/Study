@@ -65,7 +65,7 @@ result = 0
 nth = 0
 
 for train_index, valid_index in skf.split(train2,train['digit']) :
-    filepath = f'c:/data/test/mnist/checkpoint/mnist_checkpoint5-{nth}.hdf5'
+    filepath = f'c:/data/test/mnist/checkpoint/mnist_checkpoint4-{nth}.hdf5'
     mc = ModelCheckpoint(filepath, save_best_only=True, verbose=1)
     
     x_train = train2[train_index]
