@@ -9,11 +9,11 @@ import numpy as np
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Dropout, Input, Conv2D, MaxPooling2D, Flatten, LSTM
 from tensorflow.keras.datasets import mnist
-from sklearn.datasets import load_diabetes
+from sklearn.datasets import load_breast_cancer
 from sklearn.model_selection import train_test_split, KFold
 from sklearn.metrics import r2_score, accuracy_score
 
-dataset = load_diabetes()
+dataset = load_breast_cancer()
 x = dataset.data
 y = dataset.target
 
@@ -36,7 +36,7 @@ def build_model(drop=0.5, optimizer='adam', node1=256, node2=128, activation='re
     x = Dense(16, activation=activation, name='hidden5')(x)
     outputs = Dense(1, activation='sigmoid' name='outputs')(x)
     model = Model(inputs=inputs, outputs=outputs)
-    model.compile(optimizer=optimizer, metrics=['mae'], loss='binary')
+    model.compile(optimizer=optimizer, metrics=['acc'], loss='binary_crossentropy')
     return model
 
 def create_hyperparameters():

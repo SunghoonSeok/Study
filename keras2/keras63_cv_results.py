@@ -32,9 +32,9 @@ def build_model(drop=0.5, optimizer='adam'):
     return model
 
 def create_hyperparameters():
-    batches = [10, 20, 30, 40, 50]
-    optimizers = ['rmsprop', 'adam', 'adadelta']
-    dropout = [0.1, 0.2, 0.3]
+    batches = [40, 50]
+    optimizers = ['adam']
+    dropout = [0.2, 0.3]
     return {"batch_size" : batches, "optimizer" : optimizers, "drop" : dropout}
 
 hyperparameters = create_hyperparameters()
@@ -45,7 +45,7 @@ model2 = KerasClassifier(build_fn=build_model, verbose=1)
 
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 
-search = RandomizedSearchCV(model2, hyperparameters, cv=3)
+search = GridSearchCV(model2, hyperparameters, cv=3)
 search.fit(x_train, y_train, verbose=1)
 acc = search.score(x_test, y_test)
 print("최종 스코어 :", acc)
@@ -58,30 +58,58 @@ print(search.cv_results_)
 # {'optimizer': 'adam', 'drop': 0.1, 'batch_size': 50}
 # 0.9578833182652792
 
-# 최종 스코어 : 0.9678000211715698
-# {'optimizer': 'rmsprop', 'drop': 0.2, 'batch_size': 50}
-# 0.955383320649465
-# {'mean_fit_time': array([7.00051936, 3.82475026, 3.13480202, 2.72680179, 1.83340669,
-#        5.80273461, 5.55144986, 1.87615339, 1.52712528, 2.62377397]), 'std_fit_time': array([0.49857986, 0.09017939, 0.05285451, 0.10717602, 
-# 0.07282085,
-#        0.10560144, 0.1591102 , 0.08498088, 0.01560473, 0.01173559]), 'mean_score_time': array([1.99760707, 0.96478677, 1.01802929, 0.85364238, 0.47893985,
-#        1.81543167, 1.84809399, 0.47880665, 0.50167656, 0.85119939]), 'std_score_time': array([0.10958189, 0.01251725, 0.0458842 , 0.00544165, 0.01520402,
-#        0.01121024, 0.02378735, 0.02227226, 0.06532389, 0.01170892]), 'param_optimizer': masked_array(data=['rmsprop', 'rmsprop', 'adam', 'adam', 'rmsprop',
-#                    'adadelta', 'adam', 'rmsprop', 'adadelta', 'adadelta'],
-#              mask=[False, False, False, False, False, False, False, False,
-#                    False, False],
+# 최종 스코어 : 0.967199981212616
+# {'optimizer': 'adam', 'drop': 0.2, 'batch_size': 50}
+# 0.95496666431427
+# {'mean_fit_time': array([2.09782155, 1.75763083, 1.55575212, 1.53010003]), 
+# 'std_fit_time': array([0.45485351, 0.03792982, 0.09036409, 0.0626698 ]), 
+# 'mean_score_time': array([0.60952004, 0.61459851, 0.49034874, 0.51158086]), 
+# 'std_score_time': array([0.02068277, 0.04056165, 0.00439272, 0.05357591]), 
+# 'param_optimizer': masked_array(data=['adam', 'adam', 'adam', 'adam'],
+#              mask=[False, False, False, False],
 #        fill_value='?',
-#             dtype=object), 'param_drop': masked_array(data=[0.1, 0.1, 0.3, 0.3, 0.2, 0.2, 0.1, 0.3, 0.2, 0.3],
-#              mask=[False, False, False, False, False, False, False, False,
-#                    False, False],
+#             dtype=object), 'param_drop': masked_array(data=[0.2, 0.3, 0.2, 0.3],
+#              mask=[False, False, False, False],
 #        fill_value='?',
-#             dtype=object), 'param_batch_size': masked_array(data=[10, 20, 20, 30, 50, 10, 10, 50, 50, 30],
-#              mask=[False, False, False, False, False, False, False, False,
-#                    False, False],
+#             dtype=object), 'param_batch_size': masked_array(data=[40, 40, 50, 50],
+#              mask=[False, False, False, False],
 #        fill_value='?',
-#             dtype=object), 'params': [{'optimizer': 'rmsprop', 'drop': 0.1, 'batch_size': 10}, {'optimizer': 'rmsprop', 'drop': 0.1, 'batch_size': 20}, {'optimizer': 'adam', 'drop': 0.3, 'batch_size': 20}, {'optimizer': 'adam', 'drop': 0.3, 'batch_size': 30}, {'optimizer': 'rmsprop', 'drop': 0.2, 'batch_size': 50}, {'optimizer': 'adadelta', 'drop': 0.2, 'batch_size': 10}, {'optimizer': 'adam', 'drop': 0.1, 'batch_size': 10}, {'optimizer': 'rmsprop', 'drop': 0.3, 'batch_size': 50}, {'optimizer': 'adadelta', 'drop': 0.2, 'batch_size': 50}, {'optimizer': 'adadelta', 'drop': 0.3, 'batch_size': 30}], 'split0_test_score': array([0.95784998, 0.95389998, 0.95375001, 0.95625001, 0.95300001,
-#        0.29574999, 0.95225   , 0.95459998, 0.22930001, 0.22995   ]), 'split1_test_score': array([0.95415002, 0.95200002, 0.94564998, 0.95525002, 0.95494998,
-#        0.37255001, 0.94185001, 0.95254999, 0.17075001, 0.18515   ]), 'split2_test_score': array([0.94774997, 0.94615   , 0.95424998, 0.95045   , 0.95819998,
-#        0.29745001, 0.95585001, 0.95674998, 0.26719999, 0.2018    ]), 'mean_test_score': array([0.95324999, 0.95068334, 0.95121666, 0.95398335, 0.95538332,
-#        0.32191667, 0.94998334, 0.95463332, 0.22241667, 0.20563333]), 'std_test_score': array([0.00417214, 0.00329806, 0.00394152, 0.00253158, 0.00214488,
-#        0.0358099 , 0.00593595, 0.0017148 , 0.03967522, 0.01848929]), 'rank_test_score': array([ 4,  6,  5,  3,  1,  8,  7,  2,  9, 10])}
+#             dtype=object), 
+#             'params': [{'optimizer': 'adam', 'drop': 0.2, 'batch_size': 40}, 
+#             {'optimizer': 'adam', 'drop': 0.3, 'batch_size': 40}, 
+#             {'optimizer': 'adam', 'drop': 0.2, 'batch_size': 50}, 
+#             {'optimizer': 'adam', 'drop': 0.3, 'batch_size': 50}], 
+#             'split0_test_score': array([0.95630002, 0.95415002, 0.95744997, 0.95735002]), 
+#             'split1_test_score': array([0.95165002, 0.9447    , 0.95120001, 0.95324999]), 
+#             'split2_test_score': array([0.95649999, 0.95130002, 0.95625001, 0.95060003]), 
+#             'mean_test_score': array([0.95481668, 0.95005002, 0.95496666, 0.95373334]), 
+#             'std_test_score': array([0.00224065, 0.00395791, 0.00270811, 0.00277679]), 
+#             'rank_test_score': array([2, 4, 1, 3])}
+
+# 최종 스코어 : 0.9648000001907349
+# {'batch_size': 50, 'drop': 0.2, 'optimizer': 'adam'}
+# 0.9577333529790243
+# {'mean_fit_time': array([2.09351993, 1.702185  , 1.54260651, 1.52305555]), 
+# 'std_fit_time': array([0.46834317, 0.01097603, 0.06338516, 0.06023835]), 
+# 'mean_score_time': array([0.58796231, 0.61132582, 0.4810586 , 0.5143942 ]), 
+# 'std_score_time': array([0.01608676, 0.05414734, 0.0041936 , 0.05369227]), 
+# 'param_batch_size': masked_array(data=[40, 40, 50, 50],
+#              mask=[False, False, False, False],
+#        fill_value='?',
+#             dtype=object), 'param_drop': masked_array(data=[0.2, 0.3, 0.2, 0.3],
+#              mask=[False, False, False, False],
+#        fill_value='?',
+#             dtype=object), 'param_optimizer': masked_array(data=['adam', 'adam', 'adam', 'adam'],
+#              mask=[False, False, False, False],
+#        fill_value='?',
+#             dtype=object), 
+#             'params': [{'batch_size': 40, 'drop': 0.2, 'optimizer': 'adam'}, 
+#             {'batch_size': 40, 'drop': 0.3, 'optimizer': 'adam'}, 
+#             {'batch_size': 50, 'drop': 0.2, 'optimizer': 'adam'}, 
+#             {'batch_size': 50, 'drop': 0.3, 'optimizer': 'adam'}], 
+#             'split0_test_score': array([0.96214998, 0.94735003, 0.96130002, 0.95625001]), 
+#             'split1_test_score': array([0.95249999, 0.95015001, 0.95380002, 0.95179999]), 
+#             'split2_test_score': array([0.95615   , 0.95515001, 0.95810002, 0.95085001]), 
+#             'mean_test_score': array([0.95693332, 0.95088335, 0.95773335, 0.95296667]), 
+#             'std_test_score': array([0.00397834, 0.00322627, 0.00307282, 0.00235384]), 
+#             'rank_test_score': array([2, 4, 1, 3])}

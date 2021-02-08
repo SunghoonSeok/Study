@@ -37,6 +37,7 @@ def create_hyperparameters():
     batches = [10]
     optimizers = ['adam']
     dropout = [0.2]
+    # return {"kerasclassifier__batch_size" : batches, "kerasclassifier__optimizer" : optimizers, "kerasclassifier__drop" : dropout}
     return {"clf__batch_size" : batches, "clf__optimizer" : optimizers, "clf__drop" : dropout}
 
 hyperparameters = create_hyperparameters()
@@ -62,3 +63,7 @@ print(search.best_score_)
 # 최종 스코어 : 0.9652000069618225
 # {'optimizer': 'adam', 'drop': 0.1, 'batch_size': 50}
 # 0.9578833182652792
+
+# 최종 스코어 : 0.960099995136261
+# {'kerasclassifier__batch_size': 10, 'kerasclassifier__drop': 0.2, 'kerasclassifier__optimizer': 'adam'}
+# 0.9521833459536234
