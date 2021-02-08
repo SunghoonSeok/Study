@@ -47,7 +47,7 @@ model2 = KerasClassifier(build_fn=build_model, verbose=1)
 
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 
-search = GridSearchCV(model2, hyperparameters, cv=3, refit=True)
+search = RandomizedSearchCV(model2, hyperparameters, cv=3, refit=True)
 search.fit(x_train, y_train, verbose=1)
 acc = search.score(x_test, y_test)
 print("최종 스코어 :", acc)
