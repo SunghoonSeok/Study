@@ -6,6 +6,7 @@ from PIL import Image
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import *
 from sklearn.model_selection import train_test_split
+import scipy.signal as signal
 # dirty 데이터는 train 데이터 훈련시키자!
 # 50000개 
 # dirty_mnist_2nd_answer.csv 는 dirty의 y값 
@@ -14,17 +15,19 @@ from sklearn.model_selection import train_test_split
 # 5000개 
 # y값을 찾는것이 목표
 
-img=[]
-for i in range(5000):
-    filepath='c:/data/test/dirty_mnist/dirty_mnist_2nd/%05d.png'%i
-    image=Image.open(filepath)
-    image_data=asarray(image)
-    img.append(image_data)
+# img=[]
+# for i in range(5000):
+#     filepath='c:/data/test/dirty_mnist/dirty_mnist_2nd/%05d.png'%i
+#     image=Image.open(filepath)
+#     image_data=asarray(image)
+#     image_data = signal.medfilt2d(np.array(image_data), kernel_size=3)
+#     img.append(image_data)
 # img2=[]
 # for i in range(50000, 55000):
 #     filepath='c:/data/test/dirty_mnist/test_dirty_mnist_2nd/%05d.png'%i
 #     image2=Image.open(filepath)
 #     image_data2=asarray(image2)
+#     image_data2 = signal.medfilt2d(np.array(image_data2), kernel_size=3)
 #     img2.append(image_data2)
 
 # np.save('c:/data/test/dirty_mnist/temporary/test.npy', arr=img)
@@ -46,10 +49,9 @@ for i in range(5000):
 x_data = np.load('c:/data/test/dirty_mnist/temporary/test2.npy')
 x_test = np.load('c:/data/test/dirty_mnist/temporary/test4.npy')
 
-print(x_data.shape) # (500, 256, 256)
-print(x_data[0])
 x_data = x_data.reshape(5000, 256, 256, 1)
 x_test = x_test.reshape(5000, 256, 256, 1)
+
 
 dataset = pd.read_csv('c:/data/test/dirty_mnist/dirty_mnist_2nd_answer.csv')
 submission = pd.read_csv('c:/data/test/dirty_mnist/sample_submission.csv')
@@ -62,7 +64,7 @@ def convmodel():
     model = Sequential()
     model.add(Conv2D(128, 8, padding='same', activation='relu', input_shape=(256,256,1)))
     model.add(Conv2D(64,8,padding='same',activation='relu'))
-    model.add(AveragePooling2D(8))
+    model.add(AveragePooling2D(3))
     model.add(Conv2D(32,8,padding='same',activation='relu'))
     model.add(Flatten())
     model.add(Dense(64,activation='relu'))
@@ -83,12 +85,12 @@ for i in alphabet:
     print(y)
     x_train, x_val, y_train, y_val = train_test_split(x_data, y, train_size=0.8, shuffle=True, random_state=42)
     model = convmodel()
-    # checkpoint = ModelCheckpoint(f'c:/data/test/dirty_mnist/checkpoint/checkpoint-{i}.hdf5', 
-    # monitor='val_loss', save_best_only=True, verbose=1)
+    checkpoint = ModelCheckpoint(f'c:/data/test/dirty_mnist/checkpoint/checkpoint-{i}.hdf5', 
+    monitor='val_loss', save_best_only=True, verbose=1)
     lr = ReduceLROnPlateau(patience=3,verbose=1,factor=0.5) #learning rate scheduler
     es = EarlyStopping(patience=6, verbose=1)
-    model.fit(x_train, y_train, epochs=100, validation_data=(x_val, y_val), batch_size=16, callbacks=[lr,es])
-    # model2 = load_model(f'c:/data/test/dirty_mnist/checkpoint/checkpoint-{i}.hdf5', compile=False)
+    model.fit(x_train, y_train, epochs=100, validation_data=(x_val, y_val), batch_size=32, callbacks=[checkpoint,lr,es])
+    model2 = load_model(f'c:/data/test/dirty_mnist/checkpoint/checkpoint-{i}.hdf5', compile=False)
     y_pred = model.predict(x_test)
     print(y_pred)
     y_recovery = np.where(y_pred<0.5, 0, 1)
