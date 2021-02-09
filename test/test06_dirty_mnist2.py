@@ -55,10 +55,19 @@ x_test = x_test.reshape(5000, 256, 256, 1)
 
 dataset = pd.read_csv('c:/data/test/dirty_mnist/dirty_mnist_2nd_answer.csv')
 submission = pd.read_csv('c:/data/test/dirty_mnist/sample_submission.csv')
-
+import matplotlib.pyplot as plt
 y_data = dataset.iloc[:5000,:]
 print(y_data)
 
+plt.figure(figsize=(20, 5))
+ax = plt.subplot(2, 10, 1)
+plt.imshow(x_test[0])
+
+
+ax.get_xaxis().set_visible(False)
+ax.get_yaxis().set_visible(False)
+plt.show()
+'''
 from tensorflow.keras.optimizers import Adam
 def convmodel():
     model = Sequential()
@@ -97,3 +106,4 @@ for i in alphabet:
     print(y_recovery)
     submission[i] = y_recovery
 submission.to_csv('c:/data/test/dirty_mnist/submission.csv', index=False)
+'''
