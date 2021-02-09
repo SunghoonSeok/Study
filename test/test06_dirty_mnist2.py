@@ -16,9 +16,10 @@ import scipy.signal as signal
 # y값을 찾는것이 목표
 
 # img=[]
-# for i in range(5000):
+# for i in range(50000):
 #     filepath='c:/data/test/dirty_mnist/dirty_mnist_2nd/%05d.png'%i
 #     image=Image.open(filepath)
+#     image = image.resize((128,128))
 #     image_data=asarray(image)
 #     image_data = signal.medfilt2d(np.array(image_data), kernel_size=3)
 #     img.append(image_data)
@@ -26,6 +27,7 @@ import scipy.signal as signal
 # for i in range(50000, 55000):
 #     filepath='c:/data/test/dirty_mnist/test_dirty_mnist_2nd/%05d.png'%i
 #     image2=Image.open(filepath)
+#     image2 = image2.resize((128,128))
 #     image_data2=asarray(image2)
 #     image_data2 = signal.medfilt2d(np.array(image_data2), kernel_size=3)
 #     img2.append(image_data2)
@@ -37,41 +39,41 @@ import scipy.signal as signal
 # img_ch_np2=np.load('c:/data/test/dirty_mnist/temporary/test3.npy')
 
 # img_ch_np = img_ch_np/255.
-# threshold = 1
-# img_ch_np[img_ch_np < threshold] = 0
+# # threshold = 0.98
+# # img_ch_np[img_ch_np < threshold] = 0
 
 # img_ch_np2 = img_ch_np2/255.
-# threshold = 1
-# img_ch_np2[img_ch_np2 < threshold] = 0
+# # threshold = 0.98
+# # img_ch_np2[img_ch_np2 < threshold] = 0
 
 # np.save('c:/data/test/dirty_mnist/temporary/test2.npy', arr=img_ch_np)
 # np.save('c:/data/test/dirty_mnist/temporary/test4.npy', arr=img_ch_np2)
 x_data = np.load('c:/data/test/dirty_mnist/temporary/test2.npy')
 x_test = np.load('c:/data/test/dirty_mnist/temporary/test4.npy')
 
-x_data = x_data.reshape(5000, 256, 256, 1)
-x_test = x_test.reshape(5000, 256, 256, 1)
+x_data = x_data.reshape(50000, 128, 128, 1)
+x_test = x_test.reshape(5000, 128, 128, 1)
 
 
 dataset = pd.read_csv('c:/data/test/dirty_mnist/dirty_mnist_2nd_answer.csv')
 submission = pd.read_csv('c:/data/test/dirty_mnist/sample_submission.csv')
 import matplotlib.pyplot as plt
-y_data = dataset.iloc[:5000,:]
+y_data = dataset.iloc[:,:]
 print(y_data)
 
-plt.figure(figsize=(20, 5))
-ax = plt.subplot(2, 10, 1)
-plt.imshow(x_test[0])
+# plt.figure(figsize=(20, 5))
+# ax = plt.subplot(2, 10, 1)
+# plt.imshow(x_test[0])
 
 
-ax.get_xaxis().set_visible(False)
-ax.get_yaxis().set_visible(False)
-plt.show()
-'''
+# ax.get_xaxis().set_visible(False)
+# ax.get_yaxis().set_visible(False)
+# plt.show()
+
 from tensorflow.keras.optimizers import Adam
 def convmodel():
     model = Sequential()
-    model.add(Conv2D(128, 8, padding='same', activation='relu', input_shape=(256,256,1)))
+    model.add(Conv2D(128, 8, padding='same', activation='relu', input_shape=(128,128,1)))
     model.add(Conv2D(64,8,padding='same',activation='relu'))
     model.add(AveragePooling2D(3))
     model.add(Conv2D(32,8,padding='same',activation='relu'))
@@ -106,4 +108,3 @@ for i in alphabet:
     print(y_recovery)
     submission[i] = y_recovery
 submission.to_csv('c:/data/test/dirty_mnist/submission.csv', index=False)
-'''

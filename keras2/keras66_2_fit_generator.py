@@ -14,7 +14,7 @@ train_datagen = ImageDataGenerator(
     # zoom_range=1.2,
     # shear_range=0.7,
     fill_mode='nearest',
-    validation_split=0.2
+    validation_split=0.19
 )
 test_datagen = ImageDataGenerator(rescale=1./255)
 
@@ -43,6 +43,9 @@ xy_test = test_datagen.flow_from_directory(
     batch_size=5,
     class_mode='binary'
 )
+# Found 130 images belonging to 2 classes.
+# Found 30 images belonging to 2 classes.
+# Found 160 images belonging to 2 classes.
 
 model = Sequential()
 model.add(Conv2D(32, 3, padding='same', activation='relu', input_shape=(150,150,3)))
@@ -66,7 +69,7 @@ es = EarlyStopping(monitor = 'val_loss', patience = 20)
 lr = ReduceLROnPlateau(monitor = 'val_loss', patience = 5, factor = 0.5, verbose = 1)
 filepath = 'c:/data/modelcheckpoint/keras62_1_checkpoint_{val_loss:.4f}-{epoch:02d}.hdf5'
 cp = ModelCheckpoint(filepath, save_best_only=True, monitor = 'val_loss')
-history = model.fit_generator(xy_train, steps_per_epoch=24, epochs=500, validation_data=xy_val, validation_steps=6,
+history = model.fit_generator(xy_train, steps_per_epoch=(xy_train.samples/xy_train.batch_size), epochs=100, validation_data=xy_val, validation_steps=(xy_val.samples/xy_val.batch_size),
 callbacks=[es])
 
 result = model.evaluate_generator(xy_test)
