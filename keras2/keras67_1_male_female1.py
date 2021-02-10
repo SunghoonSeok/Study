@@ -43,10 +43,13 @@ print(xy_val[0][0].shape)
 
 model = Sequential()
 model.add(Conv2D(32, 2, padding='same', activation='relu', input_shape=(150,150,3)))
+model.add(BatchNormalization())
 model.add(Conv2D(64,3, activation='relu'))
-model.add(Conv2D(32,2, activation='relu'))
+model.add(BatchNormalization())
+model.add(Conv2D(128,2, activation='relu'))
 model.add(MaxPooling2D(2))
 model.add(Conv2D(64,3, activation='relu'))
+model.add(BatchNormalization())
 model.add(Conv2D(64,3, activation='relu'))
 model.add(MaxPooling2D(2))
 model.add(Flatten())
@@ -62,7 +65,7 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc'])
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
 es = EarlyStopping(monitor = 'val_loss', patience = 30)
 lr = ReduceLROnPlateau(monitor = 'val_loss', patience = 15, factor = 0.5, verbose = 1)
-filepath = 'c:/data/modelcheckpoint/keras67_1_checkpoint2.hdf5'
+filepath = 'c:/data/modelcheckpoint/keras67_1_checkpoint3.hdf5'
 cp = ModelCheckpoint(filepath, save_best_only=True, monitor = 'val_loss')
 history = model.fit_generator(xy_train, steps_per_epoch=(xy_train.samples/xy_train.batch_size), epochs=500, validation_data=xy_val, validation_steps=(xy_val.samples/xy_val.batch_size),
 callbacks=[es,cp,lr])
@@ -108,3 +111,6 @@ print("val_acc : ", val_acc)
 
 # loss : 0.9310007691383362
 # acc : 0.6774193644523621
+
+# loss : 0.7922691702842712
+# acc : 0.725806474685669

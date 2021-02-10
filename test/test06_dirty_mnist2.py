@@ -73,33 +73,35 @@ print(y_data)
 from tensorflow.keras.optimizers import Adam
 def convmodel():
     model = Sequential()
-    model.add(Conv2D(128, 8, padding='same', activation='relu', input_shape=(128,128,1)))
-    model.add(Conv2D(64,8,padding='same',activation='relu'))
+    model.add(Conv2D(64, 3, padding='same', activation='relu', input_shape=(128,128,1)))
+    model.add(BatchNormalization())
+    model.add(Conv2D(128,3,padding='same',activation='relu'))
     model.add(AveragePooling2D(3))
-    model.add(Conv2D(32,8,padding='same',activation='relu'))
+    model.add(Conv2D(64,2,padding='same',activation='relu'))
+    model.add(BatchNormalization())
+    model.add(Conv2D(32,2,padding='same',activation='relu'))
+    model.add(MaxPooling2D(2))
     model.add(Flatten())
     model.add(Dense(64,activation='relu'))
     model.add(Dense(32,activation='relu'))
     model.add(Dense(16,activation='relu'))
     model.add(Dense(8,activation='relu'))
     model.add(Dense(1,activation='sigmoid'))
-    optimizer = Adam(lr=0.002)
+    optimizer = Adam(lr=0.0005)
     model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
     return model
-    
-
+x_train, x_val, y_train, y_val = train_test_split(x_data, y_data, train_size=0.8, shuffle=True, random_state=42)
 
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
 for i in alphabet:
-    y = y_data.loc[:,i]
-    print(y)
-    x_train, x_val, y_train, y_val = train_test_split(x_data, y, train_size=0.8, shuffle=True, random_state=42)
+    y_train = y_train.loc[:,i]
+    y_val = y_val.loc[:,i] 
     model = convmodel()
     checkpoint = ModelCheckpoint(f'c:/data/test/dirty_mnist/checkpoint/checkpoint-{i}.hdf5', 
     monitor='val_loss', save_best_only=True, verbose=1)
-    lr = ReduceLROnPlateau(patience=3,verbose=1,factor=0.5) #learning rate scheduler
-    es = EarlyStopping(patience=6, verbose=1)
+    lr = ReduceLROnPlateau(patience=10,verbose=1,factor=0.5) #learning rate scheduler
+    es = EarlyStopping(patience=25, verbose=1)
     model.fit(x_train, y_train, epochs=100, validation_data=(x_val, y_val), batch_size=32, callbacks=[checkpoint,lr,es])
     model2 = load_model(f'c:/data/test/dirty_mnist/checkpoint/checkpoint-{i}.hdf5', compile=False)
     y_pred = model.predict(x_test)
