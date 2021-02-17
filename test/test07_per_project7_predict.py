@@ -13,11 +13,10 @@ feature = ['length', 'chroma_stft_mean', 'chroma_stft_var', 'rms_mean', 'rms_var
 'mfcc13_mean', 'mfcc13_var', 'mfcc14_mean', 'mfcc14_var', 'mfcc15_mean', 'mfcc15_var', 'mfcc16_mean', 'mfcc16_var', 
 'mfcc17_mean', 'mfcc17_var', 'mfcc18_mean', 'mfcc18_var', 'mfcc19_mean', 'mfcc19_var', 'mfcc20_mean', 'mfcc20_var']
 
-a = os.path.splitext("c:/data/music/predict_music/아이유-마음을드려요.wav")
+a = os.path.splitext("c:/data/music/predict_music/아이유-celebrity.wav")
 a = os.path.split(a[0])
-print(a[1])
 
-df_pred = pd.DataFrame(columns=feature, index=a)
+df_pred = pd.DataFrame(columns=feature, index=[a[1]])
 df_pred.index.name = 'filename'
 pd.DataFrame.to_csv(df_pred, 'c:/data/music/predict_music/predict_csv/df_'+str(a[1])+'.csv')
 
@@ -28,7 +27,10 @@ import numpy as np
 
 # 한 곡에 대한 feature 총 정리
 import librosa
-y, sr = librosa.load("c:/data/music/predict_music/아이유-마음을드려요.wav")
+y, sr = librosa.load("c:/data/music/predict_music/"+str(a[1])+".wav")
+# from playsound import playsound
+# playsound("c:/data/music/genres_original/ballad/ballad.00000.wav")
+
 # length
 length = len(y) #661500
 

@@ -13,11 +13,10 @@ import random
 import librosa, IPython
 import librosa.display as lplt
 import os
-seed = 12
-np.random.seed(seed)
-print(seed)
+# seed = 12
+# np.random.seed(seed)
 
-a = os.path.splitext("c:/data/music/predict_music/정승환-눈사람.wav")
+a = os.path.splitext("c:/data/music/predict_music/아이유-celebrity.wav")
 a = os.path.split(a[0])
 print(a[1])
 
@@ -39,8 +38,8 @@ print(label_index)
 print(index_label)
 df.label = [label_index[l] for l in df.label]
 
-df_shuffle = df.sample(frac=1, random_state=seed).reset_index(drop=True)
-pred_shuffle = pred.sample(frac=1, random_state=seed).reset_index(drop=True)
+df_shuffle = df.sample(frac=1, random_state=42).reset_index(drop=True)
+pred_shuffle = pred.sample(frac=1, random_state=42).reset_index(drop=True)
 # remove irrelevant columns
 df_shuffle.drop(['filename', 'length'], axis=1, inplace=True)
 pred_shuffle.drop(['filename', 'length'], axis=1, inplace=True)
@@ -50,8 +49,8 @@ x_pred = pred_shuffle
 
 # split into train dev and test
 from sklearn.model_selection import train_test_split
-x_train, x_val_test, y_train, y_val_test = train_test_split(df_x, df_y, train_size=0.7, random_state=seed, stratify=df_y)
-x_val, x_test, y_val, y_test = train_test_split(x_val_test, y_val_test, train_size=0.66, random_state=seed, stratify=y_val_test)
+x_train, x_val_test, y_train, y_val_test = train_test_split(df_x, df_y, train_size=0.7, random_state=42, stratify=df_y)
+x_val, x_test, y_val, y_test = train_test_split(x_val_test, y_val_test, train_size=0.66, random_state=42, stratify=y_val_test)
 
 from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
@@ -64,39 +63,44 @@ from tensorflow.keras.models import Model, Sequential, load_model
 from tensorflow.keras.layers import Dense, Input, LSTM, Dropout, Conv1D, Flatten, MaxPooling1D, GRU, SimpleRNN, ReLU, LeakyReLU
 from tensorflow.keras.optimizers import Adam, Adagrad, Adamax, SGD, RMSprop, Adadelta, Ftrl, Nadam
 
-model = Sequential()
-model.add(Dense(512, activation='relu', input_shape=(x_train.shape[1],)))
-model.add(Dropout(0.2))
-model.add(Dense(256, activation='relu'))
-model.add(Dropout(0.2))
-model.add(Dense(128, activation='relu'))
-model.add(Dropout(0.2))
-model.add(Dense(64, activation='relu'))
-model.add(Dropout(0.2))
-model.add(Dense(11, activation='softmax'))
+# model = Sequential()
+# model.add(Dense(512, input_shape=(x_train.shape[1],)))
+# model.add(LeakyReLU())
+# model.add(Dropout(0.2))
+# model.add(Dense(256))
+# model.add(LeakyReLU())
+# model.add(Dropout(0.2))
+# model.add(Dense(128))
+# model.add(LeakyReLU())
+# model.add(Dropout(0.2))
+# model.add(Dense(64))
+# model.add(LeakyReLU())
+# model.add(Dropout(0.2))
+# model.add(Dense(11, activation='softmax'))
 
-optimizer = Adam(lr=0.002)
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
-es = EarlyStopping(monitor='val_loss',mode='min', patience=40)
-rl = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=12, mode='min')
-modelpath = 'c:/data/music/checkpoint/checkpoint_{val_loss:.4f}-{val_accuracy:.4f}.hdf5'
-mc = ModelCheckpoint(modelpath, monitor='val_loss',save_best_only=True, mode='min',verbose=1)
+# optimizer = Adam(lr=0.002)
+# from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
+# es = EarlyStopping(monitor='val_loss',mode='min', patience=30)
+# rl = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=10, mode='min')
+# modelpath = 'c:/data/music/checkpoint/checkpoint_{val_loss:.4f}-{val_accuracy:.4f}'
+# mc = ModelCheckpoint(modelpath, monitor='val_loss',save_best_only=True, mode='min',verbose=1)
 
 
-model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
-model.fit(x_train, y_train, batch_size=128, epochs=1000, validation_data=(x_val, y_val), callbacks=[es,rl,mc])
+# model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+# model.fit(x_train, y_train, batch_size=128, epochs=1000, validation_data=(x_val, y_val), callbacks=[es,rl,mc])
 
-
-test_loss, test_acc  = model.evaluate(x_test, y_test, batch_size=128)
+model2 = load_model('c:/data/music/checkpoint/checkpoint_0.2972-0.9224.hdf5')
+test_loss, test_acc  = model2.evaluate(x_test, y_test, batch_size=128)
 print("The test Loss is :",test_loss)
 print("\nThe Best test Accuracy is :",test_acc*100)
-y_pred = model.predict(x_pred)
+y_pred = model2.predict(x_pred)
 y_recovery = np.argmax(y_pred, axis=1).reshape(-1,1)
 print(y_recovery)
 y_recovery = index_label[y_recovery[0][0]]
 
+
 print(""+str(a[1])+" 는(은) 무슨 장르니?")
-print(""+str(a[1])+" 는(은)",y_recovery,"장르입니다.")
+print(""+str(a[1])+"는(은)",y_recovery,"장르입니다.")
 
 
 df_30 = pd.read_csv('c:/data/music/30s_data.csv')
