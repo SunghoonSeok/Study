@@ -1,25 +1,34 @@
 import pandas as pd
 import numpy as np
+import librosa
+import os
 
-train = pd.read_csv('c:/data/music/features_30_sec.csv', header=None)
-feature = train.iloc[0,:]
-feature = feature.values.tolist()
-feature = feature[1:]
-print(feature)
-# ['filename', 'length', 'chroma_stft_mean', 'chroma_stft_var', 'rms_mean', 'rms_var', 
-# 'spectral_centroid_mean', 'spectral_centroid_var', 'spectral_bandwidth_mean', 'spectral_bandwidth_var', 
-# 'rolloff_mean', 'rolloff_var', 'zero_crossing_rate_mean', 'zero_crossing_rate_var', 'harmony_mean', 'harmony_var', 
-# 'perceptr_mean', 'perceptr_var', 'tempo', 
-# 'mfcc1_mean', 'mfcc1_var', 'mfcc2_mean', 'mfcc2_var', 'mfcc3_mean', 'mfcc3_var', 'mfcc4_mean', 'mfcc4_var', 
-# 'mfcc5_mean', 'mfcc5_var', 'mfcc6_mean', 'mfcc6_var', 'mfcc7_mean', 'mfcc7_var', 'mfcc8_mean', 'mfcc8_var', 
-# 'mfcc9_mean', 'mfcc9_var', 'mfcc10_mean', 'mfcc10_var', 'mfcc11_mean', 'mfcc11_var', 'mfcc12_mean', 'mfcc12_var', 
-# 'mfcc13_mean', 'mfcc13_var', 'mfcc14_mean', 'mfcc14_var', 'mfcc15_mean', 'mfcc15_var', 'mfcc16_mean', 'mfcc16_var', 
-# 'mfcc17_mean', 'mfcc17_var', 'mfcc18_mean', 'mfcc18_var', 'mfcc19_mean', 'mfcc19_var', 'mfcc20_mean', 'mfcc20_var', 
-# 'label']
+feature = ['length', 'chroma_stft_mean', 'chroma_stft_var', 'rms_mean', 'rms_var', 
+'spectral_centroid_mean', 'spectral_centroid_var', 'spectral_bandwidth_mean', 'spectral_bandwidth_var', 
+'rolloff_mean', 'rolloff_var', 'zero_crossing_rate_mean', 'zero_crossing_rate_var', 'harmony_mean', 'harmony_var', 
+'perceptr_mean', 'perceptr_var', 'tempo', 
+'mfcc1_mean', 'mfcc1_var', 'mfcc2_mean', 'mfcc2_var', 'mfcc3_mean', 'mfcc3_var', 'mfcc4_mean', 'mfcc4_var', 
+'mfcc5_mean', 'mfcc5_var', 'mfcc6_mean', 'mfcc6_var', 'mfcc7_mean', 'mfcc7_var', 'mfcc8_mean', 'mfcc8_var', 
+'mfcc9_mean', 'mfcc9_var', 'mfcc10_mean', 'mfcc10_var', 'mfcc11_mean', 'mfcc11_var', 'mfcc12_mean', 'mfcc12_var', 
+'mfcc13_mean', 'mfcc13_var', 'mfcc14_mean', 'mfcc14_var', 'mfcc15_mean', 'mfcc15_var', 'mfcc16_mean', 'mfcc16_var', 
+'mfcc17_mean', 'mfcc17_var', 'mfcc18_mean', 'mfcc18_var', 'mfcc19_mean', 'mfcc19_var', 'mfcc20_mean', 'mfcc20_var']
+
+a = os.path.splitext("c:/data/music/predict_music/아이유-마음을드려요.wav")
+a = os.path.split(a[0])
+print(a[1])
+
+df_pred = pd.DataFrame(columns=feature, index=a)
+df_pred.index.name = 'filename'
+pd.DataFrame.to_csv(df_pred, 'c:/data/music/predict_music/predict_csv/df_'+str(a[1])+'.csv')
+
+import pandas as pd
+import numpy as np
+
+
 
 # 한 곡에 대한 feature 총 정리
 import librosa
-y, sr = librosa.load("c:/data/music/predict_music/아이유_마음을드려요.wav")
+y, sr = librosa.load("c:/data/music/predict_music/아이유-마음을드려요.wav")
 # length
 length = len(y) #661500
 
@@ -113,7 +122,7 @@ mfcc19_mean = np.mean(mfcc[18])
 mfcc19_var = np.var(mfcc[18])
 mfcc20_mean = np.mean(mfcc[19])
 mfcc20_var = np.var(mfcc[19])
-label = 'ballad'
+
 feature =[length, chroma_stft_mean, chroma_stft_var, rms_mean, rms_var, 
 spectral_centroid_mean, spectral_centroid_var, spectral_bandwidth_mean, spectral_bandwidth_var, 
 rolloff_mean, rolloff_var, zero_crossing_rate_mean, zero_crossing_rate_var, harmony_mean, harmony_var, 
@@ -122,11 +131,10 @@ mfcc1_mean, mfcc1_var, mfcc2_mean, mfcc2_var, mfcc3_mean, mfcc3_var, mfcc4_mean,
 mfcc5_mean, mfcc5_var, mfcc6_mean, mfcc6_var, mfcc7_mean, mfcc7_var, mfcc8_mean, mfcc8_var, 
 mfcc9_mean, mfcc9_var, mfcc10_mean, mfcc10_var, mfcc11_mean, mfcc11_var, mfcc12_mean, mfcc12_var, 
 mfcc13_mean, mfcc13_var, mfcc14_mean, mfcc14_var, mfcc15_mean, mfcc15_var, mfcc16_mean, mfcc16_var, 
-mfcc17_mean, mfcc17_var, mfcc18_mean, mfcc18_var, mfcc19_mean, mfcc19_var, mfcc20_mean, mfcc20_var, 
-label]
+mfcc17_mean, mfcc17_var, mfcc18_mean, mfcc18_var, mfcc19_mean, mfcc19_var, mfcc20_mean, mfcc20_var]
 
 import pandas as pd
-train = pd.read_csv('c:/data/music/df_30.csv', index_col=0, header=0)
-print(train.head())
-train.loc['ballad.00000.wav',:]=feature
-print(train.head())
+pred = pd.read_csv('c:/data/music/predict_music/predict_csv/df_'+str(a[1])+'.csv', index_col=0, header=0)
+
+pred.loc[:,:]=feature
+pred.to_csv('c:/data/music/predict_music/predict_csv/'+str(a[1])+'.csv')

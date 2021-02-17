@@ -147,3 +147,4 @@ sub.loc[sub.id.str.contains("Day7"), "q_0.1":] = day7.round(2)
 sub.loc[sub.id.str.contains("Day8"), "q_0.1":] = day8.round(2)
 
 sub.to_csv('c:/data/test/solar/sample_submission17_check.csv', index=False)        
+from sklearn.preprocessing import MultiLabelBinarizer, 

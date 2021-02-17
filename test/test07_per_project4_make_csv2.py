@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import librosa
 import os
-
+from pydub import AudioSegment
 feature = ['length', 'chroma_stft_mean', 'chroma_stft_var', 'rms_mean', 'rms_var', 
 'spectral_centroid_mean', 'spectral_centroid_var', 'spectral_bandwidth_mean', 'spectral_bandwidth_var', 
 'rolloff_mean', 'rolloff_var', 'zero_crossing_rate_mean', 'zero_crossing_rate_var', 'harmony_mean', 'harmony_var', 
@@ -14,16 +14,16 @@ feature = ['length', 'chroma_stft_mean', 'chroma_stft_var', 'rms_mean', 'rms_var
 'mfcc17_mean', 'mfcc17_var', 'mfcc18_mean', 'mfcc18_var', 'mfcc19_mean', 'mfcc19_var', 'mfcc20_mean', 'mfcc20_var', 
 'label']
 
-list = os.listdir('c:/data/music/genres_original/')
+list = os.listdir('c:/data/music/genres_split/')
 a =[]
 for genre in list:
-    index = os.listdir('c:/data/music/genres_original/'+genre+'')
-    for i in range(100):
+    index = os.listdir('c:/data/music/genres_split/'+genre+'')
+    for i in range(1000):
         a.append(index[i])
 
-df_30 = pd.DataFrame(columns=feature, index=a)
-df_30.index.name = 'filename'
-print(df_30.head())
-print(df_30.tail())
-pd.DataFrame.to_csv(df_30, 'c:/data/music/df_30.csv')
+df_3 = pd.DataFrame(columns=feature, index=a)
+df_3.index.name = 'filename'
+print(df_3.head())
+print(df_3.tail())
+pd.DataFrame.to_csv(df_3, 'c:/data/music/df_3.csv')
 
