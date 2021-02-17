@@ -89,8 +89,8 @@ def normalize(x, axis=0):
 mfccs = librosa.feature.mfcc(y, sr=sr)
 mfccs = normalize(mfccs, axis=1)
 
-print('mean: %.2f' % mfccs.mean())
-print('var: %.2f' % mfccs.var())
+print(mfccs)
+print(mfccs.shape)
 
 plt.figure(figsize=(16, 6))
 librosa.display.specshow(mfccs, sr=sr, x_axis='time')

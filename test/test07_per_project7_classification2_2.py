@@ -14,10 +14,10 @@ import librosa, IPython
 import librosa.display as lplt
 import os
 seed = 12
-np.random.seed(seed)
+seed = np.random.seed(seed)
 print(seed)
 
-a = os.path.splitext("c:/data/music/predict_music/아이유-celebrity.wav")
+a = os.path.splitext("c:/data/music/predict_music/경서-밤하늘의별을.wav")
 a = os.path.split(a[0])
 print(a[1])
 
@@ -42,8 +42,8 @@ df.label = [label_index[l] for l in df.label]
 df_shuffle = df.sample(frac=1, random_state=seed).reset_index(drop=True)
 pred_shuffle = pred.sample(frac=1, random_state=seed).reset_index(drop=True)
 # remove irrelevant columns
-df_shuffle.drop(['filename', 'length'], axis=1, inplace=True)
-pred_shuffle.drop(['filename', 'length'], axis=1, inplace=True)
+df_shuffle.drop(['filename', 'length','tempo'], axis=1, inplace=True)
+pred_shuffle.drop(['filename', 'length','tempo'], axis=1, inplace=True)
 df_y = df_shuffle.pop('label')
 df_x = df_shuffle
 x_pred = pred_shuffle
@@ -96,6 +96,46 @@ model.fit(x_train,y_train, verbose=1,eval_metric='mlogloss',
 )
 
 aaa = model.score(x_test,y_test)
+
+
+print(model.feature_importances_)
+print("acc :", aaa)
+'''
+df = pd.DataFrame(dataset.data, columns=dataset.feature_names)
+new_data=[]
+feature=[]
+a = np.percentile(model.feature_importances_, q=25)
+
+for i in range(len(dataset.data[0])):
+    if model.feature_importances_[i] > a:
+       new_data.append(df.iloc[:,i])
+       feature.append(dataset.feature_names[i])
+
+new_data = pd.concat(new_data, axis=1)
+
+        
+x2_train, x2_test, y2_train, y2_test = train_test_split(new_data, dataset.target, train_size=0.8, random_state=32)
+model2 =XGBClassifier(n_jobs=-1)   
+model2.fit(x2_train,y2_train)
+acc2 = model2.score(x2_test, y2_test)
+print("acc2 :", acc2)
+print(new_data.shape)
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+def plot_feature_importances_dataset(model, feature_name, data):
+    n_features = data.shape[1]
+    plt.barh(np.arange(n_features), model.feature_importances_, align='center')
+    plt.yticks(np.arange(n_features), feature_name)
+    plt.xlabel("Feature Importances")
+    plt.ylabel("features")
+    plt.ylim(-1, n_features)
+plot_feature_importances_dataset(model, dataset.feature_names, dataset.data)
+# plot_feature_importances_dataset(model2, feature, new_data)
+plt.show()
+'''
+
 # test_loss, test_acc  = model.evaluate(x_test, y_test, batch_size=128)
 # print("The test Loss is :",test_loss)
 # print("\nThe Best test Accuracy is :",test_acc*100)
@@ -109,7 +149,6 @@ y_recovery = index_label[y_pred[0]]
 print(""+str(a[1])+" 는(은) 무슨 장르니?")
 print(""+str(a[1])+" 는(은)",y_recovery,"장르입니다.")
 
-
 df_30 = pd.read_csv('c:/data/music/30s_data.csv')
 pred = pred.assign(label=[y_recovery])
 df_30 = pd.concat([df_30,pred])
@@ -119,7 +158,11 @@ df_30 = df_30.drop(columns=['length','label'])
 
 # print(df_30.head())
 # print(df_30.tail())
-df_30 = scaler.transform(df_30)
+scaler2=StandardScaler()
+scaler2.fit(df_30)
+df_30 = scaler2.transform(df_30)
+print(df_30.head())
+print(df_30.tail())
 from sklearn.metrics.pairwise import cosine_similarity
 similarity = cosine_similarity(df_30)
 sim_df = pd.DataFrame(similarity, index=labels.index, columns=labels.index)
@@ -132,3 +175,4 @@ def find_similar_songs(name, n=5):
     print(""+name+" 와(과) 비슷한 곡 "+str(n)+"개의 list입니다.")
     print(series.head(n).to_frame('추천목록'))
 find_similar_songs(a[1])
+

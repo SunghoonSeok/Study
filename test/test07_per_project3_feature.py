@@ -27,7 +27,8 @@ length = len(y) #661500
 chroma_stft = librosa.feature.chroma_stft(y, sr=sr, hop_length=512)
 chroma_stft_mean = np.mean(chroma_stft) #0.29205593
 chroma_stft_var = np.var(chroma_stft) #0.09444008
-
+print(chroma_stft)
+print(chroma_stft.shape)
 # rms
 rms = librosa.feature.rms(y)
 rms_mean = np.mean(rms)

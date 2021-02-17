@@ -13,7 +13,7 @@ feature = ['length', 'chroma_stft_mean', 'chroma_stft_var', 'rms_mean', 'rms_var
 'mfcc13_mean', 'mfcc13_var', 'mfcc14_mean', 'mfcc14_var', 'mfcc15_mean', 'mfcc15_var', 'mfcc16_mean', 'mfcc16_var', 
 'mfcc17_mean', 'mfcc17_var', 'mfcc18_mean', 'mfcc18_var', 'mfcc19_mean', 'mfcc19_var', 'mfcc20_mean', 'mfcc20_var']
 
-a = os.path.splitext("c:/data/music/predict_music/아이유-celebrity.wav")
+a = os.path.splitext("c:/data/music/predict_music/방탄소년단-Dynamite.wav")
 a = os.path.split(a[0])
 
 df_pred = pd.DataFrame(columns=feature, index=[a[1]])
