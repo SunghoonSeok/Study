@@ -13,12 +13,12 @@ feature = ['length', 'chroma_stft_mean', 'chroma_stft_var', 'rms_mean', 'rms_var
 'mfcc13_mean', 'mfcc13_var', 'mfcc14_mean', 'mfcc14_var', 'mfcc15_mean', 'mfcc15_var', 'mfcc16_mean', 'mfcc16_var', 
 'mfcc17_mean', 'mfcc17_var', 'mfcc18_mean', 'mfcc18_var', 'mfcc19_mean', 'mfcc19_var', 'mfcc20_mean', 'mfcc20_var']
 
-a = os.path.splitext("c:/data/music/predict_music/방탄소년단-Dynamite.wav")
+a = os.path.splitext("c:/data/music/predict_music/릴보이-내일이오면.wav")
 a = os.path.split(a[0])
 
 df_pred = pd.DataFrame(columns=feature, index=[a[1]])
 df_pred.index.name = 'filename'
-pd.DataFrame.to_csv(df_pred, 'c:/data/music/predict_music/predict_csv/df_'+str(a[1])+'.csv')
+pd.DataFrame.to_csv(df_pred, 'c:/data/music/predict_music/predict_csv/'+str(a[1])+'.csv')
 
 import pandas as pd
 import numpy as np
@@ -136,7 +136,7 @@ mfcc13_mean, mfcc13_var, mfcc14_mean, mfcc14_var, mfcc15_mean, mfcc15_var, mfcc1
 mfcc17_mean, mfcc17_var, mfcc18_mean, mfcc18_var, mfcc19_mean, mfcc19_var, mfcc20_mean, mfcc20_var]
 
 import pandas as pd
-pred = pd.read_csv('c:/data/music/predict_music/predict_csv/df_'+str(a[1])+'.csv', index_col=0, header=0)
+pred = pd.read_csv('c:/data/music/predict_music/predict_csv/'+str(a[1])+'.csv', index_col=0, header=0)
 
 pred.loc[:,:]=feature
 pred.to_csv('c:/data/music/predict_music/predict_csv/'+str(a[1])+'.csv')

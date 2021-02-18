@@ -133,4 +133,4 @@ for genre in classif:
     print(''+genre+' 데이터 마무리')
 print(train.head())
 print(train.tail())
-train.to_csv('c:/data/music/3s_data.csv')
+train.to_csv('c:/data/music/3s_data2.csv')

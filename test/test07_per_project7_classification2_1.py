@@ -17,7 +17,7 @@ seed = 12
 np.random.seed(seed)
 print(seed)
 
-a = os.path.splitext("c:/data/music/predict_music/아이유-celebrity.wav")
+a = os.path.splitext("c:/data/music/predict_music/아이유-마음을드려요.wav")
 a = os.path.split(a[0])
 print(a[1])
 
@@ -134,14 +134,6 @@ def plot_feature_importances_dataset(model, feature_name, data):
 plot_feature_importances_dataset(model, dataset.feature_names, dataset.data)
 # plot_feature_importances_dataset(model2, feature, new_data)
 plt.show()
-
-
-
-
-
-
-
-
 
 
 # test_loss, test_acc  = model.evaluate(x_test, y_test, batch_size=128)
