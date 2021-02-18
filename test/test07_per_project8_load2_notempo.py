@@ -17,7 +17,7 @@ seed = 12
 np.random.seed(seed)
 print(seed)
 
-a = os.path.splitext("c:/data/music/predict_music/아이유-celebrity.wav")
+a = os.path.splitext("c:/data/music/predict_music/방탄소년단-Dynamite.wav")
 a = os.path.split(a[0])
 print(a[1])
 
