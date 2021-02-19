@@ -20,7 +20,8 @@ train = pd.read_csv('c:/data/music/df_3.csv', index_col=0, header=0)
 
 
 classif = os.listdir('c:/data/music/genres_split/')
-
+print(len(classif))
+'''
 a =[]
 for genre in classif:
     for i in range(100):
@@ -134,3 +135,4 @@ for genre in classif:
 print(train.head())
 print(train.tail())
 train.to_csv('c:/data/music/3s_data2.csv')
+'''
