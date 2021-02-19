@@ -34,13 +34,12 @@ print(index_label)
 df.label = [label_index[l] for l in df.label]
 
 df_shuffle = df.sample(frac=1, random_state=seed).reset_index(drop=True)
-pred_shuffle = pred.sample(frac=1, random_state=seed).reset_index(drop=True)
 # remove irrelevant columns
 df_shuffle.drop(['filename', 'length','tempo'], axis=1, inplace=True)
-pred_shuffle.drop(['filename', 'length','tempo'], axis=1, inplace=True)
+pred.drop(['filename', 'length','tempo'], axis=1, inplace=True)
 df_y = df_shuffle.pop('label')
 df_x = df_shuffle
-x_pred = pred_shuffle
+x_pred = pred
 
 # split into train dev and test
 

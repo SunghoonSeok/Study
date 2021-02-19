@@ -13,7 +13,7 @@ feature = ['length', 'chroma_stft_mean', 'chroma_stft_var', 'rms_mean', 'rms_var
 'mfcc13_mean', 'mfcc13_var', 'mfcc14_mean', 'mfcc14_var', 'mfcc15_mean', 'mfcc15_var', 'mfcc16_mean', 'mfcc16_var', 
 'mfcc17_mean', 'mfcc17_var', 'mfcc18_mean', 'mfcc18_var', 'mfcc19_mean', 'mfcc19_var', 'mfcc20_mean', 'mfcc20_var']
 
-a = os.path.splitext("c:/data/music/predict_music/릴보이-내일이오면.wav")
+a = os.path.splitext("c:/data/music/predict_music/방탄소년단-Dynamite.wav")
 a = os.path.split(a[0])
 
 df_pred = pd.DataFrame(columns=feature, index=[a[1]])
@@ -82,8 +82,9 @@ tempo, _ = librosa.beat.beat_track(y, sr=sr)
 S = librosa.feature.melspectrogram(y, sr=sr)
 S_DB = librosa.amplitude_to_db(S, ref=np.max)
 D = np.abs(librosa.stft(y, n_fft=2048, win_length=2048, hop_length=512))
-mfcc = librosa.feature.mfcc(y, sr=sr, n_mfcc = 20)
-print(mfcc[0])
+mfcc = librosa.feature.mfcc(y, sr=sr, S=librosa.power_to_db(D), n_mfcc = 20)
+print(np.mean(mfcc[0]))  # -11.3112
+
 mfcc1_mean = np.mean(mfcc[0])
 mfcc1_var = np.var(mfcc[0])
 mfcc2_mean = np.mean(mfcc[1])
@@ -134,10 +135,9 @@ mfcc5_mean, mfcc5_var, mfcc6_mean, mfcc6_var, mfcc7_mean, mfcc7_var, mfcc8_mean,
 mfcc9_mean, mfcc9_var, mfcc10_mean, mfcc10_var, mfcc11_mean, mfcc11_var, mfcc12_mean, mfcc12_var, 
 mfcc13_mean, mfcc13_var, mfcc14_mean, mfcc14_var, mfcc15_mean, mfcc15_var, mfcc16_mean, mfcc16_var, 
 mfcc17_mean, mfcc17_var, mfcc18_mean, mfcc18_var, mfcc19_mean, mfcc19_var, mfcc20_mean, mfcc20_var]
-'''
+
 import pandas as pd
 pred = pd.read_csv('c:/data/music/predict_music/predict_csv/'+str(a[1])+'.csv', index_col=0, header=0)
 
 pred.loc[:,:]=feature
-pred.to_csv('c:/data/music/predict_music/predict_csv/'+str(a[1])+'.csv')
-'''
+pred.to_csv('c:/data/music/predict_music/predict_csv/'+str(a[1])+'2.csv')

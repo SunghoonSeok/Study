@@ -111,10 +111,10 @@ class Song_to_csv:
                         tempo, _ = librosa.beat.beat_track(y, sr=sr)
 
                         # MFCCs
-                        # S = librosa.feature.melspectrogram(y, sr=sr)
-                        # S_DB = librosa.amplitude_to_db(S, ref=np.max)
-                        # D = np.abs(librosa.stft(y, n_fft=2048, win_length=2048, hop_length=512))
-                        mfcc = librosa.feature.mfcc(y, sr=sr, n_mfcc = 20)
+                        S = librosa.feature.melspectrogram(y, sr=sr)
+                        S_DB = librosa.amplitude_to_db(S, ref=np.max)
+                        D = np.abs(librosa.stft(y, n_fft=2048, win_length=2048, hop_length=512))
+                        mfcc = librosa.feature.mfcc(y, sr=sr,S=librosa.power_to_db(D), n_mfcc = 20)
                         mfcc1_mean = np.mean(mfcc[0])
                         mfcc1_var = np.var(mfcc[0])
                         mfcc2_mean = np.mean(mfcc[1])
@@ -220,10 +220,10 @@ class Song_to_csv:
                         tempo, _ = librosa.beat.beat_track(y, sr=sr)
 
                         # MFCCs
-                        # S = librosa.feature.melspectrogram(y, sr=sr)
-                        # S_DB = librosa.amplitude_to_db(S, ref=np.max)
-                        # D = np.abs(librosa.stft(y, n_fft=2048, win_length=2048, hop_length=512))
-                        mfcc = librosa.feature.mfcc(y, sr=sr, n_mfcc = 20)
+                        S = librosa.feature.melspectrogram(y, sr=sr)
+                        S_DB = librosa.amplitude_to_db(S, ref=np.max)
+                        D = np.abs(librosa.stft(y, n_fft=2048, win_length=2048, hop_length=512))
+                        mfcc = librosa.feature.mfcc(y, sr=sr,S=librosa.power_to_db(D), n_mfcc = 20)
                         mfcc1_mean = np.mean(mfcc[0])
                         mfcc1_var = np.var(mfcc[0])
                         mfcc2_mean = np.mean(mfcc[1])

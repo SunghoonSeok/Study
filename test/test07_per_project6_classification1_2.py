@@ -40,13 +40,13 @@ print(index_label)
 df.label = [label_index[l] for l in df.label]
 
 df_shuffle = df.sample(frac=1, random_state=seed).reset_index(drop=True)
-pred_shuffle = pred.sample(frac=1, random_state=seed).reset_index(drop=True)
+# pred_shuffle = pred.sample(frac=1, random_state=seed).reset_index(drop=True)
 # remove irrelevant columns
 df_shuffle.drop(['filename', 'length', 'tempo'], axis=1, inplace=True)
-pred_shuffle.drop(['filename', 'length','tempo'], axis=1, inplace=True)
+pred.drop(['filename', 'length','tempo'], axis=1, inplace=True)
 df_y = df_shuffle.pop('label')
 df_x = df_shuffle
-x_pred = pred_shuffle
+x_pred = pred
 
 # split into train dev and test
 from sklearn.model_selection import train_test_split
@@ -80,15 +80,15 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCh
 es = EarlyStopping(monitor='val_loss',mode='min', patience=45)
 rl = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=15, mode='min')
 # modelpath = 'c:/data/music/checkpoint/checkpoint_{val_loss:.4f}-{val_accuracy:.4f}.hdf5'
-modelpath = 'c:/data/music/checkpoint/checkpoint_notempo_{val_loss:.4f}.hdf5'
+modelpath = 'c:/data/music/checkpoint/checkpoint2_notempo_{val_loss:.4f}.hdf5'
 mc = ModelCheckpoint(modelpath, monitor='val_loss',save_best_only=True, mode='min',verbose=1)
 
 
 model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer, metrics=['sparse_categorical_accuracy'])
-model.fit(x_train, y_train, batch_size=64, epochs=1000, validation_data=(x_val, y_val), callbacks=[es,rl,mc])
+model.fit(x_train, y_train, batch_size=32, epochs=1000, validation_data=(x_val, y_val), callbacks=[es,rl,mc])
 
 
-test_loss, test_acc  = model.evaluate(x_test, y_test, batch_size=64)
+test_loss, test_acc  = model.evaluate(x_test, y_test, batch_size=32)
 
 print("The test Loss is :",test_loss)
 print("\nThe Best test Accuracy is :",test_acc*100)

@@ -40,13 +40,13 @@ print(index_label)
 df.label = [label_index[l] for l in df.label]
 
 df_shuffle = df.sample(frac=1, random_state=seed).reset_index(drop=True)
-pred_shuffle = pred.sample(frac=1, random_state=seed).reset_index(drop=True)
+# pred_shuffle = pred.sample(frac=1, random_state=seed).reset_index(drop=True)
 # remove irrelevant columns
 df_shuffle.drop(['filename', 'length','tempo'], axis=1, inplace=True)
-pred_shuffle.drop(['filename', 'length','tempo'], axis=1, inplace=True)
+pred.drop(['filename', 'length','tempo'], axis=1, inplace=True)
 df_y = df_shuffle.pop('label')
 df_x = df_shuffle
-x_pred = pred_shuffle
+x_pred = pred
 
 # split into train dev and test
 from sklearn.model_selection import train_test_split
@@ -91,26 +91,29 @@ mc = ModelCheckpoint(modelpath, monitor='val_loss',save_best_only=True, mode='mi
 
 # model.fit(x_train, y_train, batch_size=128, epochs=1000, validation_data=(x_val, y_val), callbacks=[es,rl,mc])
 
-model2 = load_model('c:/data/music/checkpoint/checkpoint_notempo_0.2917.hdf5',compile=False)
+model2 = load_model('c:/data/music/checkpoint/checkpoint2_notempo_0.2994.hdf5',compile=False)
 model2.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer, metrics=['sparse_categorical_accuracy'])
 
-test_loss, test_acc  = model2.evaluate(x_test, y_test, batch_size=64)
+test_loss, test_acc  = model2.evaluate(x_test, y_test, batch_size=32)
 print("The test Loss is :",test_loss)
 print("\nThe Best test Accuracy is :",test_acc*100)
 y_pred = model2.predict(x_pred)
 y_recovery = np.argmax(y_pred, axis=1).reshape(-1,1)
 print(y_recovery)
+
+
 y_label=[]
 for i in range(len(y_recovery)):
     temp = index_label[y_recovery[i][0]]
     y_label.append(temp)
 print(y_label)
 
-'''
+
+
 print(""+str(a[1])+" 는(은) 무슨 장르니?")
-print(""+str(a[1])+"는(은)",y_recovery,"장르입니다.")
+print(""+str(a[1])+"는(은)",y_label,"장르입니다.")
 
-
+'''
 df_30 = pd.read_csv('c:/data/music/30s_data.csv')
 pred = pred.assign(label=[y_recovery])
 df_30 = pd.concat([df_30,pred])
