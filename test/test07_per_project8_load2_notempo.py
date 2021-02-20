@@ -14,10 +14,10 @@ import librosa, IPython
 import librosa.display as lplt
 import os
 seed = 12
-np.random.seed(seed)
-print(seed)
+# np.random.seed(seed)
+# print(seed)
 
-a = os.path.splitext("c:/data/music/predict_music/predict_csv.wav")
+a = os.path.splitext("c:/data/music/predict_music/disco_csv.wav")
 a = os.path.split(a[0])
 print(a[1])
 
@@ -32,6 +32,7 @@ print(df.label.value_counts().reset_index())
 # map labels to index
 label_index = dict()
 index_label = dict()
+print(df.label.unique()) # label 종류 출력
 for i, x in enumerate(df.label.unique()):
     label_index[x] = i
     index_label[i] = x
@@ -39,14 +40,15 @@ print(label_index)
 print(index_label)
 df.label = [label_index[l] for l in df.label]
 
-df_shuffle = df.sample(frac=1, random_state=seed).reset_index(drop=True)
-# pred_shuffle = pred.sample(frac=1, random_state=seed).reset_index(drop=True)
+df_shuffle = df.sample(frac=1, random_state=seed).reset_index(drop=True) # reset index droptrue 안하면 index 2줄임, shuffle해줌
+'''
+cpred = pred.copy()
 # remove irrelevant columns
 df_shuffle.drop(['filename', 'length','tempo'], axis=1, inplace=True)
-pred.drop(['filename', 'length','tempo'], axis=1, inplace=True)
+cpred.drop(['filename', 'length','tempo'], axis=1, inplace=True)
 df_y = df_shuffle.pop('label')
 df_x = df_shuffle
-x_pred = pred
+x_pred = cpred
 
 # split into train dev and test
 from sklearn.model_selection import train_test_split
@@ -91,7 +93,7 @@ mc = ModelCheckpoint(modelpath, monitor='val_loss',save_best_only=True, mode='mi
 
 # model.fit(x_train, y_train, batch_size=128, epochs=1000, validation_data=(x_val, y_val), callbacks=[es,rl,mc])
 
-model2 = load_model('c:/data/music/checkpoint/checkpoint2_notempo_0.2994.hdf5',compile=False)
+model2 = load_model('c:/data/music/checkpoint/checkpoint_notempo_0.2917.hdf5',compile=False)
 model2.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer, metrics=['sparse_categorical_accuracy'])
 
 test_loss, test_acc  = model2.evaluate(x_test, y_test, batch_size=32)
@@ -113,18 +115,21 @@ print(y_label)
 print(""+str(a[1])+" 는(은) 무슨 장르니?")
 print(""+str(a[1])+"는(은)",y_label,"장르입니다.")
 
-'''
+i= random.randrange(len(y_label))
 df_30 = pd.read_csv('c:/data/music/30s_data.csv')
-pred = pred.assign(label=[y_recovery])
-df_30 = pd.concat([df_30,pred])
+pred = pred.assign(label=y_label)
+ipred = pred.iloc[[i]]
+npred = pred.iloc[i]
+fname = npred['filename']
+
+print(fname)
+df_30 = pd.concat([df_30,ipred])
 df_30.set_index('filename', inplace=True)
 labels = df_30[['label']]
 df_30 = df_30.drop(columns=['length','label'])
 
-# print(df_30.head())
-# print(df_30.tail())
 
-from sklearn.preprocessing import MaxAbsScaler, Normalizer
+from sklearn.preprocessing import MaxAbsScaler
 scaler2 = MaxAbsScaler()
 scaler2.fit(df_30)
 df_30 = scaler2.transform(df_30)
@@ -141,5 +146,5 @@ def find_similar_songs(name, n=5):
     print("\n*******\n"+name+" 와(과) 비슷한 곡 추천해줘")
     print(""+name+" 와(과) 비슷한 곡 "+str(n)+"개의 list입니다.")
     print(series.head(n).to_frame('추천목록'))
-find_similar_songs(str(a[1]))
+find_similar_songs(fname)
 '''
