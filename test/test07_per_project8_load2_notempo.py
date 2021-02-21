@@ -41,7 +41,7 @@ print(index_label)
 df.label = [label_index[l] for l in df.label]
 
 df_shuffle = df.sample(frac=1, random_state=seed).reset_index(drop=True) # reset index droptrue 안하면 index 2줄임, shuffle해줌
-'''
+
 cpred = pred.copy()
 # remove irrelevant columns
 df_shuffle.drop(['filename', 'length','tempo'], axis=1, inplace=True)
@@ -147,4 +147,3 @@ def find_similar_songs(name, n=5):
     print(""+name+" 와(과) 비슷한 곡 "+str(n)+"개의 list입니다.")
     print(series.head(n).to_frame('추천목록'))
 find_similar_songs(fname)
-'''

@@ -1,20 +1,20 @@
-# 다량의 mp3파일을 wav 파일로 바꾸기
+# mp3파일을 wav 파일로 바꾸기
 import os
 from pydub import AudioSegment
 
 
-mp3_sound = AudioSegment.from_mp3('c:\\data\\music\\metal\\metal\\metalmetal.mp3')
-mp3_sound.export('c:\\data\\music\\metal\\metal\\metalmetal2.wav', format="wav")
+mp3_sound = AudioSegment.from_mp3('c:\\data\\music\\country\\country\\countrycountry.mp3')
+mp3_sound.export('c:\\data\\music\\country\\country\\countrycountry2.wav', format="wav")
 
 # 통으로 되어있는 곡 4분마다 30초씩
 import librosa
 import numpy as np
 import librosa.display
 import soundfile
-y, sr = librosa.load('c:\\data\\music\\metal\\metal\\metalmetal2.wav')
+y, sr = librosa.load('c:\\data\\music\\country\\country\\countrycountry2.wav')
 for i in range(100):
     y2 = y[22050*240*(i):22050*(240*(i)+30)]
-    soundfile.write("c:/data/music/metal/metal/metal.%05d.wav"%i, y2, samplerate=sr)
+    soundfile.write("c:/data/music/country/country/country.%05d.wav"%i, y2, samplerate=sr)
 
 
 # # 빠진 번호 곡 채우기

@@ -1,22 +1,6 @@
 import pandas as pd
 import numpy as np
 
-train = pd.read_csv('c:/data/music/features_30_sec.csv', header=None)
-feature = train.iloc[0,:]
-feature = feature.values.tolist()
-feature = feature[1:]
-print(feature)
-# ['filename', 'length', 'chroma_stft_mean', 'chroma_stft_var', 'rms_mean', 'rms_var', 
-# 'spectral_centroid_mean', 'spectral_centroid_var', 'spectral_bandwidth_mean', 'spectral_bandwidth_var', 
-# 'rolloff_mean', 'rolloff_var', 'zero_crossing_rate_mean', 'zero_crossing_rate_var', 'harmony_mean', 'harmony_var', 
-# 'perceptr_mean', 'perceptr_var', 'tempo', 
-# 'mfcc1_mean', 'mfcc1_var', 'mfcc2_mean', 'mfcc2_var', 'mfcc3_mean', 'mfcc3_var', 'mfcc4_mean', 'mfcc4_var', 
-# 'mfcc5_mean', 'mfcc5_var', 'mfcc6_mean', 'mfcc6_var', 'mfcc7_mean', 'mfcc7_var', 'mfcc8_mean', 'mfcc8_var', 
-# 'mfcc9_mean', 'mfcc9_var', 'mfcc10_mean', 'mfcc10_var', 'mfcc11_mean', 'mfcc11_var', 'mfcc12_mean', 'mfcc12_var', 
-# 'mfcc13_mean', 'mfcc13_var', 'mfcc14_mean', 'mfcc14_var', 'mfcc15_mean', 'mfcc15_var', 'mfcc16_mean', 'mfcc16_var', 
-# 'mfcc17_mean', 'mfcc17_var', 'mfcc18_mean', 'mfcc18_var', 'mfcc19_mean', 'mfcc19_var', 'mfcc20_mean', 'mfcc20_var', 
-# 'label']
-
 # 한 곡에 대한 feature 총 정리
 import librosa
 y, sr = librosa.load("c:/data/music/predict_music/아이유_마음을드려요.wav")
@@ -66,12 +50,11 @@ perceptr_var = np.var(perceptr)
 
 # tempo
 tempo, _ = librosa.beat.beat_track(y, sr=sr)
-# print(tempo)
 
 # MFCCs
 S = librosa.feature.melspectrogram(y, sr=sr)
 S_DB = librosa.amplitude_to_db(S, ref=np.max)
-D = np.abs(librosa.stft(y, n_fft=2048, win_length=2048, hop_length=512))
+D = np.abs(librosa.stft(y, n_fft=2048, win_length=1024, hop_length=512))
 mfcc = librosa.feature.mfcc(y,S = librosa.power_to_db(D), sr=sr, n_mfcc = 20)
 # print(mfcc[0])
 mfcc1_mean = np.mean(mfcc[0])

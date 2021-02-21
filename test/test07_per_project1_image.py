@@ -13,31 +13,23 @@ print(len(y))
 print('Sampling rate (KHz): %d' % sr)
 print('Audio length (seconds): %.2f' % (len(y) / sr))
 
-
-
-# [-0.15219471 -0.18531479 -0.17492233 ...  0.12399548  0.08108243
-#   0.03574109]
+# [0.10967798 0.127714   0.12182648 ... 0.02821436 0.02284489 0.01139307]
 # 661500
 # Sampling rate (KHz): 22050
 # Audio length (seconds): 30.00
-
 audio_file, _ = librosa.effects.trim(y)
 
-# the result is an numpy ndarray
-print('Audio File:', audio_file, '\n')
-print('Audio File shape:', np.shape(audio_file))
-
 plt.figure(figsize = (16, 6))
-librosa.display.waveplot(y = audio_file, sr = sr, color = "#A300F9");
-plt.title("Sound Waves in IU-I give you my heart", fontsize = 23);
+librosa.display.waveplot(y = y, sr = sr, color = "#A300F9");
+plt.title("Sound Waves in Snowman", fontsize = 23);
 # plt.show()
 
 # Default FFT window size
 n_fft = 2048 # FFT window size
-hop_length = 512 # number audio of frames between STFT columns (looks like a good default)
+hop_length = 512 # number audio of frames between STFT columns
 
 # Short-time Fourier transform (STFT)
-D = np.abs(librosa.stft(audio_file, n_fft = n_fft, hop_length = hop_length))
+D = np.abs(librosa.stft(y, n_fft = n_fft, hop_length = hop_length))
 
 print('Shape of D object:', np.shape(D)) # Shape of D object: (1025, 1292)
 
@@ -95,4 +87,3 @@ print(mfccs.shape)
 plt.figure(figsize=(16, 6))
 librosa.display.specshow(mfccs, sr=sr, x_axis='time')
 plt.show()
-
