@@ -32,12 +32,14 @@ hop_length = 512 # number audio of frames between STFT columns
 D = np.abs(librosa.stft(y, n_fft = n_fft, hop_length = hop_length))
 
 print('Shape of D object:', np.shape(D)) # Shape of D object: (1025, 1292)
-
+# shape = (1 + n_fft/2, len(y)/hop_length)
 plt.figure(figsize = (16, 6))
 plt.plot(D);
-# plt.show()
+plt.show()
+
 
 # Convert an amplitude spectrogram to Decibels-scaled spectrogram.
+D = np.abs(librosa.stft(y, n_fft = n_fft, hop_length = hop_length))
 DB = librosa.amplitude_to_db(D, ref = np.max)
 
 # Creating the Spectogram
@@ -87,3 +89,4 @@ print(mfccs.shape)
 plt.figure(figsize=(16, 6))
 librosa.display.specshow(mfccs, sr=sr, x_axis='time')
 plt.show()
+'''

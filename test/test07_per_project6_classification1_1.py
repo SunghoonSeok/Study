@@ -28,6 +28,14 @@ print("Dataset has",df.shape)
 print("Count of Positive and Negative samples")
 print(df.label.value_counts().reset_index())
 
+# 상관계수
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set(style='dark', font_scale=1.2, font='Malgun Gothic') # , palette='pastel'
+sns.color_palette('Paired',6)
+sns.heatmap(data=df.corr(), square=True, annot=True, cbar=True)
+plt.show()
+'''
 
 # map labels to index
 label_index = dict()
@@ -97,7 +105,7 @@ y_recovery = np.argmax(y_pred, axis=1).reshape(-1,1)
 print(y_recovery)
 y_recovery = index_label[y_recovery[0][0]]
 
-'''
+
 model2 = load_model('c:/data/music/checkpoint/checkpoint.hdf5')
 test_loss, test_acc  = model2.evaluate(x_test, y_test, batch_size=128)
 print("The test Loss is :",test_loss)
@@ -107,7 +115,7 @@ y_recovery = np.argmax(y_pred, axis=1).reshape(-1,1)
 print(y_recovery)
 y_recovery = index_label[y_recovery[0][0]]
 
-'''
+
 print(""+str(a[1])+" 는(은) 무슨 장르니?")
 print(""+str(a[1])+" 는(은)",y_recovery,"장르입니다.")
 
@@ -135,3 +143,4 @@ def find_similar_songs(name, n=5):
     print(""+name+" 와(과) 비슷한 곡 "+str(n)+"개의 list입니다.")
     print(series.head(n).to_frame('추천목록'))
 find_similar_songs(a[1])
+'''

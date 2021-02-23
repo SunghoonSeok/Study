@@ -52,8 +52,9 @@ x_pred = cpred
 
 # split into train dev and test
 from sklearn.model_selection import train_test_split
-x_train, x_val_test, y_train, y_val_test = train_test_split(df_x, df_y, train_size=0.7, random_state=seed, stratify=df_y)
-x_val, x_test, y_val, y_test = train_test_split(x_val_test, y_val_test, train_size=0.66, random_state=seed, stratify=y_val_test)
+x_train, x_val_test, y_train, y_val_test = train_test_split(df_x, df_y, train_size=0.70001, random_state=seed, stratify=df_y)
+x_val, x_test, y_val, y_test = train_test_split(x_val_test, y_val_test, train_size=0.66667, random_state=seed, stratify=y_val_test)
+print(x_train.shape, x_val.shape, x_test.shape)
 
 from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
@@ -83,7 +84,7 @@ import keras
 # model.add(Dropout(0.2))
 # model.add(Dense(11, activation='softmax'))
 
-optimizer = Adam(lr=0.0005)
+optimizer = Adam(lr=0.001)
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
 es = EarlyStopping(monitor='val_loss',mode='min', patience=45)
 rl = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=15, mode='min')
@@ -93,15 +94,30 @@ mc = ModelCheckpoint(modelpath, monitor='val_loss',save_best_only=True, mode='mi
 
 # model.fit(x_train, y_train, batch_size=128, epochs=1000, validation_data=(x_val, y_val), callbacks=[es,rl,mc])
 
-model2 = load_model('c:/data/music/checkpoint/checkpoint2_notempo_0.2458.hdf5',compile=False)
+model2 = load_model('c:/data/music/checkpoint/checkpoint_notempo_0.2917.hdf5',compile=False)
 model2.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer, metrics=['sparse_categorical_accuracy'])
 
 test_loss, test_acc  = model2.evaluate(x_test, y_test, batch_size=32)
 print("The test Loss is :",test_loss)
 print("\nThe Best test Accuracy is :",test_acc*100)
-y_pred = model2.predict(x_pred)
-y_recovery = np.argmax(y_pred, axis=1).reshape(-1,1)
-print(y_recovery)
+print(x_test.shape)
+y_pred = model2.predict(x_test)
+y_pred = np.argmax(y_pred, axis=1).reshape(-1,1)
+# y_test = np.argmax(y_test, axis=1).reshape(-1,1)
+
+from sklearn.metrics import multilabel_confusion_matrix, confusion_matrix
+cm = confusion_matrix(y_test, y_pred)
+plt.figure(figsize=(16,9))
+sns.heatmap(
+    cm,
+    annot=True,
+    xticklabels=['ballad','blues','classical','country','disco','hiphop','jazz','metal','pop','reggae','rock'],
+    yticklabels=['ballad','blues','classical','country','disco','hiphop','jazz','metal','pop','reggae','rock']
+)
+plt.show()
+# y_pred = model2.predict(x_pred)
+# y_recovery = np.argmax(y_pred, axis=1).reshape(-1,1)
+# print(y_recovery)
 
 
 # y_label=[]

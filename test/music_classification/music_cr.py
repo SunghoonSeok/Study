@@ -8,8 +8,8 @@ import os
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MaxAbsScaler
 from tensorflow.keras.models import Model, Sequential, load_model
-from tensorflow.keras.layers import Dense, Input, LSTM, Dropout, Conv1D, Flatten, MaxPooling1D, GRU, SimpleRNN, ReLU, LeakyReLU
-from tensorflow.keras.optimizers import Adam, Adagrad, Adamax, SGD, RMSprop, Adadelta, Ftrl, Nadam
+from tensorflow.keras.layers import Dense, Input, Dropout
+from tensorflow.keras.optimizers import Adam, Adagrad, Adamax, SGD, RMSprop, Adadelta, Nadam
 from sklearn.metrics.pairwise import cosine_similarity
 
 class Classifi_recommend:
@@ -66,9 +66,11 @@ class Classifi_recommend:
         optimizer = Adam(lr=0.001)
 
         model2 = load_model('c:/data/music/checkpoint/checkpoint_notempo_0.2917.hdf5',compile=False)
+        # model2 = load_model('c:/data/music/checkpoint/checkpoint2_notempo_0.2885.hdf5',compile=False)
+        # model2 = load_model('c:/data/music/checkpoint/checkpoint_notempo_0.2596.hdf5',compile=False)
         model2.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer, metrics=['sparse_categorical_accuracy'])
 
-        test_loss, test_acc  = model2.evaluate(x_test, y_test, batch_size=32)
+        test_loss, test_acc  = model2.evaluate(x_test, y_test, batch_size=64)
         print("\nThe test Loss is :",test_loss)
         print("The Best test Accuracy is :",test_acc*100)
         y_pred = model2.predict(x_pred)
@@ -86,6 +88,7 @@ class Classifi_recommend:
         print(""+str(a[1])+"는(은)",y_label,"장르입니다.")
 
         i= random.randrange(len(y_label))
+        
         df_30 = pd.read_csv('c:/data/music/30s_data.csv')
         pred = pred.assign(label=y_label)
         ipred = pred.iloc[[i]]
