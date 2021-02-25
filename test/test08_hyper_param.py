@@ -58,28 +58,33 @@ from tensorflow.keras.optimizers import Adam, Adagrad, Adamax, SGD, RMSprop, Ada
 from tensorflow.keras.activations import elu,relu,selu,swish,tanh
 
 #2. 모델
-def build_model(drop=0.2, optimizer='adam', node=512, activation='relu'):
-    activation = activation
+def build_model(drop=0.2, activation1='relu',activation2='relu',activation3='relu',activation4='relu'):
+    activation1 = activation1
+    activation2 = activation2
+    activation3 = activation3
+    activation4 = activation4
     model = Sequential()
-    model.add(Dense(node, activation=activation, input_shape=(56,)))
+    model.add(Dense(512, activation=activation1, input_shape=(56,)))
     model.add(Dropout(drop))
-    model.add(Dense(256, activation=activation))
+    model.add(Dense(256, activation=activation2))
     model.add(Dropout(drop))
-    model.add(Dense(128, activation=activation))
+    model.add(Dense(128, activation=activation3))
     model.add(Dropout(drop))
-    model.add(Dense(64, activation=activation))
+    model.add(Dense(64, activation=activation4))
     model.add(Dropout(drop))
     model.add(Dense(11, activation='softmax'))
-    model.compile(loss='sparse_categorical_crossentropy',optimizer=optimizer, metrics=['accuracy'])
+    model.compile(loss='sparse_categorical_crossentropy',optimizer=Adam(lr=0.0005), metrics=['accuracy'])
     return model
 
 def create_hyperparameters():
-    batches = [16,32,64,128]
-    optimizers = ['adam', 'adamax','adadelta','sgd','rmsprop', 'nadam', 'adagrad']
-    dropout = [0.2, 0.3, 0.4]
-    node = [512, 1024]
-    activation = ['relu','elu','selu','swish','tanh']
-    return {"batch_size" : batches, "optimizer" : optimizers, "drop" : dropout, "node" : node, "activation" : activation}
+    batches = [32,64,128]
+    activation1 = ['relu','elu','selu','swish']
+    activation2 = ['relu','elu','selu','swish']
+    activation3 = ['relu','elu','selu','swish']
+    activation4 = ['relu','elu','selu','swish']
+
+    return {"batch_size" : batches, "activation1" : activation1,
+    "activation2" : activation2, "activation3" : activation3, "activation4" : activation4}
 
 hyperparameters = create_hyperparameters()
 
@@ -89,8 +94,8 @@ from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
 
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
-es = EarlyStopping(monitor='val_loss',mode='min', patience=45)
-rl = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=15, mode='min')
+es = EarlyStopping(monitor='val_loss',mode='min', patience=60)
+rl = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=20, mode='min')
 modelpath = 'c:/data/music/checkpoint/checkpoint3_notempo_{val_loss:.4f}.hdf5'
 mc = ModelCheckpoint(modelpath, monitor='val_loss',save_best_only=True, mode='min',verbose=1)
 
@@ -105,10 +110,13 @@ scaler = StandardScaler()
 x_train = pd.DataFrame(scaler.fit_transform(x_train), columns=x_train.columns)
 x_val = pd.DataFrame(scaler.transform(x_val), columns=x_train.columns)
 x_test = pd.DataFrame(scaler.transform(x_test), columns=x_train.columns)
-search = GridSearchCV(model2, hyperparameters)
+search = RandomizedSearchCV(model2, hyperparameters, n_iter=50)
 hist = search.fit(x_train, y_train, validation_data=(x_val,y_val), callbacks=[es,rl,mc])
 acc = search.score(x_test, y_test)
 print("score :", acc)
 print(search.best_params_)
 print(search.best_score_)
     
+# score : 0.9430097937583923
+# {'batch_size': 32, 'activation4': 'elu', 'activation3': 'relu', 'activation2': 'elu', 'activation1': 'selu'}
+# 0.9202493548393249

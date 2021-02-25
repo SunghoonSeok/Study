@@ -17,7 +17,7 @@ from efficientnet_pytorch import EfficientNet
 import matplotlib.pyplot as plt
 from torch_poly_lr_decay import PolynomialLRDecay
 import random
-
+import ttach as tta
 
 torch.set_num_threads(1)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -117,15 +117,27 @@ class EfficientNet_MultiLabel(nn.Module):
 
 # 해당 코드에서는 1fold만 실행
 
-kf = KFold(n_splits=5, shuffle=True, random_state=42)
+kf = KFold(n_splits=7, shuffle=True, random_state=42)
 folds=[]
 for train_idx, valid_idx in kf.split(imgs):
     folds.append((train_idx, valid_idx))
     
 ### seed_everything(42)
+# from edafa import ClassPredictor
+
+# class myPredictor(ClassPredictor):
+#     def __init__(self, model, *args, **kwargs):
+#         super().__init__(*args,**kwargs)
+#         self.model = model
+#     def predict_patches(self, patches):
+#         return self.model.predict(patches)
+
+# conf = '{"augs":["NO",\
+#     "ROT90","ROT270"],\
+        # "mean":"ARITH"}'
 
 # 5개의 fold 모두 실행하려면 for문을 5번 돌리면 됩니다.
-for fold in range(5):
+for fold in range(3):
     model = EfficientNet_MultiLabel(in_channels=3).to(device)
 #   model = nn.DataParallel(model)
     train_idx = folds[fold][0]
@@ -144,7 +156,7 @@ for fold in range(5):
 
 
     epochs=30
-    batch_size=10        # 자신의 VRAM에 맞게 조절해야 OOM을 피할 수 있습니다.
+    batch_size=16      # 자신의 VRAM에 맞게 조절해야 OOM을 피할 수 있습니다.
     
     
     
@@ -217,7 +229,7 @@ for fold in range(5):
             valid_accuracy.append(np.mean(valid_batch_accuracy))
             
         if np.mean(valid_batch_accuracy)>valid_best_accuracy:
-            torch.save(model.state_dict(), 'c:/data/test/dirty_mnist/checkpoint/EfficientNetB0-fold{}.pt'.format(fold))
+            torch.save(model.state_dict(), 'c:/data/test/dirty_mnist/checkpoint/EfficientNetB0-fold{}_tta.pt'.format(fold))
             valid_best_accuracy = np.mean(valid_batch_accuracy)
         print('fold : {}\tepoch : {:02d}\ttrain_accuracy / loss : {:.5f} / {:.5f}\tvalid_accuracy / loss : {:.5f} / {:.5f}\ttime : {:.0f}'.format(fold+1, epoch+1,
                                                                                                                                               np.mean(batch_accuracy_list),
@@ -241,20 +253,22 @@ test_transform = transforms.Compose([
 submission = pd.read_csv('c:/data/test/dirty_mnist/sample_submission.csv')
 
 with torch.no_grad():
-    for fold in range(5):
+    for fold in range(3):
         model = EfficientNet_MultiLabel(in_channels=3).to(device)
-        model.load_state_dict(torch.load('c:/data/test/dirty_mnist/checkpoint/EfficientNetB0-fold{}.pt'.format(fold)))
+        model.load_state_dict(torch.load('c:/data/test/dirty_mnist/checkpoint/EfficientNetB0-fold{}_tta.pt'.format(fold)))
         model.eval()
 
         test_dataset = MnistDataset_v2(imgs = test_imgs, transform=test_transform, train=False)
         test_loader = DataLoader(dataset=test_dataset, batch_size=32, shuffle=False)
+        tta_model = tta.ClassificationTTAWrapper(model, tta.aliases.ten_crop_transform(),merge_mode='mean')
 
         for n, X_test in enumerate(tqdm(test_loader)):
             X_test = torch.tensor(X_test, device=device, dtype=torch.float32)
             with torch.no_grad():
                 model.eval()
-                pred_test = model(X_test).cpu().detach().numpy()
+                pred_test = tta_model(X_test).cpu().detach().numpy()
                 submission.iloc[n*32:(n+1)*32,1:] += pred_test
+        print(submission.head())
         submission.iloc[:,1:] = np.where(submission.values[:,1:]>=0.5, 1,0)
-        submission.to_csv('c:/data/csv/EfficientNetB0-fold{}.csv'.format(fold), index=False) 
+        submission.to_csv('c:/data/csv/EfficientNetB0-fold{}_tta.csv'.format(fold), index=False) 
 # 제출물 생성                                                                                                                      
