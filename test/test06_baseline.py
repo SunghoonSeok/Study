@@ -18,24 +18,26 @@ import matplotlib.pyplot as plt
 from torch_poly_lr_decay import PolynomialLRDecay
 import random
 import ttach as tta
+import albumentations
 
-torch.set_num_threads(1)
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+torch.set_num_threads(1) # cpu usage 제한
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") # GPU 사용, multi면 "cuda"
 
-# Dacon Dataset Load
+# 데이콘 데이터 셋 load
 labels_df = pd.read_csv('c:/data/test/dirty_mnist/dirty_mnist_2nd_answer.csv')[:]
 imgs_dir = np.array(sorted(glob.glob('c:/data/test/dirty_mnist/dirty_mnist_2nd/*')))[:]
 labels = np.array(labels_df.values[:,1:])
 test_imgs_dir = np.array(sorted(glob.glob('c:/data/test/dirty_mnist/test_dirty_mnist_2nd/*')))
+# glob.glob는 폴더 안에 있는 파일 불러옴, sorted는 파일명으로 정렬해준다
 
 imgs=[]
-for path in tqdm(imgs_dir[:]):
+for path in tqdm(imgs_dir[:]): # tqdm은 for문 상태바라고 생각하면 됨
     img=cv2.imread(path, cv2.IMREAD_COLOR)
     imgs.append(img)
 imgs=np.array(imgs)
 
 # 저장소에서 load
-class MnistDataset_v1(Dataset):
+class MnistDataset_v1(Dataset): # 문법 Dataset 불러올때,
     def __init__(self, imgs_dir=None, labels=None, transform=None, train=True):
         self.imgs_dir = imgs_dir
         self.labels = labels
@@ -68,6 +70,18 @@ class MnistDataset_v2(Dataset):
         self.labels = labels
         self.transform = transform
         self.train=train
+        self.aug = albumentations.Compose ([ 
+            albumentations.RandomResizedCrop (256, 256), 
+            albumentations.Transpose (p = 0.5), 
+            albumentations.HorizontalFlip (p = 0.5), 
+            albumentations.VerticalFlip (p = 0.5),
+            albumentations.HueSaturationValue(
+                hue_shift_limit=0.2, 
+                sat_shift_limit=0.2,
+                val_shift_limit=0.2, 
+                p=0.5
+            )
+        ], p=1.)
         pass
     
     def __len__(self):
@@ -103,7 +117,7 @@ def seed_everything(seed: int = 42):
 class EfficientNet_MultiLabel(nn.Module):
     def __init__(self, in_channels):
         super(EfficientNet_MultiLabel, self).__init__()
-        self.network = EfficientNet.from_pretrained('efficientnet-b0', in_channels=in_channels)
+        self.network = EfficientNet.from_pretrained('efficientnet-b4', in_channels=in_channels)
         self.output_layer = nn.Linear(1000, 26)
 
     def forward(self, x):
@@ -137,7 +151,7 @@ for train_idx, valid_idx in kf.split(imgs):
         # "mean":"ARITH"}'
 
 # 5개의 fold 모두 실행하려면 for문을 5번 돌리면 됩니다.
-for fold in range(3):
+for fold in range(1):
     model = EfficientNet_MultiLabel(in_channels=3).to(device)
 #   model = nn.DataParallel(model)
     train_idx = folds[fold][0]
@@ -229,7 +243,7 @@ for fold in range(3):
             valid_accuracy.append(np.mean(valid_batch_accuracy))
             
         if np.mean(valid_batch_accuracy)>valid_best_accuracy:
-            torch.save(model.state_dict(), 'c:/data/test/dirty_mnist/checkpoint/EfficientNetB0-fold{}_tta.pt'.format(fold))
+            torch.save(model.state_dict(), 'c:/data/test/dirty_mnist/checkpoint/EfficientNetB4-fold{}_tta4.pt'.format(fold))
             valid_best_accuracy = np.mean(valid_batch_accuracy)
         print('fold : {}\tepoch : {:02d}\ttrain_accuracy / loss : {:.5f} / {:.5f}\tvalid_accuracy / loss : {:.5f} / {:.5f}\ttime : {:.0f}'.format(fold+1, epoch+1,
                                                                                                                                               np.mean(batch_accuracy_list),
@@ -253,22 +267,20 @@ test_transform = transforms.Compose([
 submission = pd.read_csv('c:/data/test/dirty_mnist/sample_submission.csv')
 
 with torch.no_grad():
-    for fold in range(3):
+    for fold in range(1):
         model = EfficientNet_MultiLabel(in_channels=3).to(device)
-        model.load_state_dict(torch.load('c:/data/test/dirty_mnist/checkpoint/EfficientNetB0-fold{}_tta.pt'.format(fold)))
+        model.load_state_dict(torch.load('c:/data/test/dirty_mnist/checkpoint/EfficientNetB4-fold{}_tta4.pt'.format(fold)))
         model.eval()
 
         test_dataset = MnistDataset_v2(imgs = test_imgs, transform=test_transform, train=False)
         test_loader = DataLoader(dataset=test_dataset, batch_size=32, shuffle=False)
-        tta_model = tta.ClassificationTTAWrapper(model, tta.aliases.ten_crop_transform(),merge_mode='mean')
 
         for n, X_test in enumerate(tqdm(test_loader)):
             X_test = torch.tensor(X_test, device=device, dtype=torch.float32)
             with torch.no_grad():
                 model.eval()
-                pred_test = tta_model(X_test).cpu().detach().numpy()
+                pred_test = model(X_test).cpu().detach().numpy()
                 submission.iloc[n*32:(n+1)*32,1:] += pred_test
         print(submission.head())
         submission.iloc[:,1:] = np.where(submission.values[:,1:]>=0.5, 1,0)
-        submission.to_csv('c:/data/csv/EfficientNetB0-fold{}_tta.csv'.format(fold), index=False) 
-# 제출물 생성                                                                                                                      
+        submission.to_csv('c:/data/csv/EfficientNetB4-fold{}_tta4.csv'.format(fold), index=False)                                                                                                               
