@@ -1,6 +1,6 @@
 from tensorflow.keras.applications import Xception
 from tensorflow.keras.applications.xception import preprocess_input
-from tensorflow.keras.layers import Dense, Flatten
+from tensorflow.keras.layers import Dense, Flatten, UpSampling2D
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.datasets import cifar10
 
@@ -25,7 +25,7 @@ y_test = ohencoder.transform(y_test).toarray()
 
 
 
-vgg19 = Xception(weights='imagenet', include_top=False, input_shape=(32,32,3))
+vgg19 = Xception(weights='imagenet', include_top=False, input_shape=(96,96,3))
 vgg19.trainable =True
 x_train = preprocess_input(x_train)
 x_test = preprocess_input(x_test)
@@ -34,12 +34,12 @@ x_train = x_train.astype('float32')/255.  # 전처리
 x_test = x_test.astype('float32')/255.  # 전처리
 
 model = Sequential()
+model.add(UpSampling2D(size=(3,3)))
 model.add(vgg19)
 model.add(Flatten())
 model.add(Dense(128))
 model.add(Dense(64))
 model.add(Dense(10, activation='softmax'))
-model.summary()
 
 from tensorflow.keras.optimizers import Adam
 optimizer = Adam(lr=0.001)
