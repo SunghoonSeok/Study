@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 def elu(x, alpha=1):
     return x if x>=0 else alpha*(np.exp(x)-1)
 
@@ -17,7 +16,3 @@ print(y)
 plt.plot(x,y)
 plt.grid()
 plt.show()
-
-#### 과제
-# elu, selu, reaky relu
-# 72_2,3,4번으로 파일을 만들것

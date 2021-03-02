@@ -14,6 +14,3 @@ plt.plot(x,y)
 plt.grid()
 plt.show()
 
-#### 과제
-# elu, selu, reaky relu
-# 72_2,3,4번으로 파일을 만들것

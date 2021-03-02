@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from tensorflow.keras.activations import elu, selu
-def selu(x, alpha=1, scale=1.0507):
+def selu(x, alpha=1.67326, scale=1.0507):
     return scale*x if x>=0 else scale*alpha*(np.exp(x)-1)
 
 x = np.arange(-5,5,0.1)
@@ -18,6 +18,3 @@ plt.plot(x,y)
 plt.grid()
 plt.show()
 
-#### 과제
-# elu, selu, reaky relu
-# 72_2,3,4번으로 파일을 만들것
