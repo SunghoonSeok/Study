@@ -73,3 +73,7 @@ print("Best acc : ", acc2)
 # Best acc :  0.6089000105857849
 
 # trainable = True, Preprocess_input 적용, 255전처리 적용, batch64
+# Loss :  1.472052812576294
+# acc :  0.8216000199317932
+# Best Loss :  0.6754404306411743
+# Best acc :  0.7903000116348267
