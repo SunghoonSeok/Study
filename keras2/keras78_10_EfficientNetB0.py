@@ -7,8 +7,7 @@ from tensorflow.keras.datasets import cifar10
 
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 
-# x_train = x_train.astype('float32')/255.  # 전처리
-# x_test = x_test.astype('float32')/255.  # 전처리
+
 y_train = y_train.reshape(y_train.shape[0],)
 y_test = y_test.reshape(y_test.shape[0],)
 
@@ -17,13 +16,9 @@ x_test = preprocess_input(x_test)
 x_train = x_train.astype('float32')/255.  # 전처리
 x_test = x_test.astype('float32')/255.  # 전처리
 
-# from sklearn.model_selection import train_test_split
-# x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, train_size=0.8, random_state=42)
 
 vgg19 = EfficientNetB0(weights='imagenet', include_top=False, input_shape=(32,32,3))
 vgg19.trainable = True
-
-
 
 
 # OneHotEncoding
@@ -31,14 +26,11 @@ from sklearn.preprocessing import OneHotEncoder
 
 y_train = y_train.reshape(-1,1)
 y_test = y_test.reshape(-1,1)
-# y_val = y_val.reshape(-1,1)
 
 ohencoder = OneHotEncoder()
 ohencoder.fit(y_train)
 y_train = ohencoder.transform(y_train).toarray()
 y_test = ohencoder.transform(y_test).toarray()
-# y_val = ohencoder.transform(y_val).toarray()
-
 
 
 model = Sequential()
