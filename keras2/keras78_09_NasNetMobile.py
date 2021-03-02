@@ -60,3 +60,4 @@ loss2, acc2 = model2.evaluate(x_test, y_test, batch_size=64)
 print("Best Loss : ", loss2)
 print("Best acc : ", acc2)
 
+# ValueError: When setting `include_top=True` and loading `imagenet` weights, `input_shape` should be (224, 224, 3).

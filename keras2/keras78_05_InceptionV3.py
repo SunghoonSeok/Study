@@ -60,3 +60,4 @@ loss2, acc2 = model2.evaluate(x_test, y_test, batch_size=64)
 print("Best Loss : ", loss2)
 print("Best acc : ", acc2)
 
+# ValueError: Input size must be at least 75x75; got `input_shape=(32, 32, 3)`

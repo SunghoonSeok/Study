@@ -60,3 +60,8 @@ loss2, acc2 = model2.evaluate(x_test, y_test, batch_size=64)
 print("Best Loss : ", loss2)
 print("Best acc : ", acc2)
 
+# Loss :  1.318946123123169
+# acc :  0.7943000197410583
+# 157/157 [==============================] - 3s 17ms/step - loss: 0.7264 - acc: 0.7609
+# Best Loss :  0.7264000773429871
+# Best acc :  0.7609000205993652

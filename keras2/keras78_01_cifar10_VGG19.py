@@ -59,3 +59,9 @@ model2 = load_model('c:/data/modelcheckpoint/checkpoint_78_1_VGG19.hdf5')
 loss2, acc2 = model2.evaluate(x_test, y_test, batch_size=64)
 print("Best Loss : ", loss2)
 print("Best acc : ", acc2)
+
+# Loss :  1.502487301826477
+# acc :  0.8105999827384949
+
+# Best Loss :  0.7264392375946045
+# Best acc :  0.7760999798774719
