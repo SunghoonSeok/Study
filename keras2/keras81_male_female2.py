@@ -9,30 +9,30 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import numpy as np
 
-img_dog = load_img('../data/image/vgg/dog1.jpg', target_size=(224,224))
-img_cat = load_img('../data/image/vgg/cat1.jpg', target_size=(224,224))
-img_lion = load_img('../data/image/vgg/lion1.jpg', target_size=(224,224))
-img_suit = load_img('../data/image/vgg/suit1.jpg', target_size=(224,224))
-# print(img_dog) # <PIL.Image.Image image mode=RGB size=224x224 at 0x1AF89768070>
+img_face1 = load_img('../data/image/my_face/1/my_face1.jpg', target_size=(224,224))
+img_face2 = load_img('../data/image/my_face/1/my_face2.jpg', target_size=(224,224))
+img_face3 = load_img('../data/image/my_face/1/my_face3.PNG', target_size=(224,224))
+img_face4 = load_img('../data/image/my_face/1/my_face4.jpg', target_size=(224,224))
+img_face5 = load_img('../data/image/my_face/1/my_face5.jpg', target_size=(224,224))
+img_face6 = load_img('../data/image/my_face/1/my_face6.PNG', target_size=(224,224))
 
-# plt.imshow(img_cat)
-# plt.show()
 
-arr_dog = img_to_array(img_dog)
-arr_cat = img_to_array(img_cat)
-arr_lion = img_to_array(img_lion)
-arr_suit = img_to_array(img_suit)
-# print(arr_dog)
-# print(type(arr_dog)) # <class 'numpy.ndarray'>
-# print(arr_dog.shape) # (224, 224, 3)
+arr_face1 = img_to_array(img_face1)
+arr_face2 = img_to_array(img_face2)
+arr_face3 = img_to_array(img_face3)
+arr_face4 = img_to_array(img_face4)
+arr_face5 = img_to_array(img_face5)
+arr_face6 = img_to_array(img_face6)
 
 # RGB -> BGR
 from tensorflow.keras.applications.vgg16 import preprocess_input
-arr_dog = preprocess_input(arr_dog)
-arr_cat = preprocess_input(arr_cat)
-arr_lion = preprocess_input(arr_lion)
-arr_suit = preprocess_input(arr_suit)
-arr_input =np.stack([arr_dog,arr_cat,arr_lion,arr_suit])
+arr_face1 = preprocess_input(arr_face1)
+arr_face2 = preprocess_input(arr_face2)
+arr_face3 = preprocess_input(arr_face3)
+arr_face4 = preprocess_input(arr_face4)
+arr_face5 = preprocess_input(arr_face5)
+arr_face6 = preprocess_input(arr_face6)
+arr_input =np.stack([arr_face1,arr_face2,arr_face3,arr_face4,arr_face5,arr_face6])
 print(arr_input.shape) # (4, 224, 224, 3)
 
 
