@@ -2,7 +2,7 @@ from tensorflow.keras.datasets import imdb, reuters
 import matplotlib.pyplot as plt
 import numpy as np
 (x_train, y_train), (x_test, y_test) = imdb.load_data(
-    num_words=10000
+    num_words=1000
 )
 
 # [실습/과제] Embedding으로 모델 만들것!!
@@ -60,15 +60,15 @@ print(y_bunpo)
 
 ############################ 전처리 ################################
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-x_train = pad_sequences(x_train, maxlen=400)
-x_test = pad_sequences(x_test, maxlen=400)
+x_train = pad_sequences(x_train, maxlen=100)
+x_test = pad_sequences(x_test, maxlen=100)
 
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense, LSTM, Embedding, Flatten, Conv1D
 
 model = Sequential()
-model.add(Embedding(10000, 600, input_length=400))
-model.add(LSTM(300))
+model.add(Embedding(1000, 400, input_length=100))
+model.add(LSTM(200))
 model.add(Dense(1,activation='sigmoid'))
 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc'])
@@ -77,26 +77,19 @@ es = EarlyStopping(monitor='val_loss', patience=30,mode='min')
 lr = ReduceLROnPlateau(monitor='val_loss', patience=10, mode='min')
 file_path = 'c:/data/modelcheckpoint/checkpoint_85.hdf5'
 mc = ModelCheckpoint(file_path,monitor='val_acc', save_best_only=True, mode='max',verbose=1)
-model.fit(x_train,y_train, batch_size=32, epochs=200, validation_split=0.2, callbacks=[es,lr,mc])
+model.fit(x_train,y_train, batch_size=16, epochs=200, validation_split=0.2, callbacks=[es,lr,mc])
 
 
-
-loss, acc = model.evaluate(x_test,y_test,batch_size=32)
+loss, acc = model.evaluate(x_test,y_test,batch_size=16)
 print("Loss : ", loss)
 print("Accuracy : ", acc)
 model2 = load_model('c:/data/modelcheckpoint/checkpoint_85.hdf5')
-loss2, acc2 = model2.evaluate(x_test,y_test,batch_size=32)
+loss2, acc2 = model2.evaluate(x_test,y_test,batch_size=16)
 print("Load_Loss : ", loss2)
 print("Load_Accuracy : ", acc2)
 
-# adam
-# Loss :  1.9384208917617798
-# Accuracy :  0.7150489687919617
+# Loss :  1.541557788848877
+# Accuracy :  0.8256000280380249
 
-# rmsprop
-# Loss :  1.9339804649353027
-# Accuracy :  0.6892253160476685
-
-# embedding 600, lstm 300
-# Loss :  1.691252589225769
-# Accuracy :  0.7435441017150879
+# Load_Loss :  0.36793699860572815
+# Load_Accuracy :  0.8389599919319153
