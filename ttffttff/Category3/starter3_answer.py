@@ -70,19 +70,37 @@ def solution_model():
         subset='validation'
 
     )
-    from tensorflow.keras.models import Sequential
+    from tensorflow.keras.models import Sequential, load_model
     from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, BatchNormalization, Dense
 
 
     model = tf.keras.models.Sequential([
     # YOUR CODE HERE, BUT END WITH A 3 Neuron Dense, activated by softmax
-        tf.keras.layers.Conv2D(128,3, padding='same',activation='relu', input_shape=(150,150,3)),
+        tf.keras.layers.Conv2D(32,2, padding='valid', input_shape=(150,150,3)),
         tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.Conv2D(64,2,padding='same',activation='relu'),
+        tf.keras.layers.Activation('relu'),
+        tf.keras.layers.Conv2D(32,2),
         tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.Conv2D(32,2,activation='relu'),
+        tf.keras.layers.Activation('relu'),
+        tf.keras.layers.MaxPooling2D(pool_size=(2,2),strides=(2,2)),
+
+        tf.keras.layers.Conv2D(64,2, padding='valid'),
         tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.MaxPooling2D(2),
+        tf.keras.layers.Activation('relu'),
+        tf.keras.layers.Conv2D(64,2),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Activation('relu'),
+        tf.keras.layers.MaxPooling2D(pool_size=(2,2),strides=(2,2)),
+        
+        tf.keras.layers.Conv2D(128,2, padding='valid'),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Activation('relu'),
+        tf.keras.layers.Conv2D(128,2),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Activation('relu'),
+        tf.keras.layers.MaxPooling2D(pool_size=(2,2),strides=(2,2)),
+
+        tf.keras.layers.GlobalAveragePooling2D(),
         tf.keras.layers.Flatten(),
         tf.keras.layers.Dense(128,activation='relu'),
         tf.keras.layers.Dense(64,activation='relu'),
@@ -91,15 +109,21 @@ def solution_model():
         tf.keras.layers.Dense(3, activation='softmax')
     ])
     from tensorflow.keras.optimizers import Adam
-    model.compile(loss='categorical_crossentropy',optimizer=Adam(lr=1e-5),metrics=['acc'])
+    model.compile(loss='categorical_crossentropy',optimizer=Adam(lr=0.00001),metrics=['acc'])
     from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
     es = EarlyStopping(monitor = 'val_loss', patience = 30)
     lr = ReduceLROnPlateau(monitor = 'val_loss', patience = 15, factor = 0.5, verbose = 1)
+    file_path = 'c:/data/modelcheckpoint/checkpoint_tf_category3.hdf5'
+    mc = ModelCheckpoint(file_path, monitor='val_loss', save_best_only=True, mode='min',verbose=1)
     model.fit_generator(train_generator, steps_per_epoch=(train_generator.samples/train_generator.batch_size),
                         validation_data=test_generator,validation_steps=(test_generator.samples/test_generator.batch_size),
-                        epochs=200,callbacks=[es,lr])
+                        epochs=200,callbacks=[es,lr,mc])
     loss,acc =model.evaluate_generator(test_generator)
     print(loss, acc)
+    model = load_model(file_path)
+    loss2, acc2 = model.evaluate_generator(test_generator)
+    print(loss2, acc2)
+
     return model
 
 
@@ -110,3 +134,5 @@ def solution_model():
 if __name__ == '__main__':
     model = solution_model()
     model.save("c:/study/tf_certificate/category3/mymodel.h5")
+
+# 0.24751204252243042 0.9523809552192688

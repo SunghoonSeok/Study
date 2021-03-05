@@ -44,7 +44,6 @@ def windowed_dataset(series, window_size, batch_size, shuffle_buffer):
     ds = ds.map(lambda w: (w[:-1], w[1:]))
     return ds.batch(batch_size).prefetch(1)
 
-
 def solution_model():
     url = 'https://storage.googleapis.com/download.tensorflow.org/data/Sunspots.csv'
     urllib.request.urlretrieve(url, 'c:/data/tf_certificate/sunspots.csv')
@@ -56,10 +55,10 @@ def solution_model():
       reader = csv.reader(csvfile, delimiter=',')
       next(reader)
       for row in reader:
-        sunspots.append(# YOUR CODE HERE)
-        time_step.append(# YOUR CODE HERE)
-
-    series = # YOUR CODE HERE
+        sunspots.append(float(row[2]))
+        time_step.append(row[0])
+    import pandas as pd
+    series = np.array(sunspots)
 
     # DO NOT CHANGE THIS CODE
     # This is the normalization function
@@ -74,10 +73,10 @@ def solution_model():
     split_time = 3000
 
 
-    time_train = # YOUR CODE HERE
-    x_train = # YOUR CODE HERE
-    time_valid = # YOUR CODE HERE
-    x_valid = # YOUR CODE HERE
+    time_train = time[0:split_time]
+    x_train = series[0:split_time]
+    time_valid = time[split_time:]
+    x_valid = series[split_time:]
 
     # DO NOT CHANGE THIS CODE
     window_size = 30
@@ -86,16 +85,60 @@ def solution_model():
 
 
     train_set = windowed_dataset(x_train, window_size=window_size, batch_size=batch_size, shuffle_buffer=shuffle_buffer_size)
+    valid_set = windowed_dataset(x_valid, window_size=window_size, batch_size=batch_size, shuffle_buffer=shuffle_buffer_size)
+    t=0
+    q=0
+    for ex in train_set:
+        t += 1
+    print("t :",t)
+    for ex in valid_set:
+        q += 1
+    print("q :",q)
+        
+    # x_train=[]
+    # y_train=[]
+    # for ex in train_set:
+    #     x_train.append(ex[0])
+    #     y_train.append(ex[1])
+    # x_val=[]
+    # y_val=[]
+    # for dx in valid_set:
+    #     x_val.append(dx[0])
+    #     y_val.append(dx[1])
+    # x_train = np.array(x_train)
+    # x_val = np.array(x_val)
+    # y_train = np.array(y_train)
+    # y_val = np.array(y_val)
+    # print(x_train.shape,y_train.shape,x_val.shape,y_val.shape) (96,)(96,)(13,)(13,)
+    # print(x_val)
 
+    # x_train = x_train.reshape(x_train.shape[0]*x_train.shape[1],x_train.shape[2],x_train.shape[3])
+    # x_val = x_val.reshape(x_val.shape[0]*x_val.shape[1],x_val.shape[2],x_val.shape[3])
+    # y_train = y_train.reshape(y_train.shape[0]*y_train.shape[1],y_train.shape[2],y_train.shape[3])
+    # y_val = y_val.reshape(y_val.shape[0]*y_val.shape[1],y_val.shape[2],y_val.shape[3])
+
+
+    # print(x_train.shape,y_train.shape,x_val.shape,y_val.shape)
+        
 
     model = tf.keras.models.Sequential([
       # YOUR CODE HERE. Whatever your first layer is, the input shape will be [None,1] when using the Windowed_dataset above, depending on the layer type chosen
+      tf.keras.layers.Conv1D(128,2,padding='same', input_shape=(None,1),activation='relu'),
+      tf.keras.layers.Dense(128),
+      tf.keras.layers.Dense(64),
+      tf.keras.layers.Dense(32),
+      tf.keras.layers.Dense(16),
       tf.keras.layers.Dense(1)
     ])
+    model.summary()
     # PLEASE NOTE IF YOU SEE THIS TEXT WHILE TRAINING -- IT IS SAFE TO IGNORE
     # BaseCollectiveExecutor::StartAbort Out of range: End of sequence
     # 	 [[{{node IteratorGetNext}}]]
     #
+    model.compile(loss='mae', optimizer='adam')
+    model.fit(train_set, batch_size=32, epochs=100, validation_data=valid_set)
+    loss = model.evaluate(valid_set)
+    print(loss)
 
 
     # YOUR CODE HERE TO COMPILE AND TRAIN THE MODEL
