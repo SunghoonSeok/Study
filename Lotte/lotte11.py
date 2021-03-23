@@ -25,31 +25,33 @@ train_datagen = ImageDataGenerator(
     rotation_range=40,
     zoom_range=0.2,
     fill_mode='nearest',
-    validation_split=0.2,
+    validation_split=0.1,
     preprocessing_function=preprocess_input
 )
 test_datagen = ImageDataGenerator(
+    width_shift_range=0.05,
+    height_shift_range=0.05,
     preprocessing_function=preprocess_input
 
 )
 
-# train_generator
-xy_train = train_datagen.flow_from_directory(
-    '../data/lotte/train',
-    target_size=(img_size,img_size),
-    batch_size=batch,
-    class_mode='sparse',
-    subset='training',
-    seed= seed
-)
-xy_val = train_datagen.flow_from_directory(
-    '../data/lotte/train',
-    target_size=(img_size,img_size),
-    batch_size=batch,
-    class_mode='sparse',
-    subset='validation',
-    seed=seed
-)
+# # train_generator
+# xy_train = train_datagen.flow_from_directory(
+#     '../data/lotte/train',
+#     target_size=(img_size,img_size),
+#     batch_size=batch,
+#     class_mode='sparse',
+#     subset='training',
+#     seed= seed
+# )
+# xy_val = train_datagen.flow_from_directory(
+#     '../data/lotte/train',
+#     target_size=(img_size,img_size),
+#     batch_size=batch,
+#     class_mode='sparse',
+#     subset='validation',
+#     seed=seed
+# )
 
 
 from tensorflow.keras.applications import EfficientNetB4
@@ -66,20 +68,19 @@ a = Dense(1000, activation= 'softmax') (a)
 
 model = Model(inputs = efficientnet.input, outputs = a)
 
-model.summary()
 
 from tensorflow.keras.optimizers import Adam
 optimizer = Adam(lr=0.0005)
-model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer, metrics=['sparse_categorical_accuracy'])
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
-es = EarlyStopping(monitor='val_loss', patience=15, mode='min')
-file_path = 'c:/data/modelcheckpoint/lotte_efficientnetb44.hdf5'
-mc = ModelCheckpoint(file_path, monitor='val_loss',save_best_only=True,mode='min',verbose=1)
-rl = ReduceLROnPlateau(monitor='val_loss',factor=0.5,patience=5,verbose=1,mode='min')
+# model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer, metrics=['sparse_categorical_accuracy'])
+# from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
+# es = EarlyStopping(monitor='val_loss', patience=15, mode='min')
+# file_path = 'c:/data/modelcheckpoint/lotte_efficientnetb44.hdf5'
+# mc = ModelCheckpoint(file_path, monitor='val_loss',save_best_only=True,mode='min',verbose=1)
+# rl = ReduceLROnPlateau(monitor='val_loss',factor=0.5,patience=5,verbose=1,mode='min')
 
-history = model.fit_generator(xy_train, steps_per_epoch=(xy_train.samples/xy_train.batch_size), epochs=200, validation_data=xy_val, validation_steps=(xy_val.samples/xy_val.batch_size),
-callbacks=[es,mc,rl])
-from tensorflow.keras.models import load_model
+# history = model.fit_generator(xy_train, steps_per_epoch=(xy_train.samples/xy_train.batch_size), epochs=200, validation_data=xy_val, validation_steps=(xy_val.samples/xy_val.batch_size),
+# callbacks=[es,mc,rl])
+# from tensorflow.keras.models import load_model
 
 model = load_model('c:/data/modelcheckpoint/lotte_efficientnetb44.hdf5')
 
@@ -96,7 +97,7 @@ cumsum = np.zeros([72000, 1000])
 count_result = []
 for tta in range(50):
     print(f'{tta+1} 번째 TTA 진행중 - TTA')
-    pred = model.predict(test_data, steps = len(test_data)) # (72000, 1000)
+    pred = model.predict(test_data, steps = len(test_data),verbose=1) # (72000, 1000)
     pred = np.array(pred)
     cumsum = np.add(cumsum, pred)
     temp = cumsum / (tta+1)
