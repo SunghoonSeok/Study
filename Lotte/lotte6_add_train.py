@@ -19,7 +19,7 @@ for i in range(1000):
         img = Image.open("../data/lotte2/train/%d/%d.jpg"%(i,j))
         area = (51,0,205,256)
         cropped_img = img.crop(area)
-        img_resize = cropped_img.resize((128,128))
+        img_resize = cropped_img.resize((160,160))
         img_resize.save("../data/lotte2/train/%d/%d.jpg"%(i,j+48),'JPEG')
 
 #########데이터 로드
@@ -32,8 +32,8 @@ for i in range(0,1000) :
 
 nb_classes = len(categories)
 
-image_w = 128
-image_h = 128
+image_w = 160
+image_h = 160
 
 pixels = image_h * image_w * 3
 
@@ -64,11 +64,11 @@ for idx, cat in enumerate(categories):
 X = np.array(X)
 y = np.array(y)
 
-np.save("../../data/npy/P_project_x5.npy", arr=X)
-np.save("../../data/npy/P_project_y5.npy", arr=y)
+np.save("../../data/npy/P_project_x10.npy", arr=X)
+np.save("../../data/npy/P_project_y10.npy", arr=y)
 
-x = np.load("../../data/npy/P_project_x5.npy",allow_pickle=True)
-y = np.load("../../data/npy/P_project_y5.npy",allow_pickle=True)
+x = np.load("../../data/npy/P_project_x10.npy",allow_pickle=True)
+y = np.load("../../data/npy/P_project_y10.npy",allow_pickle=True)
 
 print(x.shape)
 print(y.shape)

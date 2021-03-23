@@ -13,7 +13,7 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.optimizers import Adam
 from sklearn.model_selection import train_test_split
 from keras.callbacks import ReduceLROnPlateau
-#########데이터 로드
+########데이터 로드
 
 caltech_dir =  '../../data/lotte/train/'
 categories = []
@@ -55,11 +55,11 @@ for idx, cat in enumerate(categories):
 X = np.array(X)
 y = np.array(y)
 
-np.save("../../data/npy/P_project_x8.npy", arr=X)
-np.save("../../data/npy/P_project_y8.npy", arr=y)
+np.save("../../data/npy/P_project_x11.npy", arr=X)
+np.save("../../data/npy/P_project_y11.npy", arr=y)
 # x_pred = np.load("../data/npy/P_project_test.npy",allow_pickle=True)
-x = np.load("../../data/npy/P_project_x8.npy",allow_pickle=True)
-y = np.load("../../data/npy/P_project_y8.npy",allow_pickle=True)
+x = np.load("../../data/npy/P_project_x11.npy",allow_pickle=True)
+y = np.load("../../data/npy/P_project_y11.npy",allow_pickle=True)
 
 print(x.shape)
 print(y.shape)
@@ -75,14 +75,9 @@ for i in range(0,72000):
     # image_data2 = signal.medfilt2d(np.array(image_data2), kernel_size=3)
     img1.append(image_data2)    
 
-# # np.save('../data/csv/Dacon3/train4.npy', arr=img)
-np.save('../../data/npy/test5.npy', arr=img1)
-# # alphabets = string.ascii_lowercase
-# # alphabets = list(alphabets)
+np.save('../../data/npy/test7.npy', arr=img1)
 
-
-# # x = np.load('../data/csv/Dacon3/train4.npy')
-x_pred = np.load('../../data/npy/test5.npy',allow_pickle=True)
+x_pred = np.load('../../data/npy/test7.npy',allow_pickle=True)
 
 print(x_pred.shape)
 

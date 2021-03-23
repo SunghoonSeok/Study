@@ -54,7 +54,7 @@ train_generator = idg.flow(x_train,y_train,batch_size=32, seed = 1024)
 valid_generator = idg2.flow(x_valid,y_valid)
 # test_generator = idg2.flow(x_pred)
 
-mc = ModelCheckpoint('../data/modelcheckpoint/lotte_11.h5',save_best_only=True, verbose=1)
+mc = ModelCheckpoint('../data/modelcheckpoint/lotte_12.h5',save_best_only=True, verbose=1)
 
 
 from tensorflow.keras.models import Model
@@ -62,7 +62,7 @@ from tensorflow.keras.layers import GlobalAveragePooling2D, Flatten, BatchNormal
 efficientnet = EfficientNetB4(include_top=False,weights='imagenet',input_shape=x_train.shape[1:])
 efficientnet.trainable = True
 a = efficientnet.output
-a = Dense(1024, activation= 'swish') (a)
+a = Dense(2048, activation= 'swish') (a)
 a = Dropout(0.3) (a)
 a = GlobalAveragePooling2D() (a)
 a = Dense(1000, activation= 'softmax') (a)
@@ -80,7 +80,7 @@ learning_history = model.fit_generator(train_generator,epochs=200, steps_per_epo
     validation_data=valid_generator, callbacks=[early_stopping,lr,mc])
 
 # predict
-model.load_weights('../data/modelcheckpoint/lotte_11.h5')
+model.load_weights('../data/modelcheckpoint/lotte_12.h5')
 
 x_pred = np.load('../../data/npy/test5.npy',allow_pickle=True)
 x_pred = preprocess_input(x_pred) 
@@ -89,4 +89,4 @@ result = model.predict(x_pred,verbose=True)
 
 sub = pd.read_csv('../data/lotte2/sample.csv')
 sub['prediction'] = np.argmax(result,axis = 1)
-sub.to_csv('../data/lotte2/answer (10).csv',index=False)
+sub.to_csv('../data/lotte2/answer (11).csv',index=False)
