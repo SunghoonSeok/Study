@@ -11,7 +11,7 @@ from scipy import stats
 # df3.to_csv('../data/csv/0122_timeseries_scale10.csv', index = False)
 
 x = []
-for i in range(1,11):
+for i in range(1,13):
     df = pd.read_csv(f'../data/lotte2/answer ({i}).csv', index_col=0, header=0)
     data = df.to_numpy()
     x.append(data)
@@ -22,10 +22,10 @@ a = []
 df = pd.read_csv(f'../data/lotte2/answer ({i}).csv', index_col=0, header=0)
 for i in range(72000):
     for j in range(1):
-        for k in range(10):
+        for k in range(12):
             a.append(x[k,i,j].astype('int'))
 a = np.array(a)
-a = a.reshape(72000,10)
+a = a.reshape(72000,12)
 m = []
 for i in range (72000) :  
     b = stats.mode(a[i])
@@ -35,4 +35,4 @@ m = np.array(m)
 print(m.shape)
 sub = pd.read_csv('../data/lotte2/sample.csv')
 sub['prediction'] = pd.DataFrame(m)
-sub.to_csv('../data/lotte2/add_file10.csv',index=False)
+sub.to_csv('../data/lotte2/add_file11.csv',index=False)

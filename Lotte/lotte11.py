@@ -1,4 +1,5 @@
 import numpy as np
+import os
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import *
@@ -13,11 +14,18 @@ from keras.optimizers import Adam,SGD
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.applications import EfficientNetB4
 from tensorflow.keras.applications.efficientnet import preprocess_input
+from PIL import Image
 batch = 32
 seed = 66
 filenum = 17
 img_size = 192
-save_folder = '../data/lpd/submit_{0:03}'.format(filenum)
+
+# for i in range(700,1000):
+#     os.mkdir('../data/lotte/train_new/{0:04}'.format(i))
+# for i in range(1000):
+#     for img in range(48):
+#         image = Image.open(f'../data/lotte/train/{i}/{img}.jpg')
+#         image.save('../data/lotte/train_new/{0:04}/{1:02}.jpg'.format(i, img))
 
 train_datagen = ImageDataGenerator(
     width_shift_range=0.1,
@@ -37,7 +45,7 @@ test_datagen = ImageDataGenerator(
 
 # # train_generator
 # xy_train = train_datagen.flow_from_directory(
-#     '../data/lotte/train',
+#     '../data/lotte/train_new',
 #     target_size=(img_size,img_size),
 #     batch_size=batch,
 #     class_mode='sparse',
@@ -45,7 +53,7 @@ test_datagen = ImageDataGenerator(
 #     seed= seed
 # )
 # xy_val = train_datagen.flow_from_directory(
-#     '../data/lotte/train',
+#     '../data/lotte/train_new',
 #     target_size=(img_size,img_size),
 #     batch_size=batch,
 #     class_mode='sparse',
@@ -74,18 +82,23 @@ optimizer = Adam(lr=0.0005)
 # model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer, metrics=['sparse_categorical_accuracy'])
 # from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
 # es = EarlyStopping(monitor='val_loss', patience=15, mode='min')
-# file_path = 'c:/data/modelcheckpoint/lotte_efficientnetb44.hdf5'
+# file_path = 'c:/data/modelcheckpoint/lotte_last.hdf5'
 # mc = ModelCheckpoint(file_path, monitor='val_loss',save_best_only=True,mode='min',verbose=1)
 # rl = ReduceLROnPlateau(monitor='val_loss',factor=0.5,patience=5,verbose=1,mode='min')
 
 # history = model.fit_generator(xy_train, steps_per_epoch=(xy_train.samples/xy_train.batch_size), epochs=200, validation_data=xy_val, validation_steps=(xy_val.samples/xy_val.batch_size),
 # callbacks=[es,mc,rl])
-# from tensorflow.keras.models import load_model
 
-model = load_model('c:/data/modelcheckpoint/lotte_efficientnetb44.hdf5')
+from tensorflow.keras.models import load_model
+
+model = load_model('c:/data/modelcheckpoint/lotte_last.hdf5')
+
+# for i in range(72000):
+#     image = Image.open(f'../data/lotte/test/test/{i}.jpg')
+#     image.save('../data/lotte/test_new/test_new/{0:05}.jpg'.format(i))
 
 test_data = test_datagen.flow_from_directory(
-    '../data/lotte/test',
+    '../data/lotte/test_new',
     target_size=(img_size,img_size),
     batch_size=batch,
     class_mode=None,
@@ -97,7 +110,7 @@ cumsum = np.zeros([72000, 1000])
 count_result = []
 for tta in range(50):
     print(f'{tta+1} 번째 TTA 진행중 - TTA')
-    pred = model.predict(test_data, steps = len(test_data),verbose=1) # (72000, 1000)
+    pred = model.predict(test_data, steps=len(test_data), verbose=1) # (72000, 1000)
     pred = np.array(pred)
     cumsum = np.add(cumsum, pred)
     temp = cumsum / (tta+1)
