@@ -24,47 +24,86 @@
 import tensorflow as tf
 import urllib
 import zipfile
+import numpy as np
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from tensorflow.keras.optimizers import Adam
 
 def solution_model():
     _TRAIN_URL = "https://storage.googleapis.com/download.tensorflow.org/data/horse-or-human.zip"
     _TEST_URL = "https://storage.googleapis.com/download.tensorflow.org/data/validation-horse-or-human.zip"
-    urllib.request.urlretrieve(_TRAIN_URL, 'horse-or-human.zip')
-    local_zip = 'horse-or-human.zip'
+    urllib.request.urlretrieve(_TRAIN_URL, '../data/image/horse-or-human.zip')
+    local_zip = '../data/image/horse-or-human.zip'
     zip_ref = zipfile.ZipFile(local_zip, 'r')
-    zip_ref.extractall('tmp/horse-or-human/')
+    zip_ref.extractall('../data/image/tmp2/horse-or-human/')
     zip_ref.close()
-    urllib.request.urlretrieve(_TEST_URL, 'testdata.zip')
-    local_zip = 'testdata.zip'
+    urllib.request.urlretrieve(_TEST_URL, '../data/image/testdata.zip')
+    local_zip = '../data/image/testdata.zip'
     zip_ref = zipfile.ZipFile(local_zip, 'r')
-    zip_ref.extractall('tmp/testdata/')
+    zip_ref.extractall('../data/image/tmp2/testdata/')
     zip_ref.close()
 
     train_datagen = ImageDataGenerator(
+        height_shift_range= 0.1,
+        width_shift_range= 0.1,
+        rescale= 1/255.
+    )
         #Your code here. Should at least have a rescale. Other parameters can help with overfitting.)
 
-    validation_datagen = ImageDataGenerator(#Your Code here)
+    validation_datagen = ImageDataGenerator(
+        rescale = 1/255.
+    )#Your Code here)
+
+    batch_size = 8
 
     train_generator = train_datagen.flow_from_directory(
+        '../data/image/tmp2/horse-or-human/',
+        target_size = (300,300),
+        class_mode = 'categorical',
+        batch_size= batch_size
+    )
         #Your Code Here)
 
     validation_generator = validation_datagen.flow_from_directory(
+        '../data/image/tmp2/testdata/',
+        target_size=(300,300),
+        class_mode = 'categorical',
+        batch_size= batch_size
+    )
         #Your Code Here)
 
 
     model = tf.keras.models.Sequential([
         # Note the input shape specified on your first layer must be (300,300,3)
         # Your Code here
-
+        tf.keras.layers.Conv2D(256, (3,3), activation = 'relu', padding = 'valid', input_shape = (300, 300, 3)),
+        tf.keras.layers.MaxPooling2D(3,3),
+        tf.keras.layers.Dropout(0.3),
+        tf.keras.layers.Conv2D(256, (3,3), activation = 'relu', padding = 'valid'),
+        tf.keras.layers.MaxPooling2D(3,3),
+        tf.keras.layers.Conv2D(128, (5,5), activation = 'relu', padding = 'valid'),
+        tf.keras.layers.MaxPooling2D(5,5),
+        tf.keras.layers.Dropout(0.3),
+        tf.keras.layers.Flatten(),
+        tf.keras.layers.Dense(64, activation = 'relu'),
+        tf.keras.layers.Dense(32, activation = 'relu'),
+        tf.keras.layers.Dense(16, activation = 'relu'),
         # This is the last layer. You should not change this code.
-        tf.keras.layers.Dense(1, activation='sigmoid')
+        tf.keras.layers.Dense(2, activation='softmax')
     ])
+    
+    es = EarlyStopping(patience = 6)
+    lr = ReduceLROnPlateau(factor = 0.25, verbose = 1, patience = 3)
+
+    model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics= ['acc'])
+
+    history = model.fit(train_generator, epochs = 1000, steps_per_epoch= np.ceil(1027/batch_size), validation_data= validation_generator,
+     validation_steps = np.ceil(256/batch_size), callbacks = [es, lr])
+    
+
+
+    print(model.evaluate(validation_generator, steps = np.ceil(256/batch_size)))
     return model
-
-
-    model.compile(#Your Code Here#)
-
-    model.fit(#Your Code Here#)
 
     # NOTE: If training is taking a very long time, you should consider setting the batch size
     # appropriately on the generator, and the steps per epoch in the model.fit() function.
@@ -75,4 +114,4 @@ def solution_model():
 # and the score will be returned to you.
 if __name__ == '__main__':
     model = solution_model()
-    model.save("mymodel.h5")
+    # model.save("mymodel.h5")

@@ -72,13 +72,10 @@ for i in range(0,72000):
     image2 = image2.convert('RGB')
     image2 = image2.resize((176,176))
     image_data2=asarray(image2)
-    # image_data2 = signal.medfilt2d(np.array(image_data2), kernel_size=3)
     img1.append(image_data2)    
 
-np.save('../../data/npy/test7.npy', arr=img1)
-
-x_pred = np.load('../../data/npy/test7.npy',allow_pickle=True)
-
+np.save('../../data/npy/test.npy', arr=img1)
+x_pred = np.load('../../data/npy/test.npy',allow_pickle=True)
 print(x_pred.shape)
 
 # from tensorflow.keras.applications import EfficientNetB7

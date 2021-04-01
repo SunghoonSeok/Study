@@ -133,6 +133,6 @@ def solution_model():
 # and the score will be returned to you.
 if __name__ == '__main__':
     model = solution_model()
-    model.save("c:/study/tf_certificate/category3/mymodel.h5")
+    model.save("c:/study/ttffttff/category3/mymodel.h5")
 
 # 0.24751204252243042 0.9523809552192688

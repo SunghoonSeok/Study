@@ -10,13 +10,13 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 
 model = Sequential() # 순차적인
-model.add(Dense(5, input_dim=1, activation='linear')) 
-model.add(Dense(3, activation='linear'))
+model.add(Dense(100, input_dim=1, activation='linear'))
+model.add(Dense(30, activation='linear'))
 model.add(Dense(4))
 model.add(Dense(1))
 
 #3. 컴파일, 훈련
-from tensorflow.keras.optimizers import Adam, SGD
+from tensorflow.keras.optimizers import Adam
 # model.compile(loss='mse', optimizer='adam')
 model.compile(loss='mse', optimizer=Adam(learning_rate=0.1))
 model.fit(x, y, epochs=137, batch_size=1 )

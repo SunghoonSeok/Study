@@ -18,42 +18,24 @@ x = np.load("../../data/npy/P_project_x4.npy",allow_pickle=True)
 x_pred = np.load('../../data/npy/test.npy',allow_pickle=True)
 y = np.load("../../data/npy/P_project_y4.npy",allow_pickle=True)
 
-x = preprocess_input(x) # (48000, 255, 255, 3)
+x = preprocess_input(x)
 x_pred = preprocess_input(x_pred) 
 
-idg = ImageDataGenerator(
+data_gen = ImageDataGenerator(
     width_shift_range=(-1,1),
     height_shift_range=(-1,1), 
     rotation_range=20,
     zoom_range=0.2,
     fill_mode='nearest')
-
-idg2 = ImageDataGenerator()
-
-'''
-- rotation_range: 이미지 회전 범위 (degrees)
-- width_shift, height_shift: 그림을 수평 또는 수직으로 랜덤하게 평행 이동시키는 범위 
-                                (원본 가로, 세로 길이에 대한 비율 값)
-- rescale: 원본 영상은 0-255의 RGB 계수로 구성되는데, 이 같은 입력값은 
-            모델을 효과적으로 학습시키기에 너무 높습니다 (통상적인 learning rate를 사용할 경우). 
-            그래서 이를 1/255로 스케일링하여 0-1 범위로 변환시켜줍니다. 
-            이는 다른 전처리 과정에 앞서 가장 먼저 적용됩니다.
-- shear_range: 임의 전단 변환 (shearing transformation) 범위
-- zoom_range: 임의 확대/축소 범위
-- horizontal_flip`: True로 설정할 경우, 50% 확률로 이미지를 수평으로 뒤집습니다. 
-    원본 이미지에 수평 비대칭성이 없을 때 효과적입니다. 즉, 뒤집어도 자연스러울 때 사용하면 좋습니다.
-- fill_mode 이미지를 회전, 이동하거나 축소할 때 생기는 공간을 채우는 방식
-'''
-
-# y = np.argmax(y, axis=1)
+data_gen2 = ImageDataGenerator()
 
 from sklearn.model_selection import train_test_split
-x_train, x_valid, y_train, y_valid = train_test_split(x,y, train_size = 0.9, shuffle = True, random_state=66)
+x_train, x_valid, y_train, y_valid = train_test_split(x,y, 
+        train_size = 0.9, shuffle = True, random_state=66)  
 
-train_generator = idg.flow(x_train,y_train,batch_size=16, seed = 342)
-# seed => random_state
-valid_generator = idg2.flow(x_valid,y_valid)
-# test_generator = idg2.flow(x_pred)
+train_generator = data_gen.flow(x_train,y_train, batch_size=16, seed = 516)
+valid_generator = data_gen2.flow(x_valid,y_valid)
+
 
 mc = ModelCheckpoint('../data/modelcheckpoint/lotte_projcet3.h5',save_best_only=True, verbose=1)
 
