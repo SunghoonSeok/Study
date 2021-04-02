@@ -18,13 +18,12 @@
 # 각각의 횟수 사이에는 빈 칸을 둔다. 해당 버튼을 누르지 않는 경우에는 숫자 0을 출력해야한다. 
 # 만일 제시된 3개의 버튼으로 T초를 맞출 수 없으면 음수 -1을 첫 줄에 출력해야 한다.
 
-input = 100
-def microwave(input):
-    a = 300
-    b = 60
-    c = 10
-    temp = 0
-    if input >= a:
-        a_count = input//a
-        temp = input%a
-    else
+a = b = c = 0 
+num = int(input()) 
+if num % 10 != 0: 
+    print(-1) 
+else: 
+    a = num//300 
+    b = (num%300)//60 # 300의 나머지를 60으로 나눔
+    c = (num%300)%60//10 # 60의 나머지를 10으로 나눔
+    print(a,b,c) # 그 반복에 대한 각가의 횟수 출력
