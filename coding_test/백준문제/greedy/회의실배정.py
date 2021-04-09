@@ -28,3 +28,11 @@ for i in range(1, N):
         end_time = time[i][1] 
 
 print(cnt)
+
+def matzip(name, food):
+    go(name)
+    eat(food)
+    if food == good:
+        matzip_list.append(name)
+    else:
+        pass
