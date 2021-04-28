@@ -199,24 +199,22 @@ for fold, (train_idx, valid_idx) in enumerate(skf.split(all_df, all_df[TARGET]))
 acc_score = accuracy_score(all_df[:train_df.shape[0]][TARGET], np.where(ctb_oof>0.5, 1, 0))
 print(f"===== ACCURACY SCORE {acc_score:.6f} =====")
 
-# Tuning the DecisionTreeClassifier by the GridSearchCV
-parameters = {
-    'max_depth': np.arange(2, 5, dtype=int),
-    'min_samples_leaf':  np.arange(2, 5, dtype=int)
+params = {
+    'metric': 'binary_logloss',
+    'n_estimators': N_ESTIMATORS,
+    'objective': 'binary',
+    'random_state': SEED,
+    'learning_rate': 0.01,
+    'min_child_samples': 150,
+    'reg_alpha': 3e-5,
+    'reg_lambda': 9e-2,
+    'num_leaves': 18,
+    'max_depth': 14,
+    'colsample_bytree': 0.7,
+    'subsample': 0.7,
+    'subsample_freq': 2,
+    'max_bin': 240,
 }
-
-classifier = DecisionTreeClassifier(random_state=2021)
-
-model = GridSearchCV(
-    estimator=classifier,
-    param_grid=parameters,
-    scoring='accuracy',
-    cv=10,
-    n_jobs=-1)
-model.fit(X_train, y_train)
-
-best_parameters = model.best_params_
-print(best_parameters)
 
 dtm_oof = np.zeros(train_df.shape[0])
 dtm_preds = np.zeros(test_df.shape[0])
@@ -233,12 +231,31 @@ for fold, (train_idx, valid_idx) in enumerate(skf.split(all_df, all_df[TARGET]))
     X_valid, y_valid = all_df.iloc[oof_idx].drop(TARGET, axis=1), all_df.iloc[oof_idx][TARGET]
     X_test = all_df.iloc[preds_idx].drop(TARGET, axis=1)
     
-    model = DecisionTreeClassifier(
-        max_depth=best_parameters['max_depth'],
-        min_samples_leaf=best_parameters['min_samples_leaf'],
-        random_state=SEED
+    pre_model = lgb.LGBMRegressor(**params)
+    pre_model.fit(
+        X_train, y_train,
+        eval_set=[(X_train, y_train),(X_valid, y_valid)],
+        early_stopping_rounds=EARLY_STOPPING_ROUNDS,
+        verbose=VERBOSE
     )
-    model.fit(X_train, y_train)
+
+    params2 = params.copy()
+    params2['learning_rate'] = params['learning_rate'] * 0.1
+    model = lgb.LGBMRegressor(**params2)
+    model.fit(
+        X_train, y_train,
+        eval_set=[(X_train, y_train),(X_valid, y_valid)],
+        early_stopping_rounds=EARLY_STOPPING_ROUNDS,
+        verbose=VERBOSE,
+        init_model=pre_model
+    )
+    
+    fi_tmp = pd.DataFrame()
+    fi_tmp["feature"] = model.feature_name_
+    fi_tmp["importance"] = model.feature_importances_
+    fi_tmp["fold"] = fold
+    fi_tmp["seed"] = SEED
+    feature_importances = feature_importances.append(fi_tmp)
     
     dtm_oof[oof_idx] = model.predict(X_valid)
     dtm_preds[preds_idx-train_df.shape[0]] = model.predict(X_test)
@@ -246,16 +263,144 @@ for fold, (train_idx, valid_idx) in enumerate(skf.split(all_df, all_df[TARGET]))
     acc_score = accuracy_score(y_valid, np.where(dtm_oof[oof_idx]>0.5, 1, 0))
     print(f"===== ACCURACY SCORE {acc_score:.6f} =====\n")
     
+    
 acc_score = accuracy_score(all_df[:train_df.shape[0]][TARGET], np.where(dtm_oof>0.5, 1, 0))
 print(f"===== ACCURACY SCORE {acc_score:.6f} =====")
+
+
+params = {
+    'metric': 'binary_logloss',
+    'n_estimators': N_ESTIMATORS,
+    'objective': 'binary',
+    'random_state': SEED,
+    'learning_rate': 0.01,
+    'min_child_samples': 140,
+    'reg_alpha': 2e-5,
+    'reg_lambda': 8e-2,
+    'num_leaves': 24,
+    'max_depth': 18,
+    'colsample_bytree': 0.9,
+    'subsample': 0.9,
+    'subsample_freq': 2,
+    'max_bin': 240,
+}
+
+lgb2_oof = np.zeros(train_df.shape[0])
+lgb2_preds = np.zeros(test_df.shape[0])
+feature_importances = pd.DataFrame()
+
+skf = StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=SEED)
+
+for fold, (train_idx, valid_idx) in enumerate(skf.split(all_df, all_df[TARGET])):
+    print(f"===== FOLD {fold} =====")
+    oof_idx = np.array([idx for idx in valid_idx if idx < train_df.shape[0]])
+    preds_idx = np.array([idx for idx in valid_idx if idx >= train_df.shape[0]])
+
+    X_train, y_train = all_df.iloc[train_idx].drop(TARGET, axis=1), all_df.iloc[train_idx][TARGET]
+    X_valid, y_valid = all_df.iloc[oof_idx].drop(TARGET, axis=1), all_df.iloc[oof_idx][TARGET]
+    X_test = all_df.iloc[preds_idx].drop(TARGET, axis=1)
+    
+    pre_model = lgb.LGBMRegressor(**params)
+    pre_model.fit(
+        X_train, y_train,
+        eval_set=[(X_train, y_train),(X_valid, y_valid)],
+        early_stopping_rounds=EARLY_STOPPING_ROUNDS,
+        verbose=VERBOSE
+    )
+
+    params2 = params.copy()
+    params2['learning_rate'] = params['learning_rate'] * 0.1
+    model = lgb.LGBMRegressor(**params2)
+    model.fit(
+        X_train, y_train,
+        eval_set=[(X_train, y_train),(X_valid, y_valid)],
+        early_stopping_rounds=EARLY_STOPPING_ROUNDS,
+        verbose=VERBOSE,
+        init_model=pre_model
+    )
+    
+    fi_tmp = pd.DataFrame()
+    fi_tmp["feature"] = model.feature_name_
+    fi_tmp["importance"] = model.feature_importances_
+    fi_tmp["fold"] = fold
+    fi_tmp["seed"] = SEED
+    feature_importances = feature_importances.append(fi_tmp)
+    
+    lgb2_oof[oof_idx] = model.predict(X_valid)
+    lgb2_preds[preds_idx-train_df.shape[0]] = model.predict(X_test)
+    
+    acc_score = accuracy_score(y_valid, np.where(lgb2_oof[oof_idx]>0.5, 1, 0))
+    print(f"===== ACCURACY SCORE {acc_score:.6f} =====\n")
+    
+acc_score = accuracy_score(all_df[:train_df.shape[0]][TARGET], np.where(lgb2_oof>0.5, 1, 0))
+print(f"===== ACCURACY SCORE {acc_score:.6f} =====")
+
+params = {
+    'bootstrap_type': 'Poisson',
+    'loss_function': 'Logloss',
+    'eval_metric': 'Logloss',
+    'random_seed': SEED,
+    'task_type': 'GPU',
+    'max_depth': 9,
+    'learning_rate': 0.01,
+    'n_estimators': N_ESTIMATORS,
+    'max_bin': 260,
+    'min_data_in_leaf': 60,
+    'l2_leaf_reg': 0.01,
+    'subsample': 0.9
+}
+
+ctb2_oof = np.zeros(train_df.shape[0])
+ctb2_preds = np.zeros(test_df.shape[0])
+feature_importances = pd.DataFrame()
+
+skf = StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=SEED)
+
+for fold, (train_idx, valid_idx) in enumerate(skf.split(all_df, all_df[TARGET])):
+    print(f"===== FOLD {fold} =====")
+    oof_idx = np.array([idx for idx in valid_idx if idx < train_df.shape[0]])
+    preds_idx = np.array([idx for idx in valid_idx if idx >= train_df.shape[0]])
+
+    X_train, y_train = all_df.iloc[train_idx].drop(TARGET, axis=1), all_df.iloc[train_idx][TARGET]
+    X_valid, y_valid = all_df.iloc[oof_idx].drop(TARGET, axis=1), all_df.iloc[oof_idx][TARGET]
+    X_test = all_df.iloc[preds_idx].drop(TARGET, axis=1)
+    
+    model = ctb.CatBoostClassifier(**params)
+    model.fit(X_train, y_train,
+              eval_set=[(X_valid, y_valid)],
+              use_best_model=True,
+              early_stopping_rounds=EARLY_STOPPING_ROUNDS,
+              verbose=VERBOSE
+              )
+    
+    fi_tmp = pd.DataFrame()
+    fi_tmp["feature"] = X_test.columns.to_list()
+    fi_tmp["importance"] = model.get_feature_importance()
+    fi_tmp["fold"] = fold
+    fi_tmp["seed"] = SEED
+    feature_importances = feature_importances.append(fi_tmp)
+    
+    ctb2_oof[oof_idx] = model.predict(X_valid)
+    ctb2_preds[preds_idx-train_df.shape[0]] = model.predict(X_test)
+    
+    acc_score = accuracy_score(y_valid, np.where(ctb2_oof[oof_idx]>0.5, 1, 0))
+    print(f"===== ACCURACY SCORE {acc_score:.6f} =====\n")
+    
+acc_score = accuracy_score(all_df[:train_df.shape[0]][TARGET], np.where(ctb2_oof>0.5, 1, 0))
+print(f"===== ACCURACY SCORE {acc_score:.6f} =====")
+
 
 submission['submit_lgb'] = np.where(lgb_preds>0.5, 1, 0)
 submission['submit_ctb'] = np.where(ctb_preds>0.5, 1, 0)
 submission['submit_dtm'] = np.where(dtm_preds>0.5, 1, 0)
+submission['submit_lgb2'] = np.where(lgb2_preds>0.5, 1, 0)
+submission['submit_ctb2'] = np.where(ctb2_preds>0.5, 1, 0)
+
+
 
 submission[[col for col in submission.columns if col.startswith('submit_')]].sum(axis = 1).value_counts()
 
-submission[TARGET] = (submission[[col for col in submission.columns if col.startswith('submit_')]].sum(axis=1) >= 2).astype(int)
+submission[TARGET] = (submission[[col for col in submission.columns if col.startswith('submit_')]].sum(axis=1) >= 3).astype(int)
 submission.drop([col for col in submission.columns if col.startswith('submit_')], axis=1, inplace=True)
 
 submission['submit_1'] = submission[TARGET].copy()
@@ -264,7 +409,7 @@ submission['submit_3'] = pd.read_csv("c:/data/kaggle/titanic/pseudo_label.csv")[
 
 submission[[col for col in submission.columns if col.startswith('submit_')]].sum(axis = 1).value_counts()
 
-submission[TARGET] = (submission[[col for col in submission.columns if col.startswith('submit_')]].sum(axis=1) >= 2).astype(int)
+submission[TARGET] = (submission[[col for col in submission.columns if col.startswith('submit_')]].sum(axis=1) >= 3).astype(int)
 
-submission[['PassengerId', TARGET]].to_csv("c:/data/kaggle/titanic/voting_submission.csv", index = False)
+submission[['PassengerId', TARGET]].to_csv("c:/data/kaggle/titanic/voting_submission3.csv", index = False)
 
