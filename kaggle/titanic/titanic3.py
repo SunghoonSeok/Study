@@ -411,5 +411,5 @@ submission[[col for col in submission.columns if col.startswith('submit_')]].sum
 
 submission[TARGET] = (submission[[col for col in submission.columns if col.startswith('submit_')]].sum(axis=1) >= 3).astype(int)
 
-submission[['PassengerId', TARGET]].to_csv("c:/data/kaggle/titanic/voting_submission3.csv", index = False)
+submission[['PassengerId', TARGET]].to_csv("c:/data/kaggle/titanic/voting_submission5.csv", index = False)
 

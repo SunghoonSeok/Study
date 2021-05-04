@@ -312,5 +312,4 @@ submission[TARGET].mean()
 
 # and now .... hold your breath and upload the results on the server and wait for the results ... TOP? How much?
 
-submission[['PassengerId', TARGET]].to_csv("c:/data/kaggle/titanic/predict4.csv", index = False)
-
+submission[['PassengerId', TARGET]].to_csv("c:/data/kaggle/titanic/predict5.csv", index = False)

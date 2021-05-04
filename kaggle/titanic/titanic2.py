@@ -21,10 +21,10 @@ warnings.simplefilter('ignore')
 
 TARGET = 'Survived'
 
-N_ESTIMATORS = 1000
+N_ESTIMATORS = 2000
 N_SPLITS = 10
 SEED = 2021
-EARLY_STOPPING_ROUNDS = 100
+EARLY_STOPPING_ROUNDS = 120
 VERBOSE = 100
 
 def set_seed(seed=42):
