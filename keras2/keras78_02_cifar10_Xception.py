@@ -61,3 +61,6 @@ print("Best Loss : ", loss2)
 print("Best acc : ", acc2)
 
 # ValueError: Input size must be at least 71x71; got `input_shape=(32, 32, 3)`
+
+# Best Loss :  0.3260430693626404
+# Best acc :  0.9025999903678894
