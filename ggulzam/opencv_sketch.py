@@ -1,8 +1,8 @@
 import cv2
-cap = cv2.VideoCapture('./one_punch.mp4')
+cap = cv2.VideoCapture('C:/video/celebrity.mp4')
 
 fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-out = cv2.VideoWriter('./one_punch2.mp4', fourcc, 23.98, (720,1280))
+out = cv2.VideoWriter('C:/video/celebrity2.mp4', fourcc, 23.98, (1280,720))
 count = 0
 while True: # 무한 루프
     ret, frame = cap.read() # 두 개의 값을 반환하므로 두 변수 지정
@@ -11,9 +11,9 @@ while True: # 무한 루프
         break
     
     # 정지화면에서 윤곽선을 추출
-    # edge = cv2.Canny(frame, 50, 150)
+    edge = cv2.Canny(frame, 50, 150)
     
-    # inversed = ~frame  # 반전
+    inversed = ~frame  # 반전
 
     if ret:
         grey_img = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
@@ -23,7 +23,7 @@ while True: # 무한 루프
         sketch = cv2.divide(grey_img,invertedblur,scale=256.0)
 
         
-        cv2.imwrite("C:/Study/frame/frame%d.jpg" % count, sketch)
+        cv2.imwrite("C:/video/sketch/celebrity/frame%d.jpg" % count, sketch)
         cv2.imshow('edge', sketch)
         count += 1
         
