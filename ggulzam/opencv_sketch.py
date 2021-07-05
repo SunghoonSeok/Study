@@ -1,8 +1,8 @@
 import cv2
-cap = cv2.VideoCapture('C:/video/eight_acoustic.mp4')
+cap = cv2.VideoCapture('C:/tp/video/vid0.mov')
 
 fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-out = cv2.VideoWriter('C:/video/eight_acoustic2.mp4', fourcc, 23.98, (1280,720))
+out = cv2.VideoWriter('C:/tp/video/vid0_2.mp4', fourcc, 60.03, (720,1280))
 count = 0
 while True: # 무한 루프
     ret, frame = cap.read() # 두 개의 값을 반환하므로 두 변수 지정
@@ -23,7 +23,7 @@ while True: # 무한 루프
         sketch = cv2.divide(grey_img,invertedblur,scale=256.0)
 
         
-        cv2.imwrite("C:/video/sketch/eight_acoustic/frame%d.jpg" % count, sketch)
+        cv2.imwrite("C:/tp/video/sketch/frame%d.jpg" % count, sketch)
         cv2.imshow('edge', sketch)
         count += 1
         

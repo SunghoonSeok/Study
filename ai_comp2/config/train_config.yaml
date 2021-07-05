@@ -1,0 +1,49 @@
+SEED:
+  random_seed: 42
+
+DATALOADER:
+  num_workers: 8
+  shuffle:
+  pin_memory: True
+  drop_last:
+  
+PREPROCESS:
+  preprocess_serial: 
+  scaler:
+
+TRAIN:
+  num_epochs: 1
+  batch_size: 8
+  learning_rate: 0.0001
+  early_stopping_patience: 15
+  model: 'unet'
+  optimizer:
+  scheduler:
+  momentum:
+  weight_decay: 0.0001
+  loss_function:
+  metric_function:
+
+VALIDATION:
+  batch_size: 16
+
+PERFORMANCE_RECORD:
+  column_list:
+    - train_serial
+    - train_timestamp
+    - model_str
+    - optimizer_str
+    - loss_function_str
+    - metric_function_str
+    - early_stopping_patience
+    - batch_size
+    - epoch
+    - learning_rate
+    - momentum
+    - random_seed # -----------key columns-------------
+    - epoch_index 
+    - train_loss
+    - validation_loss
+    - train_score
+    - validation_score
+    - elapsed_time

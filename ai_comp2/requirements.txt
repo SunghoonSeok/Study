@@ -1,0 +1,8 @@
+segmentation-models-pytorch
+torch
+numpy
+albumentations
+pandas
+opencv-python
+efficientnet-pytorch==0.6.3
+timm==0.3.2

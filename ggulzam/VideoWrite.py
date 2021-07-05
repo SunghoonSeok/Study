@@ -5,7 +5,7 @@ import numpy as np
 import glob
  
 img_array = []
-for filename in sorted(glob.glob('C:/video/sketch/eight_acoustic/frame*.jpg'), key=lambda name:int(''.join(filter(str.isdigit, name)))):
+for filename in sorted(glob.glob('C:/tp/video/sketch/frame*.jpg'), key=lambda name:int(''.join(filter(str.isdigit, name)))):
     img = cv2.imread(filename)
     height, width, layers = img.shape
     size = (width,height)
@@ -15,7 +15,7 @@ print(np.array(img_array).shape)
 
 # 비디오 파일 이름 , fourcc , 초당 프레임 수, 프레임 사이즈
 # cv2.VideoWriter_fourcc(*'DIVX') : DIVX MPEG-4 코덱
-out = cv2.VideoWriter('c:/video/eight_acoustic_sketch.avi', cv2.VideoWriter_fourcc(*'DIVX'), 23.98, size)
+out = cv2.VideoWriter('c:/tp/video/vid0_sketch.avi', cv2.VideoWriter_fourcc(*'DIVX'), 60.03, size)
  
 for i in range(len(img_array)):
     out.write(img_array[i])
